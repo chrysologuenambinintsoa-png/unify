@@ -1,0 +1,21 @@
+﻿*******************************************************************************
+Your application uses this file to locate resource strings defined
+in Welcome.html project item. 
+
+Replace the text between localization brackets as needed.
+*******************************************************************************
+
+^AdminDesc^Compte administratif^AdminDesc^
+
+^SignInHeader^Instructions^SignInHeader^
+
+^SignInInstruction^Connectez-vous pour accéder au contenu du site protégé.^SignInInstruction^
+
+^SignInPara1^Deux comptes d'utilisateur standard sont automatiquement créés lorsque l'application est initialisée si l'option d'adhésion a été sélectionnée pour cette application.^SignInPara1^
+
+^SignInPara2^Le <b>admin</b> compte administratif est autorisé à accéder à toutes les zones du site Web et le Gestionnaire d'adhésion. Le compte <b>user</b> standard est autorisé à accéder à toutes les zones du site Web, à l'exception du gestionnaire d'adhésion.^SignInPara2^
+
+^SignInPara3^Déplacez le pointeur de la souris sur le lien vers cette <i>Login site</i> Web sur le côté droit en haut de la page et connectez-vous avec l'un des comptes énumérés ci-dessous.^SignInPara3^
+
+^UserDesc^Compte utilisateur standard^UserDesc^
+

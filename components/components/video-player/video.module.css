@@ -1,0 +1,1880 @@
+/* ============================================
+   Unify Video Player
+   Complete CSS for Video.js integration
+   ============================================ */
+
+/* ============================================
+   Main Video Player Container
+   ============================================ */
+.unify-video-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  background: var(--unify-video-bg);
+  border-radius: var(--unify-video-radius);
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  box-shadow: var(--unify-video-shadow);
+}
+
+.unify-video-wrapper.fullscreen-mode {
+  border-radius: 0;
+  max-width: 100%;
+  height: 100vh;
+  width: 100vw;
+}
+
+.unify-video-wrapper.mini-player-mode {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: var(--unify-video-mini-width);
+  height: var(--unify-video-mini-height);
+  border-radius: var(--unify-video-mini-radius);
+  z-index: 99999;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  resize: both;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.unify-video-wrapper.mini-player-mode:active {
+  cursor: grabbing;
+}
+
+/* Minimize/Maximize handle */
+.mini-player-resize-handle {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.unify-video-wrapper.mini-player-mode:hover .mini-player-resize-handle {
+  opacity: 0.5;
+}
+
+/* ============================================
+   Video.js Custom Overrides
+   ============================================ */
+.unify-video-wrapper .video-js {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--unify-video-radius);
+  overflow: hidden;
+}
+
+.unify-video-wrapper .video-js.vjs-fullscreen,
+.unify-video-wrapper.fullscreen-mode .video-js {
+  border-radius: 0;
+  height: 100%;
+}
+
+/* Hide default Video.js big play button */
+.unify-video-wrapper .video-js .vjs-big-play-button {
+  display: none !important;
+}
+
+/* Hide default Video.js control bar */
+.unify-video-wrapper .video-js .vjs-control-bar {
+  display: none !important;
+}
+
+/* Hide default loading spinner */
+.unify-video-wrapper .video-js .vjs-loading-spinner {
+  display: none !important;
+}
+
+/* Remove default poster */
+.unify-video-wrapper .video-js .vjs-poster {
+  display: none !important;
+}
+
+/* Remove text track display defaults */
+.unify-video-wrapper .video-js .vjs-text-track-display {
+  bottom: 80px;
+}
+
+.unify-video-wrapper .video-js .vjs-text-track-display .vjs-text-track-cue {
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+/* ============================================
+   Custom Big Play Button (Facebook Style)
+   ============================================ */
+.unify-custom-play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: 80px;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: var(--unify-video-transition);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.unify-custom-play-button:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+  background: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.unify-custom-play-button:active {
+  transform: translate(-50%, -50%) scale(0.96);
+}
+
+.unify-custom-play-button .play-icon {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 14px 0 14px 24px;
+  border-color: transparent transparent transparent #ffffff;
+  margin-left: 4px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+}
+
+.unify-custom-play-button .pause-icon {
+  display: flex;
+  gap: 6px;
+}
+
+.unify-custom-play-button .pause-icon span {
+  width: 6px;
+  height: 28px;
+  background: #ffffff;
+  border-radius: 2px;
+}
+
+/* Play button pulse animation */
+.unify-custom-play-button::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  animation: playButtonPulse 2s ease-out infinite;
+}
+
+@keyframes playButtonPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+/* Hide play button when playing */
+.unify-video-wrapper.is-playing .unify-custom-play-button {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.8);
+}
+
+/* Show play button on pause */
+.unify-video-wrapper.is-paused .unify-custom-play-button {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+  transition: var(--unify-video-transition);
+}
+
+/* ============================================
+   Custom Loading Spinner
+   ============================================ */
+.unify-loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  display: none;
+}
+
+.unify-video-wrapper.is-buffering .unify-loading-spinner {
+  display: block;
+}
+
+.unify-loading-spinner .spinner-ring {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--unify-video-accent);
+  border-radius: 50%;
+  animation: unifySpin 0.8s linear infinite;
+}
+
+@keyframes unifySpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Controls Overlay
+   ============================================ */
+.unify-controls-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  transition: opacity var(--unify-video-controls-hide-delay) ease;
+}
+
+.unify-video-wrapper.is-playing .unify-controls-overlay {
+  opacity: 0;
+}
+
+.unify-video-wrapper.is-playing:hover .unify-controls-overlay,
+.unify-video-wrapper.is-paused .unify-controls-overlay,
+.unify-video-wrapper.is-buffering .unify-controls-overlay,
+.unify-video-wrapper.show-controls .unify-controls-overlay {
+  opacity: 1;
+}
+
+/* Top Gradient */
+.unify-controls-top {
+  padding: 16px 16px 48px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.65) 0%, transparent 100%);
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/* Bottom Gradient */
+.unify-controls-bottom {
+  padding: 48px 16px 12px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+  pointer-events: auto;
+}
+
+/* Center play button area (for click-to-play) */
+.unify-controls-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* ============================================
+   Video Info Overlay (Top)
+   ============================================ */
+.unify-video-info {
+  flex: 1;
+  min-width: 0;
+  padding-right: 16px;
+}
+
+.unify-video-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--unify-video-text);
+  line-height: 1.3;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.unify-video-meta {
+  font-size: 13px;
+  color: var(--unify-video-text-secondary);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.unify-video-meta .meta-separator {
+  width: 3px;
+  height: 3px;
+  background: var(--unify-video-text-secondary);
+  border-radius: 50%;
+}
+
+/* Top right actions */
+.unify-video-top-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Generic Control Button
+   ============================================ */
+.unify-ctrl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--unify-video-text);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: var(--unify-video-transition);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.unify-ctrl-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.unify-ctrl-btn:active {
+  transform: scale(0.95);
+}
+
+.unify-ctrl-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Tooltip */
+.unify-ctrl-btn .unify-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  background: var(--unify-video-tooltip-bg);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.unify-ctrl-btn:hover .unify-tooltip {
+  opacity: 1;
+}
+
+/* ============================================
+   Progress Bar / Timeline (Facebook Style)
+   ============================================ */
+.unify-progress-container {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.unify-progress-track {
+  position: relative;
+  width: 100%;
+  height: var(--unify-video-scrubber-height);
+  background: var(--unify-video-progress-bg);
+  border-radius: 3px;
+  overflow: visible;
+  transition: height 0.15s ease;
+}
+
+.unify-progress-container:hover .unify-progress-track {
+  height: var(--unify-video-scrubber-hover-height);
+}
+
+/* Buffered */
+.unify-progress-buffered {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--unify-video-progress-buffered);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Played */
+.unify-progress-played {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--unify-video-progress-played);
+  border-radius: 3px;
+  transition: width 0.05s linear;
+}
+
+/* Hover preview time indicator */
+.unify-progress-hover-indicator {
+  position: absolute;
+  top: -28px;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.unify-progress-container:hover .unify-progress-hover-indicator {
+  opacity: 1;
+}
+
+/* Scrubber head */
+.unify-progress-scrubber {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--unify-video-accent);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+
+.unify-progress-container:hover .unify-progress-scrubber,
+.unify-progress-container.is-dragging .unify-progress-scrubber {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Chapters markers */
+.unify-chapter-marker {
+  position: absolute;
+  top: -2px;
+  width: 3px;
+  height: calc(100% + 4px);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 1px;
+  z-index: 1;
+}
+
+/* Thumbnail preview */
+.unify-thumbnail-preview {
+  position: absolute;
+  bottom: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 6px;
+  overflow: hidden;
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.unify-progress-container:hover .unify-thumbnail-preview {
+  opacity: 1;
+}
+
+.unify-thumbnail-preview img {
+  display: block;
+  width: 160px;
+  height: 90px;
+  object-fit: cover;
+}
+
+.unify-thumbnail-preview .thumbnail-time {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* ============================================
+   Bottom Controls Row
+   ============================================ */
+.unify-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.unify-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.unify-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ============================================
+   Volume Control
+   ============================================ */
+.unify-volume-control {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+.unify-volume-slider-wrap {
+  width: 0;
+  overflow: hidden;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+}
+
+.unify-volume-control:hover .unify-volume-slider-wrap,
+.unify-volume-control.is-active .unify-volume-slider-wrap {
+  width: 80px;
+}
+
+.unify-volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 72px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  outline: none;
+  margin: 0 4px;
+  cursor: pointer;
+}
+
+.unify-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s;
+}
+
+.unify-volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.unify-volume-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.unify-volume-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+}
+
+/* ============================================
+   Time Display
+   ============================================ */
+.unify-time-display {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--unify-video-text);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.unify-time-display .time-current {
+  color: var(--unify-video-text);
+}
+
+.unify-time-display .time-separator {
+  color: var(--unify-video-text-secondary);
+  margin: 0 3px;
+}
+
+.unify-time-display .time-duration {
+  color: var(--unify-video-text-secondary);
+}
+
+/* ============================================
+   Settings Menu (Facebook Gear Style)
+   ============================================ */
+.unify-settings-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background: var(--unify-video-controls-bg);
+  border-radius: 12px;
+  padding: 8px 0;
+  min-width: 240px;
+  max-height: 360px;
+  overflow-y: auto;
+  z-index: 100;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: translateY(8px) scale(0.97);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.unify-settings-menu.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Custom scrollbar for settings */
+.unify-settings-menu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.unify-settings-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.unify-settings-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+/* Settings menu item */
+.unify-settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  color: var(--unify-video-text);
+  font-size: 14px;
+}
+
+.unify-settings-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.unify-settings-item .item-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.unify-settings-item .item-label svg {
+  width: 18px;
+  height: 18px;
+  color: var(--unify-video-text-secondary);
+}
+
+.unify-settings-item .item-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--unify-video-text-secondary);
+  font-size: 13px;
+}
+
+/* Sub-menu */
+.unify-settings-submenu {
+  position: absolute;
+  bottom: 0;
+  left: calc(100% + 4px);
+  transform: translateX(-4px);
+  background: var(--unify-video-controls-bg);
+  border-radius: 12px;
+  padding: 8px 0;
+  min-width: 180px;
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 101;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.unify-settings-submenu.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.unify-settings-submenu .submenu-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--unify-video-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 16px 4px;
+}
+
+.unify-settings-submenu .submenu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  color: var(--unify-video-text);
+  font-size: 14px;
+}
+
+.unify-settings-submenu .submenu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.unify-settings-submenu .submenu-item.is-active {
+  color: var(--unify-video-accent);
+}
+
+.unify-settings-submenu .submenu-item .check-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+}
+
+.unify-settings-submenu .submenu-item.is-active .check-icon {
+  opacity: 1;
+}
+
+/* Quality badge */
+.quality-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 6px;
+  background: rgba(24, 119, 242, 0.2);
+  color: var(--unify-video-accent);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ============================================
+   Reaction Bar (Facebook Style)
+   ============================================ */
+.unify-reaction-bar {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--unify-video-controls-bg);
+  border-radius: 40px;
+  padding: 6px 8px;
+  z-index: 50;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateX(-50%) translateY(8px) scale(0.9);
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.unify-reaction-bar.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.unify-reaction-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 28px;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.unify-reaction-btn:hover {
+  transform: scale(1.3);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.unify-reaction-btn:active {
+  transform: scale(0.95);
+}
+
+.unify-reaction-btn .reaction-label {
+  position: absolute;
+  bottom: -20px;
+  font-size: 10px;
+  color: var(--unify-video-text-secondary);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.unify-reaction-btn:hover .reaction-label {
+  opacity: 1;
+}
+
+/* ============================================
+   Action Buttons Bar (Below video)
+   ============================================ */
+.unify-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 4px;
+}
+
+.unify-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.unify-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--unify-video-text-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: var(--unify-video-transition);
+}
+
+.unify-action-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--unify-video-text);
+}
+
+.unify-action-btn:active {
+  transform: scale(0.96);
+}
+
+.unify-action-btn.is-liked {
+  color: var(--unify-video-accent);
+}
+
+.unify-action-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.unify-action-btn .action-count {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ============================================
+   Share Modal / Overlay
+   ============================================ */
+.unify-share-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.unify-share-overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.unify-share-panel {
+  background: #242526;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  overflow: hidden;
+  transform: scale(0.95);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.unify-share-overlay.is-visible .unify-share-panel {
+  transform: scale(1);
+}
+
+.unify-share-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.unify-share-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--unify-video-text);
+  margin: 0;
+}
+
+.unify-share-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--unify-video-text-secondary);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.unify-share-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.unify-share-body {
+  padding: 16px;
+}
+
+/* Share options */
+.unify-share-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.unify-share-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  min-width: 72px;
+}
+
+.unify-share-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.unify-share-option .share-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.unify-share-option .share-label {
+  font-size: 12px;
+  color: var(--unify-video-text);
+  text-align: center;
+}
+
+/* Share link input */
+.unify-share-link-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.unify-share-link-row {
+  display: flex;
+  gap: 8px;
+}
+
+.unify-share-link-input {
+  flex: 1;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: var(--unify-video-text);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.unify-share-link-input:focus {
+  border-color: var(--unify-video-accent);
+}
+
+.unify-share-copy-btn {
+  padding: 10px 16px;
+  background: var(--unify-video-accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.unify-share-copy-btn:hover {
+  background: var(--unify-video-accent-hover);
+}
+
+/* ============================================
+   Subtitles / Captions Menu
+   ============================================ */
+.unify-captions-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background: var(--unify-video-controls-bg);
+  border-radius: 12px;
+  padding: 8px 0;
+  min-width: 200px;
+  z-index: 100;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: translateY(8px) scale(0.97);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.unify-captions-menu.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* ============================================
+   Keyboard Shortcuts Overlay
+   ============================================ */
+.unify-keyboard-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.unify-keyboard-overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.unify-keyboard-panel {
+  background: #242526;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 560px;
+  width: 90%;
+  max-height: 80%;
+  overflow-y: auto;
+}
+
+.unify-keyboard-panel h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--unify-video-text);
+  margin: 0 0 24px;
+}
+
+.unify-shortcut-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.unify-shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.unify-shortcut-row:last-child {
+  border-bottom: none;
+}
+
+.unify-shortcut-keys {
+  display: flex;
+  gap: 4px;
+}
+
+.unify-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: var(--unify-video-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.unify-shortcut-desc {
+  color: var(--unify-video-text-secondary);
+  font-size: 13px;
+}
+
+/* ============================================
+   Mini Player Close Button
+   ============================================ */
+.unify-mini-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 30;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.15s;
+}
+
+.unify-video-wrapper.mini-player-mode:hover .unify-mini-close-btn {
+  opacity: 1;
+}
+
+.unify-mini-close-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* ============================================
+   PiP Badge
+   ============================================ */
+.unify-pip-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 30;
+  background: var(--unify-video-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: none;
+}
+
+.unify-video-wrapper.is-pip .unify-pip-badge {
+  display: block;
+}
+
+/* ============================================
+   Live Badge
+   ============================================ */
+.unify-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  background: #e41e3f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.unify-live-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ============================================
+   HD / 4K / Quality Badge on player
+   ============================================ */
+.unify-quality-indicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 15;
+  display: flex;
+  gap: 4px;
+}
+
+.unify-quality-tag {
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.unify-video-wrapper:hover .unify-quality-tag {
+  opacity: 1;
+}
+
+/* ============================================
+   Autoplay Crossfade Transition
+   ============================================ */
+.unify-video-crossfade {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+.unify-video-crossfade.is-active {
+  opacity: 1;
+}
+
+/* ============================================
+   Error State
+   ============================================ */
+.unify-error-state {
+  position: absolute;
+  inset: 0;
+  background: var(--unify-video-bg);
+  z-index: 25;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+.unify-video-wrapper.has-error .unify-error-state {
+  display: flex;
+}
+
+.unify-error-state .error-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--unify-video-text-secondary);
+  opacity: 0.5;
+}
+
+.unify-error-state .error-message {
+  font-size: 15px;
+  color: var(--unify-video-text-secondary);
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.unify-error-state .retry-btn {
+  padding: 8px 20px;
+  background: var(--unify-video-accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.unify-error-state .retry-btn:hover {
+  background: var(--unify-video-accent-hover);
+}
+
+/* ============================================
+   Suggested Videos Sidebar (Desktop)
+   ============================================ */
+.unify-suggested-container {
+  display: flex;
+  gap: 16px;
+}
+
+.unify-video-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.unify-suggested-sidebar {
+  width: 360px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  .unify-suggested-sidebar {
+    display: none;
+  }
+}
+
+.unify-suggested-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.unify-suggested-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.unify-suggested-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.unify-suggested-item {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.unify-suggested-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.unify-suggested-item .suggested-thumb {
+  width: 168px;
+  height: 94px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #e4e6eb;
+}
+
+.unify-suggested-item .suggested-info {
+  flex: 1;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.unify-suggested-item .suggested-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #050505;
+  line-height: 1.3;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.unify-suggested-item .suggested-meta {
+  font-size: 12px;
+  color: #65676b;
+  line-height: 1.4;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+@media (max-width: 768px) {
+  .unify-custom-play-button {
+    width: 64px;
+    height: 64px;
+  }
+
+  .unify-custom-play-button .play-icon {
+    border-width: 12px 0 12px 20px;
+    margin-left: 3px;
+  }
+
+  .unify-custom-play-button .pause-icon span {
+    width: 5px;
+    height: 22px;
+  }
+
+  .unify-controls-top {
+    padding: 12px 12px 36px;
+  }
+
+  .unify-controls-bottom {
+    padding: 36px 12px 8px;
+  }
+
+  .unify-video-title {
+    font-size: 14px;
+  }
+
+  .unify-video-meta {
+    font-size: 12px;
+  }
+
+  .unify-ctrl-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .unify-ctrl-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .unify-time-display {
+    font-size: 12px;
+  }
+
+  .unify-volume-control:hover .unify-volume-slider-wrap {
+    width: 60px;
+  }
+
+  .unify-volume-slider {
+    width: 52px;
+  }
+
+  .unify-settings-menu {
+    min-width: 200px;
+    right: -8px;
+  }
+
+  .unify-reaction-bar {
+    padding: 4px 6px;
+  }
+
+  .unify-reaction-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 22px;
+  }
+
+  .unify-action-btn {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+
+  .unify-action-btn .action-count {
+    display: none;
+  }
+
+  .unify-video-wrapper.mini-player-mode {
+    width: 280px;
+    height: 158px;
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .unify-controls-top {
+    padding: 8px 8px 28px;
+  }
+
+  .unify-controls-bottom {
+    padding: 28px 8px 6px;
+  }
+
+  .unify-ctrl-btn .unify-tooltip {
+    display: none;
+  }
+
+  .unify-video-top-actions .unify-ctrl-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .unify-action-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ============================================
+   Dark mode adjustments
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  .dark .unify-suggested-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .dark .unify-suggested-item .suggested-title {
+    color: #e4e6eb;
+  }
+
+  .dark .unify-suggested-item .suggested-meta {
+    color: #b0b3b8;
+  }
+
+  .dark .unify-suggested-item .suggested-thumb {
+    background: #3a3b3c;
+  }
+
+  .dark .unify-action-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e4e6eb;
+  }
+}
+
+/* ============================================
+   Animation Utilities
+   ============================================ */
+.unify-animate-fade-in {
+  animation: unifyFadeIn 0.3s ease-out;
+}
+
+@keyframes unifyFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.unify-animate-scale-in {
+  animation: unifyScaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes unifyScaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ============================================
+   Picture-in-Picture Styles
+   ============================================ */
+.unify-pip-toggle {
+  position: relative;
+}
+
+.unify-video-wrapper.is-pip .unify-pip-toggle svg {
+  color: var(--unify-video-accent);
+}
+
+/* ============================================
+   Forward/Rewind Buttons (Double tap)
+   ============================================ */
+.unify-seek-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 15;
+}
+
+.unify-seek-indicator.is-visible {
+  opacity: 1;
+}
+
+.unify-seek-indicator.seek-left {
+  left: 20%;
+}
+
+.unify-seek-indicator.seek-right {
+  right: 20%;
+}
+
+.unify-seek-indicator .seek-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.unify-seek-indicator .seek-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.unify-seek-indicator .seek-time {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================
+   Double Tap Areas
+   ============================================ */
+.unify-tap-area {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.unify-tap-area.tap-left {
+  left: 0;
+  width: 35%;
+}
+
+.unify-tap-area.tap-right {
+  right: 0;
+  width: 35%;
+}
+
+/* ============================================
+   Volume Popup for Mobile
+   ============================================ */
+.unify-volume-popup {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  background: var(--unify-video-controls-bg);
+  border-radius: 12px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+.unify-volume-popup.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.unify-volume-popup .popup-slider {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 4px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  outline: none;
+}
+
+.unify-volume-popup .popup-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.unify-volume-popup .popup-volume-icon {
+  color: var(--unify-video-text);
+}
+
+/* ============================================
+   Watch Later / Save List
+   ============================================ */
+.unify-saved-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.unify-saved-indicator.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.unify-saved-indicator .saved-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.unify-saved-indicator .saved-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* ============================================
+   Playback Rate Badge
+   ============================================ */
+.unify-speed-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ============================================
+   Next/Prev Video Buttons
+   ============================================ */
+.unify-nav-buttons {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  right: 0;
+  display: flex;
+  gap: 4px;
+  z-index: 50;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+.unify-nav-buttons.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ============================================
+   Aspect Ratio Container
+   ============================================ */
+.unify-aspect-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 */
+  background: #000;
+}
+
+.unify-aspect-container.is-4-3 {
+  padding-top: 75%;
+}
+
+.unify-aspect-container.is-1-1 {
+  padding-top: 100%;
+}
+
+.unify-aspect-container.is-21-9 {
+  padding-top: 42.86%;
+}
+
+.unify-aspect-container.is-vertical {
+  padding-top: 177.78%; /* 9:16 */
+}
+
+.unify-aspect-container > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* ============================================
+   Poster Image
+   ============================================ */
+.unify-poster {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: opacity 0.4s;
+}
+
+.unify-poster.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ============================================
+   Gradient overlay on poster
+   ============================================ */
+.unify-poster-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    transparent 30%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}

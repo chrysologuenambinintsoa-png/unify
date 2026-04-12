@@ -1,0 +1,62 @@
+/* Animation de chargement */
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Classe de base pour l'élément squelette */
+.skeleton {
+  background-color: #f0f2f5;
+  background-image: linear-gradient(
+    90deg,
+    #f0f2f5 0px,
+    #e4e6eb 40px,
+    #f0f2f5 80px
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite linear;
+  display: block;
+  border-radius: 4px;
+}
+
+/* Variantes */
+.skeleton-avatar {
+  border-radius: 50%;
+}
+
+.skeleton-text {
+  height: 10px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+/* Conteneurs spécifiques pour les mises en page */
+.post-skeleton {
+  padding: 12px;
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Support du mode sombre */
+@media (prefers-color-scheme: dark) {
+  .skeleton {
+    background-color: #3a3b3c;
+    background-image: linear-gradient(
+      90deg,
+      #3a3b3c 0px,
+      #4e4f50 40px,
+      #3a3b3c 80px
+    );
+  }
+  
+  .post-skeleton {
+    background-color: #242526;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}

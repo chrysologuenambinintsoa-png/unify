@@ -1,0 +1,414 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Item {
+  id              Int      @id @default(autoincrement())
+  title           String
+  content         String?
+  image           String?
+  video           String?
+  backgroundColor String?
+  textColor       String?
+  backgroundImage String?
+  author          String?
+  avatarUrl       String?
+  likes           Int      @default(0)
+  shares          Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  // association with sponsor if this post was created from a sponsor page
+  sponsorId Int? // nullable for regular user posts
+  sponsor   Sponsor? @relation(fields: [sponsorId], references: [id])
+
+  comments Comment[]
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  postId    Int
+  post      Item      @relation(fields: [postId], references: [id])
+  author    String
+  text      String
+  parentId  Int?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+  likes     Int       @default(0)
+  createdAt DateTime  @default(now())
+}
+
+model Conversation {
+  id               String    @id @default(cuid())
+  participants     String // JSON array of userIds or emails
+  participantNames String? // JSON array of participant names
+  title            String?
+  avatar           String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  messages         Message[]
+}
+
+model Message {
+  id                          Int          @id @default(autoincrement())
+  conversationId              String
+  conversation                Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderEmail                 String
+  senderName                  String
+  text                        String
+  attachments                 String? // JSON array of attachment URLs
+  reactions                   String? // JSON array of reactions { emoji, by: [] }
+  replyToId                   Int?
+  replyTo                     Message?     @relation("MessageReplies", fields: [replyToId], references: [id])
+  replies                     Message[]    @relation("MessageReplies")
+  isRead                      Boolean      @default(false)
+  readAt                      DateTime?
+  transferredToConversationId String?
+  transferredAt               DateTime?
+  createdAt                   DateTime     @default(now())
+  updatedAt                   DateTime     @updatedAt
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // e.g. like, comment, reply, friend, message, login
+  actorId   Int?
+  actor     User?    @relation("NotificationActor", fields: [actorId], references: [id])
+  content   String? // brief description
+  url       String? // link to related resource
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique
+  passwordHash        String
+  prenom              String?
+  nom                 String?
+  nomUtilisateur      String?              @unique
+  phone               String?
+  dateNaissance       DateTime?
+  genre               String?
+  photos              String? // JSON array
+  avatar              String?
+  avatarUrl           String?
+  cover               String?
+  settings            String? // stored preferences (JSON string)
+  isApprovedSeller    Boolean              @default(false)
+  friendsOf           Friendship[]         @relation("userFriends")
+  friendsWith         Friendship[]         @relation("friendUser")
+  stories             Story[]              @relation("userStories")
+  storyComments       StoryComment[]
+  notifications       Notification[] // received notifications
+  sentNotifications   Notification[]       @relation("NotificationActor")
+  marketplaceProducts MarketplaceProduct[] @relation("MarketplaceProducts")
+  pages               Page[]               @relation("PageOwner")
+  pageMemberships     PageMember[]
+  pageFollowers       PageFollower[]
+  pagePosts           PagePost[]
+  videos              Video[]
+  videoComments       VideoComment[]
+  videoLikes          VideoLike[]
+  posts               Post[]
+  createdAt           DateTime             @default(now())
+}
+
+model Friendship {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation("userFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friendId  Int
+  friend    User     @relation("friendUser", fields: [friendId], references: [id], onDelete: Cascade)
+  status    String   @default("pending") // pending, accepted, declined
+  createdAt DateTime @default(now())
+
+  @@unique([userId, friendId])
+}
+
+model Story {
+  id            String         @id @default(cuid())
+  authorId      Int
+  author        User           @relation("userStories", fields: [authorId], references: [id], onDelete: Cascade)
+  content       String?
+  image         String?
+  visibility    String?        @default("public") // public, friends, close
+  views         Int            @default(0)
+  likes         Int            @default(0)
+  shares        Int            @default(0)
+  comments      Int            @default(0)
+  likedBy       String? // JSON array of user IDs who liked
+  viewedBy      String? // JSON array of user IDs who viewed
+  reactions     String? // JSON array of reactions { type, userId }
+  storyComments StoryComment[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model StoryComment {
+  id        String   @id @default(cuid())
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  coverIcon   String?
+  cover       String?
+  avatar      String? // avatar image filename or URL
+  privacy     String?  @default("public") // public or private
+  members     Int      @default(0)
+  membersList String? // JSON string of user emails who joined
+  category    String? // Category field added for groups
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  posts       Post[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  content   String
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  groupId   Int
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  image     String?
+  mediaType String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// advertisers/sponsors pour les publicités affichées dans l'application
+model Sponsor {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String?
+  link       String?
+  image      String? // URL de l'image/visuel (banner)
+  avatarUrl  String? // URL de la photo de profil de la page
+  ownerEmail String? // email of the user who owns/manage this sponsor page
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // relation back to posts created on this sponsor's page
+  items Item[]
+
+  purchases SponsorPurchase[]
+  stats     SponsorStats?
+  targeting SponsorTarget?
+  quotas    SponsorQuota?
+}
+
+model SponsorPurchase {
+  id        Int      @id @default(autoincrement())
+  sponsorId Int?
+  sponsor   Sponsor? @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  userEmail String?
+  amount    Float
+  currency  String   @default("EUR")
+  status    String   @default("pending") // pending, completed, failed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SponsorStats {
+  id               Int      @id @default(autoincrement())
+  sponsorId        Int      @unique
+  sponsor          Sponsor  @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  impressions      Int      @default(0)
+  clicks           Int      @default(0)
+  conversions      Int      @default(0)
+  totalBudgetSpent Float    @default(0.0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model SponsorTarget {
+  id        Int      @id @default(autoincrement())
+  sponsorId Int      @unique
+  sponsor   Sponsor  @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  // demographic targeting
+  minAge    Int?
+  maxAge    Int?
+  gender    String? // 'M', 'F', 'Other' or null for all
+  // geographic
+  countries String? // JSON array of country codes
+  cities    String? // JSON array of city names
+  // interest-based
+  interests String? // JSON array of interest tags
+  // device
+  devices   String? // JSON array: 'mobile', 'desktop', 'tablet'
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SponsorQuota {
+  id                     Int      @id @default(autoincrement())
+  sponsorId              Int      @unique
+  sponsor                Sponsor  @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  // budget limits
+  dailyBudgetLimit       Float?
+  monthlyBudgetLimit     Float?
+  totalBudgetLimit       Float?
+  budgetSpentToday       Float    @default(0.0)
+  budgetSpentMonth       Float    @default(0.0)
+  // impression limits
+  dailyImpressionLimit   Int?
+  monthlyImpressionLimit Int?
+  impressionsToday       Int      @default(0)
+  impressionsMonth       Int      @default(0)
+  // quota status
+  active                 Boolean  @default(true)
+  quotaExceeded          Boolean  @default(false)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model MarketplaceProduct {
+  id          Int                 @id @default(autoincrement())
+  title       String
+  description String?
+  category    String // 'electronics', 'fashion', 'home', 'services', etc.
+  price       Float
+  currency    String              @default("EUR")
+  images      String? // JSON array of image URLs
+  sellerEmail String
+  seller      User                @relation("MarketplaceProducts", fields: [sellerEmail], references: [email], onDelete: Cascade)
+  status      String              @default("active") // active, sold, archived
+  location    String? // seller location
+  condition   String? // new, like-new, good, fair
+  views       Int                 @default(0)
+  favorites   Int                 @default(0)
+  favoredBy   String? // JSON array of user emails
+  reviews     MarketplaceReview[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+model MarketplaceReview {
+  id        Int                @id @default(autoincrement())
+  productId Int
+  product   MarketplaceProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating    Int // 1-5 stars
+  comment   String?
+  buyer     String // buyer email
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model Page {
+  id          Int            @id @default(autoincrement())
+  name        String
+  description String?
+  category    String?
+  avatar      String?
+  cover       String?
+  privacy     String         @default("public") // public, private, hidden
+  ownerEmail  String
+  owner       User           @relation("PageOwner", fields: [ownerEmail], references: [email], onDelete: Cascade)
+  members     PageMember[]
+  posts       PagePost[]
+  followers   PageFollower[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model PageMember {
+  id        Int      @id @default(autoincrement())
+  pageId    Int
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  userEmail String
+  user      User     @relation(fields: [userEmail], references: [email], onDelete: Cascade)
+  role      String   @default("member") // member, admin
+  joinedAt  DateTime @default(now())
+
+  @@unique([pageId, userEmail])
+}
+
+model PageFollower {
+  id         Int      @id @default(autoincrement())
+  pageId     Int
+  page       Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  userEmail  String
+  user       User     @relation(fields: [userEmail], references: [email], onDelete: Cascade)
+  followedAt DateTime @default(now())
+
+  @@unique([pageId, userEmail])
+}
+
+model PagePost {
+  id          Int      @id @default(autoincrement())
+  pageId      Int
+  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  authorEmail String
+  author      User     @relation(fields: [authorEmail], references: [email], onDelete: Cascade)
+  content     String
+  images      String? // JSON array of image URLs
+  tags        String? // JSON array of tags
+  feeling     String? // feeling label
+  location    String? // location name
+  event       String? // JSON object with event details
+  likes       Int      @default(0)
+  comments    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Video {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String?
+  url         String // video file URL
+  thumbnail   String?
+  duration    Int? // in seconds
+  authorEmail String
+  author      User           @relation(fields: [authorEmail], references: [email], onDelete: Cascade)
+  views       Int            @default(0)
+  likes       Int            @default(0)
+  comments    VideoComment[]
+  likedBy     VideoLike[]
+  tags        String? // JSON array of tags
+  privacy     String         @default("public") // public, private, unlisted
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model VideoComment {
+  id          Int            @id @default(autoincrement())
+  videoId     Int
+  video       Video          @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  authorEmail String
+  author      User           @relation(fields: [authorEmail], references: [email], onDelete: Cascade)
+  content     String
+  likes       Int            @default(0)
+  parentId    Int? // for nested comments
+  parent      VideoComment?  @relation("VideoCommentReplies", fields: [parentId], references: [id])
+  replies     VideoComment[] @relation("VideoCommentReplies")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model VideoLike {
+  id        Int      @id @default(autoincrement())
+  videoId   Int
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([videoId, userId])
+}

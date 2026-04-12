@@ -1,0 +1,114 @@
+﻿[data-input-enhancement="code"] .app-input-code-container {
+    font-size: 13px;
+    border: solid 1px #ccc;
+}
+
+.app-material-symbols-menu {
+    height: 45vh;
+    overflow: hidden auto;
+    border: solid 1px #ccc;
+    margin: .5em 1em;
+    padding: 1em;
+}
+
+
+    .app-material-symbols-menu:focus {
+        box-shadow: none;
+        outline: none;
+    }
+
+    .app-material-symbols-menu section h1 {
+        font-size: 16px;
+        font-weight: normal;
+        text-transform: capitalize;
+    }
+
+    .app-material-symbols-menu .app-symbol-button {
+        display: inline-block;
+        width: 112px;
+        height: 128px;
+        position: relative;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 3px solid transparent;
+    }
+
+        .app-material-symbols-menu .app-symbol-button:hover {
+            background-color: rgba(0,0,0,.05);
+        }
+
+
+        .app-material-symbols-menu .app-symbol-button.app-selected {
+            border-color: #38c;
+        }
+
+        .app-material-symbols-menu .app-symbol-button .material-icon {
+            font-size: 48px;
+            line-height: 48px;
+            width: 48px;
+            height: 48px;
+            position: absolute;
+            top: 48px;
+            margin-top: -24px;
+            left: 50%;
+            margin-left: -24px;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .app-material-symbols-menu .app-symbol-button .app-text {
+            font-size: 12px;
+            display: inline-block;
+            position: absolute;
+            left: 0;
+            top: 80px;
+            right: 0;
+            padding: 0 4px;
+            text-align: center;
+            text-transform: capitalize;
+            user-select: none;
+        }
+
+            .app-material-symbols-menu .app-symbol-button .app-text::before {
+                content: " ";
+            }
+    /*    .app-material-symbols-menu.app-hidden section {
+        visibility: hidden;
+    }
+
+    .app-material-symbols-menu.app-hidden .app-symbol-button .material-icon,
+    .app-material-symbols-menu.app-hidden .app-symbol-button .app-text {
+        display: none;
+    }*/
+    .app-material-symbols-menu .app-icon-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 128px);
+        justify-content: space-evenly;
+    }
+
+    /*    .app-material-symbols-menu.app-query .app-symbol-button:not(.app-match),
+    .app-material-symbols-menu.app-query section h1 {
+        display: none;
+    }
+*/
+    .app-material-symbols-menu.app-query section,
+    .app-material-symbols-menu section.app-query-result {
+        display: none;
+    }
+
+        .app-material-symbols-menu.app-query section.app-query-result {
+            display: block;
+        }
+
+@media (max-height: 767px) {
+    .app-material-symbols-menu {
+        height: 30vh;
+    }
+}
+
+
+/* "Dark" theme */
+
+.app-theme-dark .app-material-symbols-menu {
+    border-color: #444;
+}

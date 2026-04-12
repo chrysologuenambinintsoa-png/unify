@@ -1,0 +1,7 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cercle avec bordure jaune foncé -->
+  <circle cx="100" cy="100" r="95" fill="#0A2342" stroke="#D4A017" stroke-width="10"/>
+
+  <!-- Lettre U centrée -->
+  <text x="100" y="130" text-anchor="middle" font-size="100" font-family="Arial, sans-serif" fill="#D4A017" font-weight="bold">U</text>
+</svg>

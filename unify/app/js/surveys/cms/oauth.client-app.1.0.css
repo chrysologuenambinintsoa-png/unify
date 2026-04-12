@@ -1,0 +1,8 @@
+﻿[data-field="ClientSecret"][data-text-action="copy"] .app-field-data,
+[data-field="ClientId"][data-text-action="copy"] .app-field-data
+{
+    max-width: 75%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space:nowrap;
+}

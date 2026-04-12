@@ -1,0 +1,374 @@
+<dataControllerCollection snapshot="false" xmlns="urn:schemas-codeontime-com:data-aquarium">
+  <dataController name="SiteContent" conflictDetection="overwriteChanges" label="Site Content" nativeSchema="public" nativeTableName="site_content">
+    <commands>
+      <command id="command1" type="Text">
+        <text>
+select
+	"site_content"."site_content_id" "SiteContentID"
+	,"site_content"."file_name" "FileName"
+	,"site_content"."path" "Path"
+	,"site_content"."content_type" "ContentType"
+	,"site_content"."length" "Length"
+	,"site_content"."data" "Data"
+	,"site_content"."text" "Text"
+	,"site_content"."schedule" "Schedule"
+	,"site_content"."schedule_exceptions" "ScheduleExceptions"
+	,"site_content"."cache_profile" "CacheProfile"
+	,"site_content"."created_date" "CreatedDate"
+	,"site_content"."modified_date" "ModifiedDate"
+from "public"."site_content" "site_content"
+</text>
+      </command>
+      <command id="site_content_idUniqueIdentifierCommand" type="Text" event="Inserting">
+        <text>select gen_random_uuid()</text>
+        <output>
+          <fieldOutput fieldName="SiteContentID" />
+        </output>
+      </command>
+    </commands>
+    <fields>
+      <field name="SiteContentID" type="Guid" allowNulls="false" isPrimaryKey="true" default="gen_random_uuid()" label="Site Content Id" />
+      <field name="FileName" type="String" allowNulls="false" label="File Name" length="150" showInSummary="true" />
+      <field name="Path" type="String" label="Path" length="150" showInSummary="true" />
+      <field name="ContentType" type="String" default="'text/plain'::character varying" label="Content Type" length="150" showInSummary="true" />
+      <field name="Length" type="Int32" label="Length" showInSummary="true" />
+      <field name="Data" type="Byte[]" onDemand="true" sourceFields="SiteContentID" onDemandHandler="site_contentData" onDemandStyle="Thumbnail" allowQBE="false" allowSorting="false" label="Data" showInSummary="true" />
+      <field name="Text" type="String" allowQBE="false" allowSorting="false" label="Text" />
+      <field name="Schedule" type="String" label="Schedule" length="150" />
+      <field name="ScheduleExceptions" type="String" label="Schedule Exceptions" length="150" />
+      <field name="CacheProfile" type="String" label="Cache Profile" length="50" />
+      <field name="CreatedDate" type="DateTime" label="Created Date" />
+      <field name="ModifiedDate" type="DateTime" label="Modified Date" />
+    </fields>
+    <views>
+      <view id="grid1" type="Grid" commandId="command1" label="Site Content" sortExpression="Path, FileName">
+        <headerText>$DefaultGridViewDescription</headerText>
+        <dataFields>
+          <dataField fieldName="FileName" />
+          <dataField fieldName="Path" />
+          <dataField fieldName="ContentType" />
+          <dataField fieldName="Length" columns="15" />
+          <dataField fieldName="Data" columns="15" />
+          <dataField fieldName="Text" rows="5" />
+          <dataField fieldName="Schedule" />
+          <dataField fieldName="ScheduleExceptions" />
+          <dataField fieldName="CacheProfile" columns="50" />
+          <dataField fieldName="CreatedDate" columns="10" />
+          <dataField fieldName="ModifiedDate" columns="10" />
+        </dataFields>
+      </view>
+      <view id="editForm1" type="Form" commandId="command1" label="Review Site Content">
+        <headerText>$DefaultEditViewDescription</headerText>
+        <categories>
+          <category id="c1" headerText="Site Content">
+            <description>$DefaultEditDescription</description>
+            <dataFields>
+              <dataField fieldName="FileName" />
+              <dataField fieldName="Path" />
+              <dataField fieldName="ContentType" />
+              <dataField fieldName="Length" columns="15" />
+              <dataField fieldName="Data" columns="15" />
+              <dataField fieldName="Text" rows="5" />
+              <dataField fieldName="Schedule" />
+              <dataField fieldName="ScheduleExceptions" />
+              <dataField fieldName="CacheProfile" columns="50" />
+              <dataField fieldName="CreatedDate" columns="10" />
+              <dataField fieldName="ModifiedDate" columns="10" />
+            </dataFields>
+          </category>
+        </categories>
+      </view>
+      <view id="createForm1" type="Form" commandId="command1" label="New Site Content">
+        <headerText>$DefaultCreateViewDescription</headerText>
+        <categories>
+          <category id="c1">
+            <description>$DefaultNewDescription</description>
+            <dataFields>
+              <dataField fieldName="FileName" />
+              <dataField fieldName="Path" />
+              <dataField fieldName="ContentType" />
+              <dataField fieldName="Length" columns="15" />
+              <dataField fieldName="Data" columns="15" />
+              <dataField fieldName="Text" rows="5" />
+              <dataField fieldName="Schedule" />
+              <dataField fieldName="ScheduleExceptions" />
+              <dataField fieldName="CacheProfile" columns="50" />
+              <dataField fieldName="CreatedDate" columns="10" />
+              <dataField fieldName="ModifiedDate" columns="10" />
+            </dataFields>
+          </category>
+        </categories>
+      </view>
+    </views>
+    <actions>
+      <actionGroup id="ag1" scope="Grid">
+        <action id="a1" commandName="Select" commandArgument="editForm1" />
+        <action id="a2" commandName="Edit" />
+        <action id="a3" commandName="Delete" />
+        <action id="a6" />
+        <action id="a7" commandName="New" commandArgument="grid1" />
+        <action id="a8" commandName="Duplicate" commandArgument="createForm1" />
+      </actionGroup>
+      <actionGroup id="ag2" scope="Form">
+        <action id="a1" commandName="Edit" />
+        <action id="a2" commandName="Delete" />
+        <action id="a3" commandName="Cancel" />
+        <action id="a4" whenLastCommandName="Edit" commandName="Update" commandArgument="Save" />
+        <action id="a5" whenLastCommandName="Edit" commandName="Cancel" />
+        <action id="a6" whenLastCommandName="New" commandName="Insert" commandArgument="Save" />
+        <action id="a7" whenLastCommandName="New" commandName="Insert" commandArgument="SaveAndNew" />
+        <action id="a8" whenLastCommandName="New" commandName="Cancel" />
+        <action id="a9" whenLastCommandName="Duplicate" commandName="Insert" />
+        <action id="a10" whenLastCommandName="Duplicate" commandName="Cancel" />
+        <action id="a13" whenLastCommandName="Insert" whenLastCommandArgument="Save" whenView="createForm1" commandName="Select" commandArgument="editForm1" whenClientScript="this.hasDetails()" />
+        <action id="a14" whenLastCommandName="Insert" whenLastCommandArgument="SaveAndNew" commandName="New" commandArgument="createForm1" />
+        <action id="a15" commandName="Navigate" commandArgument="~/appservices/saas/{FileName}?storeToken=true&amp;start=%2Fpages%2Fsite-content" whenClientScript="$row.Path=='sys/saas'" />
+      </actionGroup>
+      <actionGroup id="ag3" scope="ActionBar" headerText="New" flat="true">
+        <action id="a1" commandName="New" commandArgument="createForm1" cssClass="NewIcon" />
+      </actionGroup>
+      <actionGroup id="ag4" scope="ActionBar" headerText="Edit/Delete" flat="true">
+        <action id="a1" whenKeySelected="true" commandName="Edit" commandArgument="editForm1" cssClass="EditIcon" whenView="grid1" />
+        <action id="a2" whenKeySelected="true" commandName="Delete" cssClass="DeleteIcon" whenView="grid1" />
+      </actionGroup>
+      <actionGroup id="ag5" scope="ActionBar" headerText="Actions">
+        <action id="a1" commandName="ExportCsv" />
+        <action id="a2" />
+        <action id="a3" commandName="ExportRowset" />
+        <action id="a4" commandName="ExportRss" />
+        <action id="a5" />
+        <action id="a6" commandName="Import" commandArgument="createForm1" />
+        <action id="a7" commandName="DataSheet" />
+        <action id="a8" commandName="Grid" />
+      </actionGroup>
+      <actionGroup id="ag6" scope="ActionBar" headerText="Record">
+        <action id="a1" whenLastCommandName="Edit" commandName="Update" />
+        <action id="a2" whenLastCommandName="Edit" commandName="Cancel" />
+        <action id="a3" whenLastCommandName="New" commandName="Insert" />
+        <action id="a4" whenLastCommandName="New" commandName="Cancel" />
+      </actionGroup>
+      <actionGroup id="ag7" scope="ActionBar" headerText="Report">
+        <action id="a1" commandName="ReportAsPdf" />
+        <action id="a2" commandName="ReportAsImage" />
+        <action id="a3" commandName="ReportAsExcel" />
+        <action id="a4" commandName="ReportAsWord" />
+      </actionGroup>
+      <actionGroup id="ag8" scope="Row">
+        <action id="a4" whenLastCommandName="Edit" commandName="Update" />
+        <action id="a5" whenLastCommandName="Edit" commandName="Cancel" />
+        <action id="a6" whenLastCommandName="New" commandName="Insert" />
+        <action id="a7" whenLastCommandName="New" commandName="Cancel" />
+      </actionGroup>
+    </actions>
+  </dataController>
+  <dataController name="MyProfile" conflictDetection="overwriteChanges" label="My Profile" handler="MyProfileBusinessRules">
+    <commands />
+    <fields>
+      <field name="UserName" type="String" allowNulls="false" label="^UserName^User Name^UserName^" />
+      <field name="RememberMe" type="Boolean" allowNulls="false" default="0" label="^RememberMe^Remember me next time^RememberMe^">
+        <items style="CheckBox" />
+      </field>
+      <field name="Password" type="String" allowNulls="false" label="^Password^Password^Password^" />
+      <field name="ConfirmPassword" type="String" allowNulls="false" label="^ConfirmPassword^Confirm Password^ConfirmPassword^" />
+      <field name="OldPassword" type="String" allowNulls="false" label="^OldPassword^Old Password^OldPassword^" />
+      <field name="Email" type="String" label="^Email^Email^Email^" allowNulls="false" />
+      <field name="PasswordQuestion" type="String" label="^PasswordQuestion^Password Question^PasswordQuestion^" allowNulls="false" />
+      <field name="PasswordAnswer" type="String" label="^PasswordAnswer^Password Answer^PasswordAnswer^" allowNulls="false" />
+      <field name="DisplayRememberMe" type="Boolean" />
+      <field name="OAuthEnabled" type="Boolean" />
+      <field name="OAuthProvider" type="String" allowNulls="false" label="^Account^Account^Account^">
+        <items style="RadioButtonList">
+          <item value="oauth2" text="OAuth 2.0 Identity Provider" />
+          <item value="appidentity" text="App Identity" />
+          <item value="facebook" text="Facebook" />
+          <item value="google" text="Google" />
+          <item value="msgraph" text="Microsoft" />
+          <item value="linkedin" text="LinkedIn" />
+          <item value="windowslive" text="Windows Live" />
+          <item value="sharepoint" text="SharePoint" />
+          <item value="dnn" text="DotNetNuke" />
+          <item value="identityserver" text="Identity Server" />
+          <item value="cloudidentity" text="Cloud Identity" />
+          <item value="other" text="Other" />
+        </items>
+      </field>
+    </fields>
+    <views>
+      <view id="loginForm" type="Form" access="Public" label="^LoginLink^Login^LoginLink^" tags="modal-fit-content modal-auto-grow modal-max-xs material-icon-lock-outline discard-changes-prompt-none">
+        <categories>
+          <category id="c1" headerText="" flow="NewColumn">
+            <dataFields>
+              <dataField fieldName="OAuthEnabled" hidden="true" />
+              <dataField fieldName="OAuthProvider" hidden="true" tag="lookup-auto-advance" columns="1" />
+              <dataField fieldName="UserName" />
+              <dataField fieldName="Password" textMode="Password">
+                <visibility>
+                  <expression test="$app.touch.settings('membership.disableLoginPassword') != true" />
+                </visibility>
+              </dataField>
+              <dataField fieldName="RememberMe">
+                <visibility>
+                  <expression test="$row.DisplayRememberMe != false" />
+                </visibility>
+              </dataField>
+              <dataField fieldName="DisplayRememberMe" hidden="true" />
+            </dataFields>
+          </category>
+        </categories>
+      </view>
+      <view id="signUpForm" type="Form" commandId="command1" access="Public" label="^SignUpViewLabel^Account Sign Up^SignUpViewLabel^" tags="material-icon-person-add">
+        <headerText>^SignUpViewHeaderText^Please fill this form and click OK button to sign up for an account. Click Cancel to return to the previous screen.^SignUpViewHeaderText^</headerText>
+        <categories>
+          <category id="c1" headerText="^SignUpViewNewUserInfoCategoryHeaderText^New User Information^SignUpViewNewUserInfoCategoryHeaderText^" flow="NewColumn">
+            <description>^SignUpViewNewUserInfoCategoryDescription^Please enter user name and password. Note that password must be at least 7 characters long and include one non-alphanumeric character. Only approved users will be able to login into the website.^SignUpViewNewUserInfoCategoryDescription^</description>
+            <dataFields>
+              <dataField fieldName="UserName" columns="20" />
+              <dataField fieldName="Password" columns="20" textMode="Password" />
+              <dataField fieldName="ConfirmPassword" columns="20" textMode="Password" />
+            </dataFields>
+          </category>
+          <category id="c2" headerText="^SignUpViewPasswordRecoveryCategoryHeaderText^Password Recovery^SignUpViewPasswordRecoveryCategoryHeaderText^">
+            <description>
+													
+                        ^SignUpViewPasswordRecoveryCategoryDescription^These fields are required to help you to recover a forgotten password. During the recovery process you will be asked to enter a user name. 
+						If a user account exists then a security question is requested to be answered. A correct answer will trigger an email with a temporary password send to the registered email.^SignUpViewPasswordRecoveryCategoryDescription^
+                      
+												</description>
+            <dataFields>
+              <dataField fieldName="Email" />
+              <dataField fieldName="PasswordQuestion" />
+              <dataField fieldName="PasswordAnswer" textMode="Password" />
+            </dataFields>
+          </category>
+        </categories>
+      </view>
+      <view id="passwordRequestForm" type="Form" commandId="command1" access="Public" label="^PasswordRequestViewLabel^Password Recovery: Step 1 of 2^PasswordRequestViewLabel^" tags="material-icon-lock discard-changes-prompt-none">
+        <headerText>^PasswordRequestViewHeaderText^Please fill this form and click Continue button to recover the forgotten password. Click Cancel to return to the previous screen.^PasswordRequestViewHeaderText^</headerText>
+        <categories>
+          <category id="c1" headerText="^PasswordRequestViewForgotPasswordCategoryHeaderText^Forgot your password?^PasswordRequestViewForgotPasswordCategoryHeaderText^" flow="NewColumn">
+            <description>^PasswordRequestViewForgotPasswordCategoryDescription^Please enter a user name. &lt;br/&gt;&lt;br/&gt;&lt;br/&gt;^PasswordRequestViewForgotPasswordCategoryDescription^</description>
+            <dataFields>
+              <dataField fieldName="UserName" columns="20" />
+            </dataFields>
+          </category>
+        </categories>
+      </view>
+      <view id="identityConfirmationForm" type="Form" commandId="command1" access="Public" label="^IdentityConfirmViewLabel^Password Recovery: Step 2 of 2^IdentityConfirmViewLabel^" tags="material-icon-lock-open discard-changes-prompt-none">
+        <headerText>^IdentityConfirmViewHeaderText^Please fill this form and click Submit button to recover the forgotten password. Click Cancel to return to the previous screen.^IdentityConfirmViewHeaderText^</headerText>
+        <categories>
+          <category id="c1" headerText="^IdentityConfirmationViewIdentityConfirmCategoryHeaderText^Identity Confirmation^IdentityConfirmationViewIdentityConfirmCategoryHeaderText^" flow="NewColumn">
+            <description>^IdentityConfirmationViewIdentityConfirmCategoryDescription^Answer the following question to receive your password. &lt;br/&gt;&lt;br/&gt;&lt;br/&gt;^IdentityConfirmationViewIdentityConfirmCategoryDescription^</description>
+            <dataFields>
+              <dataField fieldName="UserName" columns="20" readOnly="true" />
+              <dataField fieldName="PasswordQuestion" readOnly="true" />
+              <dataField fieldName="PasswordAnswer" textMode="Password" />
+            </dataFields>
+          </category>
+        </categories>
+      </view>
+      <view id="myAccountForm" type="Form" commandId="command1" label="^MyAccountViewLabel^My Account^MyAccountViewLabel^" tags="material-icon-perm-identity discard-changes-prompt-none">
+        <headerText>^MyAccountViewHeaderText^Please review your membership information below. Click Update My Account to change this record, or click Cancel to return back.^MyAccountViewHeaderText^</headerText>
+        <categories>
+          <category id="c1" headerText="^MyAccountViewCurrentPasswordCategoryHeaderText^1. Current Password^MyAccountViewCurrentPasswordCategoryHeaderText^" flow="NewColumn">
+            <description>^MyAccountViewCurrentPasswordCategoryDescription^Please enter your current password to create new password, update your email address, or change password recovery question and answer.^MyAccountViewCurrentPasswordCategoryDescription^</description>
+            <dataFields>
+              <dataField fieldName="UserName" readOnly="true" />
+              <dataField fieldName="OldPassword" columns="20" textMode="Password">
+                <headerText>^Password^Password^Password^</headerText>
+              </dataField>
+            </dataFields>
+          </category>
+          <category id="c2" headerText="^MyAccountViewNewPasswordCategoryHeaderText^2. New Password (Optional)^MyAccountViewNewPasswordCategoryHeaderText^">
+            <description>^MyAccountViewNewPasswordCategoryDescription^Please enter new password. Note that password must be at least 7 characters long and include one non-alphanumeric character.^MyAccountViewNewPasswordCategoryDescription^</description>
+            <dataFields>
+              <dataField fieldName="Password" columns="20" textMode="Password">
+                <headerText>^NewPassword^New Password^NewPassword^</headerText>
+              </dataField>
+              <dataField fieldName="ConfirmPassword" columns="20" textMode="Password">
+                <headerText>^ConfirmNewPassword^Confirm New Password^ConfirmNewPassword^</headerText>
+              </dataField>
+            </dataFields>
+          </category>
+          <category id="c3" headerText="^MyAccountViewPasswordRecoveryCategoryHeaderText^3. Email &amp; Password Recovery (Optional)^MyAccountViewPasswordRecoveryCategoryHeaderText^">
+            <description>
+													
+                        ^MyAccountViewPasswordRecoveryCategoryDescription^During the recovery of a forgotten password you will be asked to enter your user name. 
+						If a user account exists then a password question must be answered. A correct answer will trigger an email with a temporary password send to you.^MyAccountViewPasswordRecoveryCategoryDescription^
+                      
+												</description>
+            <dataFields>
+              <dataField fieldName="Email" />
+              <dataField fieldName="PasswordQuestion" />
+              <dataField fieldName="PasswordAnswer" textMode="Password">
+                <headerText>^MaskedPasswordAnswer^Password Answer (not displayed for your protection)^MaskedPasswordAnswer^</headerText>
+              </dataField>
+            </dataFields>
+          </category>
+        </categories>
+      </view>
+    </views>
+    <actions>
+      <actionGroup id="ag1" scope="Form">
+        <action id="a1" whenLastCommandName="New" whenLastCommandArgument="signUpForm" commandName="Insert" commandArgument="SignUp" headerText="^SignUp^Sign Up^SignUp^" />
+        <action id="a2" whenLastCommandName="New" whenLastCommandArgument="signUpForm" commandName="Cancel" />
+        <action id="a3" whenLastCommandName="Insert" whenLastCommandArgument="SignUp" commandName="Cancel" />
+        <action id="a4" whenLastCommandName="New" whenLastCommandArgument="passwordRequestForm" commandName="Cancel" />
+        <action id="a5" whenLastCommandName="New" whenLastCommandArgument="passwordRequestForm" commandName="Custom" commandArgument="RequestPassword" headerText="^RequestPasswordActionHeaderText^Next^RequestPasswordActionHeaderText^" cssClass="material-icon-arrow-forward" />
+        <action id="a6" whenLastCommandName="Edit" whenLastCommandArgument="identityConfirmationForm" commandName="Custom" commandArgument="BackToRequestPassword" headerText="^BackToRequestPasswordActionHeaderText^Back^BackToRequestPasswordActionHeaderText^" causesValidation="false" />
+        <action id="a7" whenLastCommandName="Edit" whenLastCommandArgument="identityConfirmationForm" commandName="Custom" commandArgument="ConfirmIdentity" headerText="^ConfirmIdentityActionHeaderText^Finish^ConfirmIdentityActionHeaderText^" cssClass="material-icon-check" />
+        <action id="a8" whenLastCommandName="Edit" whenLastCommandArgument="myAccountForm" commandName="Update" headerText="^UpdateMyAccountActionHeaderText^Update My Account^UpdateMyAccountActionHeaderText^" causesValidation="false" />
+        <action id="a9" whenLastCommandName="Edit" whenLastCommandArgument="myAccountForm" commandName="Cancel" />
+        <action id="a10" commandName="Custom" headerText="^LoginButton^Login^LoginButton^" commandArgument="Login" whenLastCommandName="New" whenLastCommandArgument="loginForm" causesValidation="true" key="Enter" cssClass="material-icon-arrow-forward" />
+        <action id="a11" commandName="Custom" headerText="^SignUpNow^Sign up now^SignUpNow^" commandArgument="SignUp" whenLastCommandName="New" whenLastCommandArgument="loginForm" causesValidation="false" />
+        <action id="a12" commandName="Custom" headerText="^ForgotYourPassword^Forgot your password?^ForgotYourPassword^" commandArgument="ForgotPassword" whenLastCommandName="New" whenLastCommandArgument="loginForm" causesValidation="false" />
+      </actionGroup>
+    </actions>
+    <businessRules>
+      <rule id="r100" commandName="Custom" commandArgument="Login" type="JavaScript" phase="Execute">
+									
+this.preventDefault();
+var resources = Web.MembershipResources.Messages,
+    oauthProvider = $row.OAuthProvider;
+if (oauthProvider &amp;&amp; oauthProvider != 'other') {
+    (this.dataView().findField('OAuthProvider').Items || []).forEach(provider =&gt; {
+			if (provider[0] === 'appidentity')
+				$app.storage.set('AppIdentityIssuer', provider[1]);
+		});
+    window.location = $app.resolveClientUrl('~/appservices/saas/' + oauthProvider);
+}
+else
+    $app.login($row.UserName, $row.Password, $row.RememberMe==true,
+      function () {
+        setTimeout(function() {
+          $app._navigated = true;
+          window.location.replace($app.touch.returnUrl() || __baseUrl);
+        });
+      },
+      function () {
+        $app.alert(resources.InvalidUserNameAndPassword, function() {$app.input.focus({fieldName:'UserName'})});
+      });
+
+								</rule>
+      <rule id="r101" commandName="Custom" commandArgument="SignUp" type="JavaScript" phase="Execute">
+										
+this.preventDefault();
+$app.touch.show({
+  controller: 'MyProfile',
+  startCommand: 'New',
+  startArgument: 'signUpForm'
+});
+
+									</rule>
+      <rule id="r102" commandName="Custom" commandArgument="ForgotPassword" type="JavaScript" phase="Execute">
+										
+this.preventDefault();
+$app.touch.show({
+  controller: 'MyProfile',
+  startCommand: 'New',
+  startArgument: 'passwordRequestForm'
+});
+
+									</rule>
+    </businessRules>
+  </dataController>
+</dataControllerCollection>

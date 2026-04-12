@@ -1,0 +1,47 @@
+﻿*******************************************************************************
+Your application uses this file to locate resource strings when requested
+by Localizer.Replace(token, text) method calls in the source code files of
+the project. The localization process will also use this file if missing
+localization tokens are found in a static resource.
+
+Replace the text between localization brackets (tokens) as needed.
+*******************************************************************************
+
+^AnnotationActionHeaderText^Annoter^AnnotationActionHeaderText^
+
+^AnnotationAttachmentDynamicFieldHeaderText^{0} <b>{1}</b> Attachés à {2}^AnnotationAttachmentDynamicFieldHeaderText^
+
+^AnnotationAttachmentNewFieldLabel^Pièce jointe^AnnotationAttachmentNewFieldLabel^
+
+^AnnotationCategoryDescription^Entrez note optionnelle et joindre des fichiers.^AnnotationCategoryDescription^
+
+^AnnotationCategoryHeaderText^Notes et pièces jointes^AnnotationCategoryHeaderText^
+
+^AnnotationNoteDynamicFieldHeaderText^{0} {1} Écrit à^AnnotationNoteDynamicFieldHeaderText^
+
+^AnnotationNoteFieldDynamicHeaderText^{0} ({1}) Écrit à^AnnotationNoteFieldDynamicHeaderText^
+
+^AnnotationNoteNewFieldLabel^Notes^AnnotationNoteNewFieldLabel^
+
+^AnnotationTab^Notes et pièces jointes^AnnotationTab^
+
+^BlobClearConfirm^Effacer?^BlobClearConfirm^
+
+^BlobCleared^<b>Confirmation:</b> {0} A été effacée.^BlobCleared^
+
+^BlobClearText^Effacer^BlobClearText^
+
+^BlobUploadError^<b>Erreur:</b> Échoué à télécharger {0}. {1}^BlobUploadError^
+
+^BlobUploadLinkPart1^Cliquez^BlobUploadLinkPart1^
+
+^BlobUploadLinkPart2^ici^BlobUploadLinkPart2^
+
+^BlobUploadLinkPart3^de télécharger ou de fichiers clairs {0}.^BlobUploadLinkPart3^
+
+^BlobUploded^<b>Confirmation:</b> {0} A été téléchargé avec succès. <b>It Peut prendre jusqu'à {1} minutes pour la vignette pour refléter la content.</b> téléchargées^BlobUploded^
+
+^Copyright^Tous droits réservés.^Copyright^
+
+^RecordChangedByAnotherUser^L'enregistrement a été modifié par un autre utilisateur.^RecordChangedByAnotherUser^
+

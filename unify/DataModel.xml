@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<dataModel nameMaxLength="63" parameterMarker="@" quote="&quot;" provider="Npgsql">
+  <table name="_prisma_migrations" schema="public">
+    <columns>
+      <column name="id" type="character varying" length="36" allowNulls="false" dataType="String" />
+      <column name="checksum" type="character varying" length="64" allowNulls="false" dataType="String" />
+      <column name="finished_at" type="timestamp with time zone" dataType="DateTime" />
+      <column name="migration_name" type="character varying" length="255" allowNulls="false" dataType="String" />
+      <column name="logs" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="rolled_back_at" type="timestamp with time zone" dataType="DateTime" />
+      <column name="started_at" type="timestamp with time zone" allowNulls="false" dataType="DateTime" default="now()" />
+      <column name="applied_steps_count" type="integer" allowNulls="false" dataType="Int32" default="0" />
+    </columns>
+    <primaryKey>
+      <primaryKeyColumn columnName="id" />
+    </primaryKey>
+    <foreignKeys />
+  </table>
+  <table name="Comment" schema="public">
+    <columns>
+      <column name="id" type="integer" allowNulls="false" identity="true" readOnly="true" dataType="Int32" default="nextval('&quot;Comment_id_seq&quot;'::regclass)" />
+      <column name="postId" type="integer" allowNulls="false" dataType="Int32" />
+      <column name="author" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="text" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="createdAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" default="CURRENT_TIMESTAMP" />
+      <column name="parentId" type="integer" dataType="Int32" />
+      <column name="likes" type="integer" allowNulls="false" dataType="Int32" default="0" />
+    </columns>
+    <primaryKey>
+      <primaryKeyColumn columnName="id" />
+    </primaryKey>
+    <foreignKeys>
+      <foreignKey parentTableSchema="public" parentTableName="Item">
+        <foreignKeyColumn columnName="postId" parentColumnName="id" />
+      </foreignKey>
+      <foreignKey parentTableSchema="public" parentTableName="Comment">
+        <foreignKeyColumn columnName="parentId" parentColumnName="id" />
+      </foreignKey>
+    </foreignKeys>
+  </table>
+  <table name="Conversation" schema="public">
+    <columns>
+      <column name="id" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="participants" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="title" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="avatar" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="createdAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" default="CURRENT_TIMESTAMP" />
+      <column name="updatedAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" />
+    </columns>
+    <primaryKey>
+      <primaryKeyColumn columnName="id" />
+    </primaryKey>
+    <foreignKeys />
+  </table>
+  <table name="Friendship" schema="public">
+    <columns>
+      <column name="id" type="integer" allowNulls="false" identity="true" readOnly="true" dataType="Int32" default="nextval('&quot;Friendship_id_seq&quot;'::regclass)" />
+      <column name="userId" type="integer" allowNulls="false" dataType="Int32" />
+      <column name="friendId" type="integer" allowNulls="false" dataType="Int32" />
+      <column name="createdAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" default="CURRENT_TIMESTAMP" />
+    </columns>
+    <primaryKey>
+      <primaryKeyColumn columnName="id" />
+    </primaryKey>
+    <foreignKeys>
+      <foreignKey parentTableSchema="public" parentTableName="User">
+        <foreignKeyColumn columnName="userId" parentColumnName="id" />
+      </foreignKey>
+      <foreignKey parentTableSchema="public" parentTableName="User">
+        <foreignKeyColumn columnName="friendId" parentColumnName="id" />
+      </foreignKey>
+    </foreignKeys>
+  </table>
+  <table name="Group" schema="public">
+    <columns>
+      <column name="id" type="integer" allowNulls="false" identity="true" readOnly="true" dataType="Int32" default="nextval('&quot;Group_id_seq&quot;'::regclass)" />
+      <column name="name" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="description" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="coverIcon" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="cover" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="members" type="integer" allowNulls="false" dataType="Int32" default="0" />
+      <column name="membersList" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="createdAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" default="CURRENT_TIMESTAMP" />
+      <column name="updatedAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" />
+    </columns>
+    <primaryKey>
+      <primaryKeyColumn columnName="id" />
+    </primaryKey>
+    <foreignKeys />
+  </table>
+  <table name="Item" schema="public">
+    <columns>
+      <column name="id" type="integer" allowNulls="false" identity="true" readOnly="true" dataType="Int32" default="nextval('&quot;Item_id_seq&quot;'::regclass)" />
+      <column name="title" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="content" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="createdAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" default="CURRENT_TIMESTAMP" />
+      <column name="image" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="likes" type="integer" allowNulls="false" dataType="Int32" default="0" />
+      <column name="shares" type="integer" allowNulls="false" dataType="Int32" default="0" />
+    </columns>
+    <primaryKey>
+      <primaryKeyColumn columnName="id" />
+    </primaryKey>
+    <foreignKeys />
+  </table>
+  <table name="Message" schema="public">
+    <columns>
+      <column name="id" type="integer" allowNulls="false" identity="true" readOnly="true" dataType="Int32" default="nextval('&quot;Message_id_seq&quot;'::regclass)" />
+      <column name="conversationId" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="senderEmail" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="senderName" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="text" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="attachments" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="isRead" type="boolean" allowNulls="false" dataType="Boolean" default="false" />
+      <column name="readAt" type="timestamp without time zone" dataType="DateTime" />
+      <column name="createdAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" default="CURRENT_TIMESTAMP" />
+      <column name="updatedAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" />
+    </columns>
+    <primaryKey>
+      <primaryKeyColumn columnName="id" />
+    </primaryKey>
+    <foreignKeys>
+      <foreignKey parentTableSchema="public" parentTableName="Conversation">
+        <foreignKeyColumn columnName="conversationId" parentColumnName="id" />
+      </foreignKey>
+    </foreignKeys>
+  </table>
+  <table name="site_content" schema="public">
+    <columns>
+      <column name="site_content_id" type="uuid" allowNulls="false" dataType="Guid" default="gen_random_uuid()" />
+      <column name="file_name" type="character varying" length="150" allowNulls="false" dataType="String" />
+      <column name="path" type="character varying" length="150" dataType="String" />
+      <column name="content_type" type="character varying" length="150" dataType="String" default="'text/plain'::character varying" />
+      <column name="length" type="integer" dataType="Int32" />
+      <column name="data" type="bytea" dataType="Byte[]" onDemand="true" allowSorting="false" allowQBE="false" />
+      <column name="text" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="schedule" type="character varying" length="150" dataType="String" />
+      <column name="schedule_exceptions" type="character varying" length="150" dataType="String" />
+      <column name="cache_profile" type="character varying" length="50" dataType="String" />
+      <column name="created_date" type="timestamp without time zone" dataType="DateTime" />
+      <column name="modified_date" type="timestamp without time zone" dataType="DateTime" />
+    </columns>
+    <primaryKey>
+      <primaryKeyColumn columnName="site_content_id" />
+    </primaryKey>
+    <foreignKeys />
+  </table>
+  <table name="Story" schema="public">
+    <columns>
+      <column name="id" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="authorId" type="integer" allowNulls="false" dataType="Int32" />
+      <column name="content" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="image" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="createdAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" default="CURRENT_TIMESTAMP" />
+      <column name="updatedAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" />
+      <column name="visibility" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" default="'public'::text" />
+    </columns>
+    <primaryKey>
+      <primaryKeyColumn columnName="id" />
+    </primaryKey>
+    <foreignKeys>
+      <foreignKey parentTableSchema="public" parentTableName="User">
+        <foreignKeyColumn columnName="authorId" parentColumnName="id" />
+      </foreignKey>
+    </foreignKeys>
+  </table>
+  <table name="User" schema="public">
+    <columns>
+      <column name="id" type="integer" allowNulls="false" identity="true" readOnly="true" dataType="Int32" default="nextval('&quot;User_id_seq&quot;'::regclass)" />
+      <column name="email" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="passwordHash" type="text" length="1073741824" allowNulls="false" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="prenom" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="nom" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="nomUtilisateur" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="phone" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="dateNaissance" type="timestamp without time zone" dataType="DateTime" />
+      <column name="genre" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="photos" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="createdAt" type="timestamp without time zone" allowNulls="false" dataType="DateTime" default="CURRENT_TIMESTAMP" />
+      <column name="avatar" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="avatarUrl" type="text" length="1073741824" dataType="String" allowSorting="false" allowQBE="false" onDemand="true" />
+      <column name="settings" type="jsonb" dataType="String" />
+    </columns>
+    <primaryKey>
+      <primaryKeyColumn columnName="id" />
+    </primaryKey>
+    <foreignKeys />
+  </table>
+</dataModel>

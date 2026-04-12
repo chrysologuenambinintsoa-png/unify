@@ -1,0 +1,742 @@
+﻿/* ============================================
+   NOTIFICATIONS - STYLE FACEBOOK PRO
+   Design moderne et professionnel
+   ============================================ */
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   CONTENEUR PRINCIPAL
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notifications-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 80px 16px 40px;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   EN-TÃŠTE
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notifications-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 20px;
+  border-bottom: 1px solid #dadde1;
+  margin-bottom: 16px;
+}
+
+.fb-notifications-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fb-notifications-title h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #050505;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.fb-notifications-badge {
+  background: linear-gradient(135deg, #f02849 0%, #c13584 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  min-width: 24px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(240, 40, 73, 0.3);
+}
+
+.fb-notifications-mark-all {
+  background: #e4e6eb;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #050505;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.fb-notifications-mark-all:hover {
+  background: #d8dadf;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   FILTRES
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notifications-filters {
+  display: flex;
+  gap: 10px;
+  padding: 12px 0 20px;
+  border-bottom: 1px solid #dadde1;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.fb-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #e4e6eb;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #050505;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fb-filter-btn:hover {
+  background: #d8dadf;
+  transform: translateY(-1px);
+}
+
+.fb-filter-btn.active {
+  background: linear-gradient(135deg, #003d5c 0%, #0a65d0 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(24, 119, 242, 0.3);
+}
+
+.fb-filter-count {
+  background: #f02849;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   LISTE DES NOTIFICATIONS
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notifications-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   GROUPES DE NOTIFICATIONS (Aujourd'hui, Hier)
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notification-group {
+  margin-bottom: 24px;
+}
+
+.fb-notification-group-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #65676b;
+  padding: 14px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fb-notification-group-title::before {
+  content: '';
+  width: 4px;
+  height: 16px;
+  background: linear-gradient(135deg, #003d5c 0%, #45bd62 100%);
+  border-radius: 2px;
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   ITEM DE NOTIFICATION
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  background: white;
+}
+
+.fb-notification-item:hover {
+  background: #f5f6f7;
+  transform: translateX(4px);
+}
+
+.fb-notification-item.unread {
+  background: linear-gradient(90deg, #cce0f0 0%, #f0f7ff 100%);
+  border-left: 3px solid #003d5c;
+}
+
+.fb-notification-item.unread:hover {
+  background: linear-gradient(90deg, #dbeeff 0%, #e8f4fe 100%);
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   AVATAR
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notification-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.fb-notification-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e4e6eb;
+  transition: all 0.2s ease;
+}
+
+.fb-notification-item:hover .fb-notification-avatar {
+  border-color: #003d5c;
+  transform: scale(1.05);
+}
+
+.fb-avatar-placeholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e4e6eb 0%, #d8dadf 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: #65676b;
+  border: 3px solid #e4e6eb;
+}
+
+/* Badge type notification */
+.fb-notification-type-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 26px;
+  height: 26px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: 2.5px solid white;
+  transition: transform 0.2s ease;
+}
+
+.fb-notification-item:hover .fb-notification-type-badge {
+  transform: scale(1.15);
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   CONTENU
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.fb-notification-text {
+  font-size: 15px;
+  color: #050505;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.fb-notification-actor {
+  font-weight: 700;
+  color: #050505;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.fb-notification-actor:hover {
+  color: #003d5c;
+  text-decoration: underline;
+}
+
+/* AperÃ§u du commentaire */
+.fb-notification-preview {
+  font-size: 14px;
+  color: #65676b;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: #f0f2f5;
+  border-radius: 8px;
+  font-style: italic;
+  display: flex;
+  align-items: flex-start;
+  border-left: 3px solid #003d5c;
+}
+
+.fb-notification-time {
+  font-size: 13px;
+  color: #65676b;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fb-notification-item.unread .fb-notification-time {
+  color: #003d5c;
+  font-weight: 600;
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   BOUTONS D'ACTION (Demandes d'ami)
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notification-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.fb-action-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-action-btn-primary {
+  background: linear-gradient(135deg, #003d5c 0%, #0a65d0 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(24, 119, 242, 0.3);
+}
+
+.fb-action-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4);
+}
+
+.fb-action-btn-secondary {
+  background: #e4e6eb;
+  color: #050505;
+  border: none;
+}
+
+.fb-action-btn-secondary:hover {
+  background: #d8dadf;
+  transform: translateY(-2px);
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   INDICATEUR NON LU
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notification-unread-dot {
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #003d5c 0%, #0a65d0 100%);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+  box-shadow: 0 0 12px rgba(24, 119, 242, 0.5);
+  animation: unreadPulse 2s ease infinite;
+}
+
+@keyframes unreadPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MENU OPTIONS (3 points)
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notification-menu {
+  position: relative;
+}
+
+.fb-menu-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f0f2f5;
+  border: none;
+  color: #65676b;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  opacity: 0;
+}
+
+.fb-notification-item:hover .fb-menu-btn {
+  opacity: 1;
+}
+
+.fb-menu-btn:hover {
+  background: #e4e6eb;
+  color: #050505;
+  transform: scale(1.1);
+}
+
+/* Dropdown */
+.fb-notification-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: white;
+  border: 1px solid #dadde1;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  z-index: 100;
+  overflow: hidden;
+  animation: dropdownSlide 0.2s ease;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fb-dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 14px 18px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 15px;
+  color: #050505;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.fb-dropdown-item:hover {
+  background: #f5f6f7;
+}
+
+.fb-dropdown-item-danger {
+  color: #f02849;
+}
+
+.fb-dropdown-item-danger:hover {
+  background: #ffebe6;
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   Ã‰TAT VIDE
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notifications-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.fb-empty-icon {
+  margin-bottom: 20px;
+  opacity: 0.6;
+  animation: emptyBounce 2s ease infinite;
+}
+
+@keyframes emptyBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.fb-notifications-empty h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #050505;
+  margin: 0 0 8px;
+}
+
+.fb-notifications-empty p {
+  font-size: 15px;
+  color: #65676b;
+  margin: 0;
+}
+
+/* Skeleton notification item - utilise skeleton-shimmer */
+.skeleton-notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: white;
+}
+
+.skeleton-notif-item__avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.skeleton-notif-item__badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+}
+
+.skeleton-notif-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.skeleton-notif-item__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* Skeleton header */
+.skeleton-notif-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 20px;
+  border-bottom: 1px solid #dadde1;
+  margin-bottom: 16px;
+}
+
+/* Skeleton tabs */
+.skeleton-notif-tabs {
+  display: flex;
+  gap: 10px;
+  padding: 12px 0 20px;
+  border-bottom: 1px solid #dadde1;
+  margin-bottom: 12px;
+}
+
+/* Skeleton group */
+.skeleton-notif-group {
+  margin-bottom: 24px;
+}
+
+/* Skeleton page */
+.skeleton-notif-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 80px 16px 40px;
+  min-height: 100vh;
+}
+
+/* Animation shimmer pour SkeletonNotification.js */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #e4e6eb 25%, #f0f2f5 50%, #e4e6eb 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, #3a3b3c 25%, #4e4f50 50%, #3a3b3c 75%);
+    background-size: 200% 100%;
+  }
+  
+  .skeleton-notif-item {
+    background: #242526;
+  }
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SKELETON CHARGEMENT
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.fb-notification-skeleton {
+  display: flex;
+  gap: 14px;
+  padding: 14px 18px;
+  background: white;
+}
+
+.fb-notification-avatar-skeleton {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #e4e6eb 25%, #f0f2f5 50%, #e4e6eb 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+}
+
+.fb-notification-content-skeleton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fb-notification-text-skeleton {
+  height: 18px;
+  background: linear-gradient(90deg, #e4e6eb 25%, #f0f2f5 50%, #e4e6eb 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+  border-radius: 4px;
+  width: 70%;
+}
+
+.fb-notification-time-skeleton {
+  width: 100px;
+  height: 14px;
+  background: linear-gradient(90deg, #e4e6eb 25%, #f0f2f5 50%, #e4e6eb 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   RESPONSIVE
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+@media (max-width: 768px) {
+  .fb-notifications-container {
+    padding: 70px 12px 20px;
+  }
+  
+  .fb-notifications-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  
+  .fb-notifications-title h2 {
+    font-size: 24px;
+  }
+  
+  .fb-notification-text {
+    font-size: 14px;
+  }
+  
+  .fb-notification-preview {
+    font-size: 13px;
+  }
+  
+  .fb-notification-avatar {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .fb-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+  
+  .fb-notification-type-badge {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .fb-filter-btn {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SKELETON COMMENTAIRES
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.skeleton-comment {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.skeleton-comment__avatar {
+  flex-shrink: 0;
+}
+
+.skeleton-comment__body {
+  flex: 1;
+}
+
+.skeleton-comment__bubble {
+  background: var(--fb-bg, #f0f2f5);
+  padding: 10px 14px;
+  border-radius: 18px;
+  max-width: 80%;
+}
+
+.skeleton-comment__actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  padding-left: 4px;
+}
+
+.skeleton-comment__replies {
+  margin-top: 12px;
+  padding-left: 20px;
+  border-left: 2px solid var(--fb-border, #e4e6eb);
+}
+
+.skeleton-comment__reply {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.skeleton-comment-input {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--fb-border, #e4e6eb);
+}
+
+.skeleton-comment-list {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.skeleton-comments-section {
+  border-top: 1px solid var(--fb-border, #e4e6eb);
+}
+
+.skeleton-comments-section__header {
+  padding: 12px;
+  border-bottom: 1px solid var(--fb-border, #e4e6eb);
+}
+
+.skeleton-comments-section__list {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsive skeleton commentaires */
+@media (max-width: 768px) {
+  .skeleton-comment__bubble {
+    max-width: 90%;
+  }
+}
+

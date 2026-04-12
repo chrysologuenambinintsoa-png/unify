@@ -1,0 +1,27 @@
+﻿*******************************************************************************
+Your application uses this file to locate resource strings defined
+in aspnet_Roles.xml project item. 
+
+Replace the text between localization brackets as needed.
+*******************************************************************************
+
+^ActionBarNewActionDescription^Créer un dossier d'adhésion de nouveaux rôles.^ActionBarNewActionDescription^
+
+^ActionBarNewActionHeaderText^Nouveau rôle^ActionBarNewActionHeaderText^
+
+^ActionBarNewGroupHeaderText^Nouveau^ActionBarNewGroupHeaderText^
+
+^CreateFormCategory^Remplissez le formulaire. Assurez-vous d'entrer dans tous les champs requis.^CreateFormCategory^
+
+^CreateFormHeaderText^S'il vous plaît remplir ce formulaire et cliquez sur le bouton OK pour créer une nouvelle adhésion d'enregistrement des rôles. Cliquez sur Annuler pour revenir à l'écran précédent.^CreateFormHeaderText^
+
+^DescriptionLabel^Description^DescriptionLabel^
+
+^EditViewCategory^Ce sont les champs de l'enregistrement le rôle des membres qui peuvent être éditées.^EditViewCategory^
+
+^EditViewHeaderText^S'il vous plaît examiner l'adhésion des rôles informations ci-dessous. Cliquez sur Modifier pour modifier ce dossier, cliquez sur Supprimer pour supprimer l'enregistrement, ou cliquez sur Annuler / Fermer pour revenir en arrière.^EditViewHeaderText^
+
+^GridViewHeaderText^Ceci est une liste des rôles des membres.^GridViewHeaderText^
+
+^RoleNameLabel^Rôle Nom^RoleNameLabel^
+

@@ -1,0 +1,113 @@
+/**
+ * ViewerCounter.css - Styles pour le composant ViewerCounter
+ * Design moderne avec animations
+ */
+
+/* ============================================
+   CONTENEUR PRINCIPAL
+   ============================================ */
+
+.viewer-counter-container {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  padding: 6px 12px;
+  border-radius: 20px;
+  z-index: 10;
+  transition: transform 0.2s ease;
+}
+
+.viewer-counter-container.animating {
+  animation: counter-pulse 0.3s ease;
+}
+
+@keyframes counter-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* ============================================
+   ICON
+   ============================================ */
+
+.viewer-counter-icon {
+  width: 16px;
+  height: 16px;
+  color: #fff;
+}
+
+/* ============================================
+   COUNT
+   ============================================ */
+
+.viewer-counter-count {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ============================================
+   LABEL
+   ============================================ */
+
+.viewer-counter-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  .viewer-counter-container {
+    top: 12px;
+    right: 12px;
+    padding: 4px 10px;
+  }
+  
+  .viewer-counter-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .viewer-counter-count {
+    font-size: 13px;
+  }
+  
+  .viewer-counter-label {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .viewer-counter-container {
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+  }
+  
+  .viewer-counter-icon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .viewer-counter-count {
+    font-size: 12px;
+  }
+  
+  .viewer-counter-label {
+    display: none;
+  }
+}

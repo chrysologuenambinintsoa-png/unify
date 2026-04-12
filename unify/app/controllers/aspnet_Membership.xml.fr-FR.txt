@@ -1,0 +1,213 @@
+﻿*******************************************************************************
+Your application uses this file to locate resource strings defined
+in aspnet_Membership.xml project item. 
+
+Replace the text between localization brackets as needed.
+*******************************************************************************
+
+^ActionBarNewActionDescription^Créer un enregistrement nouvel utilisateur.^ActionBarNewActionDescription^
+
+^ActionBarNewActionHeaderText^Nouvel utilisateur^ActionBarNewActionHeaderText^
+
+^ActionBarNewGroupHeaderText^Nouveau^ActionBarNewGroupHeaderText^
+
+^BackToRequestPasswordActionHeaderText^Retour^BackToRequestPasswordActionHeaderText^
+
+^Comment^Commentaire^Comment^
+
+^ConfirmIdentityActionHeaderText^Terminer^ConfirmIdentityActionHeaderText^
+
+^ConfirmNewPassword^Confirmer le nouveau mot^ConfirmNewPassword^
+
+^ConfirmPassword^Confirmer Mot de passe^ConfirmPassword^
+
+^CreateDate^Créer Date^CreateDate^
+
+^CreateFormCommentCategoryDescription^Entrez des commentaires supplémentaires sur ce compte utilisateur. Commentaire n'est pas visible pour l'utilisateur.^CreateFormCommentCategoryDescription^
+
+^CreateFormCommentCategoryHeaderText^Commentaires^CreateFormCommentCategoryHeaderText^
+
+^CreateFormNewUserInfoCategoryDescription^S'il vous plaît entrez le nom d'utilisateur et mot de passe. Notez que le mot de passe doit être d'au moins 7 caractères et inclure un caractère non alphanumérique. Seuls les utilisateurs autorisés pourront se connecter au site Web.^CreateFormNewUserInfoCategoryDescription^
+
+^CreateFormNewUserInfoCategoryHeaderText^Informations sur le nouveau^CreateFormNewUserInfoCategoryHeaderText^
+
+^CreateFormPasswordRecoveryCategoryDescription^Ces champs sont obligatoires afin d'aider un utilisateur à récupérer un mot de passe oubliés. Pendant le processus de récupération, l'utilisateur sera invité à entrer un nom d'utilisateur. Si un compte d'utilisateur existe alors une question de sécurité est prié de répondre. Une réponse correcte va déclencher un email avec un mot de passe temporaire envoyer à l'utilisateur.^CreateFormPasswordRecoveryCategoryDescription^
+
+^CreateFormPasswordRecoveryCategoryHeaderText^Password Recovery^CreateFormPasswordRecoveryCategoryHeaderText^
+
+^CreateFormRolesCategoryDescription^S'il vous plaît choisir les rôles des utilisateurs qui correspondent le plus les responsabilités de l'utilisateur. Rôles de contrôle d'accès aux zones de ce site Web. S'il vous plaît contacter l'administrateur système si des restrictions d'accès par rôle doit être changé.^CreateFormRolesCategoryDescription^
+
+^CreateFormRolesCategoryHeaderText^Rôles^CreateFormRolesCategoryHeaderText^
+
+^CreateFormViewHeaderText^S'il vous plaît remplir ce formulaire et cliquez sur le bouton OK pour créer un enregistrement nouvel utilisateur d'adhésion. Cliquez sur Annuler pour revenir à l'écran précédent.^CreateFormViewHeaderText^
+
+^CreateFormViewLabel^Nouvel utilisateur^CreateFormViewLabel^
+
+^CreateViewIsApprovedFieldHeaderText^Ce compte utilisateur sera créé comme approuvé.^CreateViewIsApprovedFieldHeaderText^
+
+^DuplicateEmail^Dupliquer adresse email.^DuplicateEmail^
+
+^DuplicateProviderUserKey^Dupliquer clé de fournisseur.^DuplicateProviderUserKey^
+
+^DuplicateUserName^Dupliquer nom d'utilisateur.^DuplicateUserName^
+
+^EditFormActivityStatisticsCategoryDescription^Les statistiques d'activité^EditFormActivityStatisticsCategoryDescription^
+
+^EditFormIsApprovedFieldHeaderText^Ce compte utilisateur est approuvé^EditFormIsApprovedFieldHeaderText^
+
+^EditFormLoginStatisticsCategoryDescription^Ce sont les statistiques de tentatives de connexion par cet utilisateur. <br/> <br/> Utilisateur sera verrouillé après avoir atteint un nombre maximum de tentatives de connexion infructueuses. <br/> <br/> Enfermé dehors utilisateurs seront en mesure de vous connecter à nouveau après la date de démarrage de passe Fenêtre échec de la tentative. <br/> <br/> Les utilisateurs qui ont échoué à récupérer le mot de passe afin de pouvoir après la date de début de réponse de mot échec de la tentative de fenêtre. <br/> <br/> Vous pouvez restaurer la capacité de l'utilisateur de se connecter par la mise en drapeau Locked Out 'Non'.^EditFormLoginStatisticsCategoryDescription^
+
+^EditFormLoginStatisticsCategoryHeaderText^Se connecter Statistiques^EditFormLoginStatisticsCategoryHeaderText^
+
+^EditFormPasswordRecoveryCategoryDescription^Pendant la récupération d'un mot de passe oublié, l'utilisateur sera invité à entrer un nom d'utilisateur. Si un compte d'utilisateur existe alors une question de sécurité est prié de répondre. Une réponse correcte va déclencher un email avec un mot de passe temporaire envoyer à l'utilisateur. <br/><br/> Changer verrouillé flag 'No' si l'utilisateur a été verrouillé après avoir atteint un nombre maximum de tentatives de connexion a échoué et que vous souhaitez autoriser l'utilisateur de se connecter à nouveau.^EditFormPasswordRecoveryCategoryDescription^
+
+^EditFormPasswordRecoveryCategoryHeaderText^Password Recovery^EditFormPasswordRecoveryCategoryHeaderText^
+
+^EditFormUserInformationCategoryDescription^S'il vous plaît choisir les rôles des utilisateurs qui correspondent le plus les responsabilités de l'utilisateur. Rôles de contrôle d'accès aux zones de ce site Web. S'il vous plaît contacter l'administrateur système si des restrictions d'accès par rôle doit être changé. <br/> <br/> Entrez des commentaires supplémentaires sur ce compte utilisateur. Commentaire n'est pas visible pour l'utilisateur.^EditFormUserInformationCategoryDescription^
+
+^EditFormUserInformationCategoryHeaderText^Information utilisateur^EditFormUserInformationCategoryHeaderText^
+
+^EditFormViewHeaderText^S'il vous plaît examiner les renseignements ci-dessous l'appartenance des utilisateurs. Cliquez sur Modifier pour modifier ce dossier, cliquez sur Supprimer pour supprimer l'enregistrement, ou cliquez sur Annuler / Fermer pour revenir en arrière.^EditFormViewHeaderText^
+
+^EditFormViewLabel^Critique User^EditFormViewLabel^
+
+^Email^Email^Email^
+
+^EnterCurrentPassword^S'il vous plaît entrer votre mot de passe actuel.^EnterCurrentPassword^
+
+^EnterPasswordAnswer^S'il vous plaît entrer une réponse de mot de passe.^EnterPasswordAnswer^
+
+^ErrorSavingUser^Erreur d'enregistrement du compte utilisateur.^ErrorSavingUser^
+
+^FailedPasswordAnswerAttemptCount^Échec Comte Tentative de passe Réponse^FailedPasswordAnswerAttemptCount^
+
+^FailedPasswordAnswerAttemptWindowStart^Échec Réponse Mot de passe Fenêtre tentative de démarrage^FailedPasswordAnswerAttemptWindowStart^
+
+^FailedPasswordAttemptCount^Échec Comte Tentative Mot de passe^FailedPasswordAttemptCount^
+
+^FailedPasswordAttemptWindowStart^Échec Démarrer de Windows Password Tentative^FailedPasswordAttemptWindowStart^
+
+^GridViewHeaderText^Ceci est une liste d'enregistrements utilisateur d'appartenance.^GridViewHeaderText^
+
+^GridViewLabel^Tous les utilisateurs^GridViewLabel^
+
+^IdentityConfirmationViewIdentityConfirmCategoryDescription^Répondez à la question suivante pour recevoir votre mot de passe. <br/><br/><br/>^IdentityConfirmationViewIdentityConfirmCategoryDescription^
+
+^IdentityConfirmationViewIdentityConfirmCategoryHeaderText^Confirmation d'identité^IdentityConfirmationViewIdentityConfirmCategoryHeaderText^
+
+^IdentityConfirmViewHeaderText^S'il vous plaît remplir ce formulaire et cliquez sur le bouton Soumettre pour récupérer le mot de passe oublié. Cliquez sur Annuler pour revenir à l'écran précédent.^IdentityConfirmViewHeaderText^
+
+^IdentityConfirmViewLabel^Password Recovery: Étape 2 de 2^IdentityConfirmViewLabel^
+
+^InvalidAnswer^Invalide réponse de récupération de mot de passe.^InvalidAnswer^
+
+^InvalidEmail^Adresse email invalide.^InvalidEmail^
+
+^InvalidPassword^Mot de passe invalide.^InvalidPassword^
+
+^InvalidProviderUserKey^Invalide clé utilisateur fournisseur.^InvalidProviderUserKey^
+
+^InvalidQuestion^Invalide la question de récupération de mot de passe.^InvalidQuestion^
+
+^InvalidUserName^Invalid nom d'utilisateur.^InvalidUserName^
+
+^IsApproved^Est approuvé^IsApproved^
+
+^IsLockedOut^Est verrouillé^IsLockedOut^
+
+^LastLockoutDate^Date de dernier verrouillage^LastLockoutDate^
+
+^LastLoginDate^Date de dernière connexion^LastLoginDate^
+
+^LastPasswordChangedDate^Mot de passe dernière modification Date^LastPasswordChangedDate^
+
+^MaskedPasswordAnswer^Réponse Mot de passe (pas affiché pour votre protection)^MaskedPasswordAnswer^
+
+^MyAccountViewCurrentPasswordCategoryDescription^S'il vous plaît entrer votre mot de passe actuel pour créer des nouveau mot de passe, mettre à jour votre adresse email, ou d'une question de récupération changement de mot de passe et la réponse.^MyAccountViewCurrentPasswordCategoryDescription^
+
+^MyAccountViewCurrentPasswordCategoryHeaderText^1. Mot de passe actuel^MyAccountViewCurrentPasswordCategoryHeaderText^
+
+^MyAccountViewHeaderText^S'il vous plaît examiner vos renseignements d'adhésion ci-dessous. Cliquez sur Mettre Mon compte pour changer ce dossier, ou cliquez sur Annuler pour revenir en arrière.^MyAccountViewHeaderText^
+
+^MyAccountViewLabel^Mon compte^MyAccountViewLabel^
+
+^MyAccountViewNewPasswordCategoryDescription^S'il vous plaît entrer nouveau mot de passe. Notez que le mot de passe doit être d'au moins 7 caractères et inclure un caractère non alphanumérique.^MyAccountViewNewPasswordCategoryDescription^
+
+^MyAccountViewNewPasswordCategoryHeaderText^2. Nouveau mot de passe (facultatif)^MyAccountViewNewPasswordCategoryHeaderText^
+
+^MyAccountViewPasswordRecoveryCategoryDescription^Pendant la récupération d'un mot de passe oublié il vous sera demandé d'entrer votre nom d'utilisateur. Si un compte d'utilisateur existe alors une question de mot de passe doit être répondu. Une réponse correcte va déclencher un email avec un mot de passe temporaire vous envoyer.^MyAccountViewPasswordRecoveryCategoryDescription^
+
+^MyAccountViewPasswordRecoveryCategoryHeaderText^3. Email Password Recovery &amp; (facultatif)^MyAccountViewPasswordRecoveryCategoryHeaderText^
+
+^NewPassword^Nouveau mot de passe^NewPassword^
+
+^NewPasswordAlert^Un nouveau mot de passe a été envoyé à l'adresse figurant au dossier.^NewPasswordAlert^
+
+^NewPasswordAndConfirmatinDoNotMatch^Nouveau mot de passe et la confirmation ne correspondent pas.^NewPasswordAndConfirmatinDoNotMatch^
+
+^NewPasswordInvalid^Votre nouveau mot de passe est invalide.^NewPasswordInvalid^
+
+^NewPasswordSubject^Nouveau mot de passe pour \'{0} \ '.^NewPasswordSubject^
+
+^OldPassword^Ancien mot de passe^OldPassword^
+
+^Password^Mot de passe^Password^
+
+^PasswordAndConfirmationDoNotMatch^Mot de passe et la confirmation ne correspondent pas.^PasswordAndConfirmationDoNotMatch^
+
+^PasswordAnswer^Réponse Mot de passe^PasswordAnswer^
+
+^PasswordDoesNotMatchRecords^Votre mot de passe ne correspond pas à nos dossiers.^PasswordDoesNotMatchRecords^
+
+^PasswordFormat^Format Mot de passe^PasswordFormat^
+
+^PasswordQuestion^Question Mot de passe^PasswordQuestion^
+
+^PasswordRequestViewForgotPasswordCategoryDescription^S'il vous plaît entrer un nom d'utilisateur. <br/><br/><br/>^PasswordRequestViewForgotPasswordCategoryDescription^
+
+^PasswordRequestViewForgotPasswordCategoryHeaderText^Mot de passe oublié?^PasswordRequestViewForgotPasswordCategoryHeaderText^
+
+^PasswordRequestViewHeaderText^S'il vous plaît remplir ce formulaire et cliquez sur le bouton Continuer pour récupérer le mot de passe oublié. Cliquez sur Annuler pour revenir à l'écran précédent.^PasswordRequestViewHeaderText^
+
+^PasswordRequestViewLabel^Password Recovery: Etape 1 sur 2^PasswordRequestViewLabel^
+
+^ProviderError^Erreur de fournisseur.^ProviderError^
+
+^RequestPasswordActionHeaderText^Suivant^RequestPasswordActionHeaderText^
+
+^Roles^Rôles^Roles^
+
+^SelfRegisteredUser^Auto-utilisateur enregistré.^SelfRegisteredUser^
+
+^SignUp^Inscription^SignUp^
+
+^SignUpViewHeaderText^S'il vous plaît remplir ce formulaire et cliquez sur le bouton OK pour ouvrir un compte. Cliquez sur Annuler pour revenir à l'écran précédent.^SignUpViewHeaderText^
+
+^SignUpViewLabel^Compte Inscription^SignUpViewLabel^
+
+^SignUpViewNewUserInfoCategoryDescription^S'il vous plaît entrez le nom d'utilisateur et mot de passe. Notez que le mot de passe doit être d'au moins 7 caractères et inclure un caractère non alphanumérique. Seuls les utilisateurs autorisés pourront se connecter au site Web.^SignUpViewNewUserInfoCategoryDescription^
+
+^SignUpViewNewUserInfoCategoryHeaderText^Informations sur le nouveau^SignUpViewNewUserInfoCategoryHeaderText^
+
+^SignUpViewPasswordRecoveryCategoryDescription^Ces champs sont obligatoires afin de vous aider à récupérer un mot de passe oubliés. Pendant le processus de récupération vous sera demandé d'entrer un nom d'utilisateur. Si un compte d'utilisateur existe alors une question de sécurité est prié de répondre. Une réponse correcte va déclencher un email avec un mot de passe temporaire envoyer à l'e-mail enregistrée.^SignUpViewPasswordRecoveryCategoryDescription^
+
+^SignUpViewPasswordRecoveryCategoryHeaderText^Password Recovery^SignUpViewPasswordRecoveryCategoryHeaderText^
+
+^UpdateMyAccountActionHeaderText^Mettre à jour mon compte^UpdateMyAccountActionHeaderText^
+
+^UserCannotBeLockedOut^L'utilisateur ne peut pas être verrouillé. Si vous voulez empêcher cet utilisateur d'être capable de se connecter, puis il suffit de marquer l'utilisateur comme «non-approuvés".^UserCannotBeLockedOut^
+
+^UserHasBeenDeleted^'{0}' Utilisateur a été supprimé.^UserHasBeenDeleted^
+
+^UserName^Nom d'utilisateur^UserName^
+
+^UserNameDoesNotExist^Nom d'utilisateur n'existe pas.^UserNameDoesNotExist^
+
+^UserNotFound^Utilisateur non trouvé.^UserNotFound^
+
+^UserRejected^L'utilisateur a été rejetée.^UserRejected^
+
+^UsersInRolesGridHeaderText^Ceci est une liste d'enregistrements utilisateur d'appartenance qui appartiennent à un rôle sélectionné.^UsersInRolesGridHeaderText^
+
+^UsersInRolesGridLabel^Les utilisateurs de Rôle^UsersInRolesGridLabel^
+

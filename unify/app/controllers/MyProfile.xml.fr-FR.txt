@@ -1,0 +1,105 @@
+﻿*******************************************************************************
+Your application uses this file to locate resource strings defined
+in MyProfile.xml project item. 
+
+Replace the text between localization brackets as needed.
+*******************************************************************************
+
+^Account^Account^Account^
+
+^BackToRequestPasswordActionHeaderText^Arrière^BackToRequestPasswordActionHeaderText^
+
+^ConfirmIdentityActionHeaderText^terminer^ConfirmIdentityActionHeaderText^
+
+^ConfirmNewPassword^Confirmer le nouveau mot de passe^ConfirmNewPassword^
+
+^ConfirmPassword^Confirmez le mot de passe^ConfirmPassword^
+
+^Email^Email^Email^
+
+^ForgotYourPassword^Mot de passe oublié?^ForgotYourPassword^
+
+^IdentityConfirmationViewIdentityConfirmCategoryDescription^Répondez à la question suivante pour recevoir votre mot de passe. <br/><br/><br/>^IdentityConfirmationViewIdentityConfirmCategoryDescription^
+
+^IdentityConfirmationViewIdentityConfirmCategoryHeaderText^Confirmation d&#39;identité^IdentityConfirmationViewIdentityConfirmCategoryHeaderText^
+
+^IdentityConfirmViewHeaderText^Veuillez remplir ce formulaire et cliquez sur le bouton Envoyer pour récupérer le mot de passe oublié. Cliquez sur Annuler pour revenir à l&#39;écran précédent.^IdentityConfirmViewHeaderText^
+
+^IdentityConfirmViewLabel^Récupération du mot de passe: étape 2 sur 2^IdentityConfirmViewLabel^
+
+^LoginButton^S&#39;identifier^LoginButton^
+
+^LoginLink^S&#39;identifier^LoginLink^
+
+^LoginWithDNN^Connexion avec DotNetNuke^LoginWithDNN^
+
+^LoginWithFacebook^Se connecter avec Facebook^LoginWithFacebook^
+
+^LoginWithGoogle^Connectez-vous avec Google^LoginWithGoogle^
+
+^LoginWithMicrosoft^Connectez-vous avec Microsoft^LoginWithMicrosoft^
+
+^LoginWithSharePoint^Connectez-vous avec SharePoint^LoginWithSharePoint^
+
+^LoginWithWindowsLive^Connectez-vous avec Windows Live^LoginWithWindowsLive^
+
+^MaskedPasswordAnswer^Réponse de mot de passe (non affichée pour votre protection)^MaskedPasswordAnswer^
+
+^MyAccountViewCurrentPasswordCategoryDescription^Veuillez entrer votre mot de passe actuel pour créer un nouveau mot de passe, mettre à jour votre adresse e-mail ou modifier la question et la réponse à la question.^MyAccountViewCurrentPasswordCategoryDescription^
+
+^MyAccountViewCurrentPasswordCategoryHeaderText^1. Mot de passe actuel^MyAccountViewCurrentPasswordCategoryHeaderText^
+
+^MyAccountViewHeaderText^S&#39;il vous plaît examiner vos informations d&#39;adhésion ci-dessous. Cliquez sur Mettre à jour mon compte pour modifier cet enregistrement ou sur Annuler pour revenir en arrière.^MyAccountViewHeaderText^
+
+^MyAccountViewLabel^Mon compte^MyAccountViewLabel^
+
+^MyAccountViewNewPasswordCategoryDescription^Entrez un nouveau mot de passe. Notez que le mot de passe doit comporter au moins 7 caractères et comporter un caractère non alphanumérique.^MyAccountViewNewPasswordCategoryDescription^
+
+^MyAccountViewNewPasswordCategoryHeaderText^2. Nouveau mot de passe (facultatif)^MyAccountViewNewPasswordCategoryHeaderText^
+
+^MyAccountViewPasswordRecoveryCategoryDescription^Lors de la récupération d&#39;un mot de passe oublié, il vous sera demandé de saisir votre nom d&#39;utilisateur. Si un compte d&#39;utilisateur existe, alors une question de mot de passe doit être répondue. Une réponse correcte déclenchera un e-mail avec un mot de passe temporaire qui vous sera envoyé.^MyAccountViewPasswordRecoveryCategoryDescription^
+
+^MyAccountViewPasswordRecoveryCategoryHeaderText^3. Email &amp; Récupération du mot de passe (facultatif)^MyAccountViewPasswordRecoveryCategoryHeaderText^
+
+^NewPassword^nouveau mot de passe^NewPassword^
+
+^OldPassword^ancien mot de passe^OldPassword^
+
+^Password^Mot de passe^Password^
+
+^PasswordAnswer^Mot de passe^PasswordAnswer^
+
+^PasswordQuestion^Mot de passe Question^PasswordQuestion^
+
+^PasswordRequestViewForgotPasswordCategoryDescription^Merci d&#39;entrer un nom d&#39;utilisateur. <br/><br/><br/>^PasswordRequestViewForgotPasswordCategoryDescription^
+
+^PasswordRequestViewForgotPasswordCategoryHeaderText^Mot de passe oublié?^PasswordRequestViewForgotPasswordCategoryHeaderText^
+
+^PasswordRequestViewHeaderText^Veuillez remplir ce formulaire et cliquer sur le bouton Continuer pour récupérer le mot de passe oublié. Cliquez sur Annuler pour revenir à l&#39;écran précédent.^PasswordRequestViewHeaderText^
+
+^PasswordRequestViewLabel^Récupération de mot de passe: Étape 1 sur 2^PasswordRequestViewLabel^
+
+^RememberMe^Se souvenir de moi la prochaine fois^RememberMe^
+
+^RequestPasswordActionHeaderText^Prochain^RequestPasswordActionHeaderText^
+
+^SignUp^S&#39;inscrire^SignUp^
+
+^SignUpNow^S&#39;inscrire maintenant^SignUpNow^
+
+^SignUpViewHeaderText^S&#39;il vous plaît remplir ce formulaire et cliquez sur le bouton OK pour vous inscrire à un compte. Cliquez sur Annuler pour revenir à l&#39;écran précédent.^SignUpViewHeaderText^
+
+^SignUpViewLabel^Inscription au compte^SignUpViewLabel^
+
+^SignUpViewNewUserInfoCategoryDescription^Veuillez entrer le nom d&#39;utilisateur et le mot de passe. Notez que le mot de passe doit comporter au moins 7 caractères et comporter un caractère non alphanumérique. Seuls les utilisateurs approuvés pourront se connecter au site Web.^SignUpViewNewUserInfoCategoryDescription^
+
+^SignUpViewNewUserInfoCategoryHeaderText^Nouvelle information d&#39;utilisateur^SignUpViewNewUserInfoCategoryHeaderText^
+
+^SignUpViewPasswordRecoveryCategoryDescription^Ces champs sont requis pour vous aider à récupérer un mot de passe oublié. Pendant le processus de récupération, il vous sera demandé d&#39;entrer un nom d&#39;utilisateur. Si un compte d&#39;utilisateur existe, alors une question de sécurité doit être répondue. Une réponse correcte déclenchera un email avec un mot de passe temporaire envoyé à l&#39;email enregistré.^SignUpViewPasswordRecoveryCategoryDescription^
+
+^SignUpViewPasswordRecoveryCategoryHeaderText^Récupération de mot de passe^SignUpViewPasswordRecoveryCategoryHeaderText^
+
+^UpdateMyAccountActionHeaderText^Mettre à jour mon compte^UpdateMyAccountActionHeaderText^
+
+^UserName^Nom d&#39;utilisateur^UserName^
+

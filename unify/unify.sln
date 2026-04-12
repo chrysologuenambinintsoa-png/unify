@@ -1,0 +1,13 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "unify", "app\", "8CAD8B21-1DB3-4F0B-8467-C4159412CABA"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Code On Time Items", "Code On Time Items", "{418DF769-F798-4364-A979-8329A4A371FA}"
+	ProjectSection(SolutionItems) = preProject
+		ClientLibrary.fr-FR.txt = ClientLibrary.fr-FR.txt
+		DataAquarium.Project.xml = DataAquarium.Project.xml
+		DataAquarium.Version.xml = DataAquarium.Version.xml
+	EndProjectSection
+EndProject

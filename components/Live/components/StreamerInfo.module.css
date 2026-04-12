@@ -1,0 +1,217 @@
+﻿/**
+ * StreamerInfo.css - Styles pour le composant StreamerInfo
+ * Design inspirÃ© de Facebook Live
+ */
+
+/* ============================================
+   CONTENEUR PRINCIPAL
+   ============================================ */
+
+.streamer-info-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #242526;
+  border-bottom: 1px solid #3e4042;
+}
+
+/* ============================================
+   AVATAR
+   ============================================ */
+
+.streamer-info-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.streamer-info-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.streamer-info-avatar-letter {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* ============================================
+   DETAILS
+   ============================================ */
+
+.streamer-info-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.streamer-info-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #e4e6eb;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.streamer-info-verified {
+  width: 18px;
+  height: 18px;
+  color: #003d5c;
+}
+
+.streamer-info-title {
+  color: #b0b3b8;
+  font-size: 14px;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.streamer-info-category {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #6b6c6d;
+  font-size: 12px;
+}
+
+.streamer-info-category svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ============================================
+   FOLLOW BUTTON
+   ============================================ */
+
+.streamer-info-follow-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #003d5c;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.streamer-info-follow-btn:hover {
+  background: #002244;
+  transform: scale(1.02);
+}
+
+.streamer-info-follow-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  .streamer-info-container {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .streamer-info-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .streamer-info-avatar-letter {
+    font-size: 18px;
+  }
+  
+  .streamer-info-name {
+    font-size: 14px;
+  }
+  
+  .streamer-info-verified {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .streamer-info-title {
+    font-size: 13px;
+  }
+  
+  .streamer-info-category {
+    font-size: 11px;
+  }
+  
+  .streamer-info-category svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .streamer-info-follow-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .streamer-info-follow-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .streamer-info-container {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  
+  .streamer-info-avatar {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .streamer-info-avatar-letter {
+    font-size: 16px;
+  }
+  
+  .streamer-info-name {
+    font-size: 13px;
+  }
+  
+  .streamer-info-verified {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .streamer-info-title {
+    font-size: 12px;
+  }
+  
+  .streamer-info-follow-btn {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+  
+  .streamer-info-follow-btn span {
+    display: none;
+  }
+  
+  .streamer-info-follow-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+

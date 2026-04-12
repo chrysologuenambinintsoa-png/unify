@@ -1,0 +1,31 @@
+{
+  "name": "live-server-mediasoup",
+  "version": "3.0.0",
+  "description": "Serveur backend avec support mediasoup pour le streaming WebRTC",
+  "main": "server-mediasoup.js",
+  "scripts": {
+    "start": "node server-mediasoup.js",
+    "dev": "nodemon server-mediasoup.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "live",
+    "streaming",
+    "websocket",
+    "socket.io",
+    "mediasoup",
+    "webrtc",
+    "facebook-live"
+  ],
+  "author": "SuperNinja AI",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "mediasoup": "^3.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
