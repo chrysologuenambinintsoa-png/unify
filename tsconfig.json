@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/components/Toast": ["./components/Toast.js"],
+      "@/components/Toast*": ["./components/Toast*"],
+      "@/components/ui/*": ["./components/components/ui/*"],
+      "@/components/*": ["./components/components/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/*": ["./*"]
+    },
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

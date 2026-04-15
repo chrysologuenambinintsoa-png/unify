@@ -31,6 +31,23 @@ export default function Feed({ sponsorId = null, sponsorTitle = null, isOwner = 
   const [originalFile, setOriginalFile] = useState(null)
   const [showLiveVideoModal, setShowLiveVideoModal] = useState(false)
 
+
+  // Helper pour gérer les posts temporaires dans le localStorage
+  function getLocalTempPosts() {
+    try {
+      const temp = localStorage.getItem('tempPosts');
+      return temp ? JSON.parse(temp) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveLocalTempPosts(posts) {
+    try {
+      localStorage.setItem('tempPosts', JSON.stringify(posts));
+    } catch {}
+  }
+
   async function load(){
     setLoadingPosts(true)
     try{
@@ -58,132 +75,24 @@ export default function Feed({ sponsorId = null, sponsorTitle = null, isOwner = 
         avatarUrl: item.avatarUrl,
         avatar: item.avatar,
         isSponsor: !!item.sponsorId,
-        sponsorId: item.sponsorId || null
+        sponsorId: item.sponsorId || null,
+        // Ajout pour affichage pageName/pageAvatar dans PostCard
+        ...(item.sponsorId ? {
+          pageName: item.author,
+          pageAvatar: item.avatarUrl || item.avatar || '/images/default-page.png',
+          ownerEmail: item.ownerEmail || item.email || null,
+        } : {})
       }))
 
-      // Also fetch group posts if not on a sponsor-specific feed
-      let groupPosts = []
-      if (!sponsorId) {
-        try {
-          const groupRes = await fetch(`/api/groupes?ts=${Date.now()}`)
-          const groupData = await groupRes.json()
-          const groups = Array.isArray(groupData.groups) ? groupData.groups : []
-          
-          // Fetch posts from each group
-          for (const group of groups) {
-            try {
-              const postsRes = await fetch(`/api/groupes/${group.id}/posts?ts=${Date.now()}`)
-              const postsData = await postsRes.json()
-              if (postsData.posts && Array.isArray(postsData.posts)) {
-                const groupPostsWithMeta = postsData.posts.map(post => ({
-                  ...post,
-                  author: post.author?.prenom || post.author?.nomUtilisateur || post.author?.email?.split('@')[0] || 'Utilisateur',
-                  date: new Date(post.createdAt).toLocaleDateString('fr-FR'),
-                  initials: post.author?.prenom ? `${post.author.prenom[0]}${(post.author.nom||'')[0]||''}`.toUpperCase() : (post.author?.nomUtilisateur ? post.author.nomUtilisateur.slice(0,2).toUpperCase() : 'U'),
-                  color: 'linear-gradient(135deg, #0B3D91, #082B60)',
-                  privacy: 'globe',
-                  likes: post.likes || 0,
-                  shares: post.shares || 0,
-                  image: post.image || null,
-                  avatarUrl: post.author?.avatarUrl || null,
-                  avatar: post.author?.avatar || null,
-                  isGroupPost: true,
-                  groupId: group.id,
-                  groupName: group.name
-                }))
-                groupPosts = [...groupPosts, ...groupPostsWithMeta]
-              }
-            } catch (e) {
-              console.warn(`Failed to fetch posts for group ${group.id}`, e)
-            }
-          }
-        } catch (e) {
-          console.warn('Failed to fetch groups', e)
-        }
-      }
+      // Récupérer les posts temporaires du localStorage
+      const tempPosts = getLocalTempPosts();
 
-      // if we are not on a sponsor-specific feed, also inject sponsor posts
-      if (!sponsorId) {
-        // also fetch active sponsors to inject into feed
-        const sponsorRes = await fetch('/api/sponsors')
-        const sponsorData = await sponsorRes.json()
-        let sponsors = Array.isArray(sponsorData.sponsors) ? sponsorData.sponsors : []
+      // ...existing code pour les groupes...
 
-        // Filter sponsors based on quotas and targeting
-        sponsors = await Promise.all(sponsors.filter(async (sp) => {
-          // Check quotas
-          try {
-            const quotaRes = await fetch(`/api/sponsors/${sp.id}/quotas`)
-            const quota = await quotaRes.json()
-            if (!quota.active || quota.quotaExceeded) return false
-          } catch (e) {
-            console.warn(`quota check failed for sponsor ${sp.id}`, e)
-          }
+      // ...existing code pour les sponsors...
 
-          // Check targeting
-          try {
-            if (!localUser) return true // show all sponsors to non-logged users
-            const targetRes = await fetch(`/api/sponsors/${sp.id}/targeting`)
-            const targeting = await targetRes.json()
-            // Age check
-            if (targeting.minAge && localUser.age < targeting.minAge) return false
-            if (targeting.maxAge && localUser.age > targeting.maxAge) return false
-            // Gender check
-            if (targeting.gender && localUser.gender && localUser.gender !== targeting.gender) return false
-            // Country check
-            if (targeting.countries?.length > 0 && localUser.country && !targeting.countries.includes(localUser.country)) return false
-            // City check
-            if (targeting.cities?.length > 0 && localUser.city && !targeting.cities.includes(localUser.city)) return false
-            // Device check
-            const userDevice = /mobile/i.test(navigator.userAgent) ? 'mobile' : /tablet/i.test(navigator.userAgent) ? 'tablet' : 'desktop'
-            if (targeting.devices?.length > 0 && !targeting.devices.includes(userDevice)) return false
-            return true
-          } catch (e) {
-            console.warn(`targeting check failed for sponsor ${sp.id}`, e)
-            return true
-          }
-        }))
-
-        // build sponsor posts with proper author profile
-        const sponsorPosts = sponsors.map(sp => {
-          // Extract author initials from sponsor title
-          const authorName = sp.author || sp.title || 'Sponsor'
-          const initials = authorName
-            .split(' ')
-            .map(w => w[0])
-            .join('')
-            .toUpperCase()
-            .slice(0, 2) || 'SP'
-
-          return {
-            id: `sponsor-${sp.id}`,
-            title: sp.title,
-            content: sp.description || sp.content || '',
-            author: authorName,
-            date: new Date(sp.createdAt).toLocaleDateString('fr-FR'),
-            initials: initials,
-            color: sp.color || 'linear-gradient(135deg,#ff9a9e,#fad0c4)',
-            privacy: 'globe',
-            likes: sp.likes || 0,
-            shares: sp.shares || 0,
-            image: sp.image || null,
-            avatarUrl: sp.avatarUrl || null,
-            avatar: sp.avatar || null,
-            isSponsor: true,
-            sponsorLink: sp.link || null,
-            sponsorId: sp.id
-          }
-        })
-
-        setItems(prev => {
-          const temps = (prev || []).filter(p => String(p.id).startsWith('temp-'))
-          // prepend sponsor posts and group posts before normal items
-          return [...temps, ...sponsorPosts, ...groupPosts, ...transformed]
-        })
-      } else {
-        // sponsor-specific feed just show fetched data
-        setItems(transformed)
-      }
+      // Fusionner les posts temporaires avec ceux du backend (en haut du feed)
+      setItems([...tempPosts, ...transformed])
     }catch(e){console.error(e)}
     finally{ setLoadingPosts(false) }
   }
@@ -333,6 +242,9 @@ export default function Feed({ sponsorId = null, sponsorTitle = null, isOwner = 
           sponsorId: sponsorId || null,
           isSponsor: !!sponsorId
         }
+        // Sauvegarder dans le localStorage
+        const tempPosts = getLocalTempPosts();
+        saveLocalTempPosts([tempPost, ...tempPosts]);
         setItems(prev => {
           const withoutDup = (prev || []).filter(p => p.id !== tempPost.id)
           return [tempPost, ...withoutDup]
@@ -363,8 +275,11 @@ export default function Feed({ sponsorId = null, sponsorTitle = null, isOwner = 
         sponsorId: sponsorId || null,
         isSponsor: !!sponsorId
       }
+      // Nettoyer les posts temporaires (on suppose que le post a été sauvegardé côté serveur)
+      const tempPosts = getLocalTempPosts().filter(p => p.title !== localPost.title || p.content !== localPost.content)
+      saveLocalTempPosts(tempPosts)
       setItems(prev => {
-        // remove any temp posts (they were placeholders)
+        // remove any temp posts (ils étaient des placeholders)
         const withoutTemps = (prev || []).filter(p => !String(p.id).startsWith('temp-'))
         return [localPost, ...withoutTemps]
       })
@@ -385,6 +300,13 @@ export default function Feed({ sponsorId = null, sponsorTitle = null, isOwner = 
 
   async function handleDelete(id){
     try {
+      // Supprimer aussi du localStorage si c'est un post temporaire
+      if (String(id).startsWith('temp-')) {
+        const tempPosts = getLocalTempPosts().filter(p => p.id !== id)
+        saveLocalTempPosts(tempPosts)
+        setItems(prev => prev.filter(p => p.id !== id))
+        return
+      }
       const res = await fetch(`/api/items/${id}`, {method: 'DELETE'});
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
       await load()
@@ -502,10 +424,29 @@ export default function Feed({ sponsorId = null, sponsorTitle = null, isOwner = 
             Aucune publication trouvée
           </div>
         ) : (
-          items.map(it=> it.sponsorId ? 
-            <PagePostCard key={it.id} post={it} onDelete={handleDelete} currentUser={currentUser} page={{id: it.sponsorId, name: it.author, profileImage: it.avatarUrl}} /> : 
-            <PostCard key={it.id} post={it} onDelete={handleDelete} currentUser={currentUser} />
-          )
+          items.map(it => {
+            if (it.sponsorId) {
+              // Determine page name and avatar
+              let pageName = typeof it.author === 'object' && it.author !== null ? it.author.name : it.author;
+              let profileImage = it.avatarUrl || it.avatar || (it.author && it.author.avatar) || '/images/default-page.png';
+              return (
+                <PagePostCard
+                  key={it.id}
+                  post={it}
+                  onDelete={handleDelete}
+                  currentUser={currentUser}
+                  page={{
+                    id: it.sponsorId,
+                    name: pageName,
+                    profileImage,
+                    ownerEmail: it.ownerEmail
+                  }}
+                />
+              );
+            } else {
+              return <PostCard key={it.id} post={it} onDelete={handleDelete} currentUser={currentUser} />;
+            }
+          })
         )}
       </div>
 

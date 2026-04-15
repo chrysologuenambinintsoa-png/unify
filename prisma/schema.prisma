@@ -94,7 +94,7 @@ model User {
   nom                 String?
   nomUtilisateur      String?              @unique
   phone               String?
-  dateNaissance       DateTime?
+  datenaissance       DateTime?
   genre               String?
   photos              String? // JSON array
   avatar              String?
@@ -112,11 +112,14 @@ model User {
   pages               Page[]               @relation("PageOwner")
   pageMemberships     PageMember[]
   pageFollowers       PageFollower[]
+  pageLikes           PageLike[]
   pagePosts           PagePost[]
   videos              Video[]
   videoComments       VideoComment[]
   videoLikes          VideoLike[]
   posts               Post[]
+  likes               Like[]
+  eventParticipations EventParticipant[]
   createdAt           DateTime             @default(now())
 }
 
@@ -189,6 +192,17 @@ model Post {
   mediaType String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  likes     Like[]
+}
+
+model Like {
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId  Int
+  post    Post  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 // advertisers/sponsors pour les publicités affichées dans l'application
@@ -311,20 +325,30 @@ model MarketplaceReview {
 }
 
 model Page {
-  id          Int            @id @default(autoincrement())
-  name        String
-  description String?
-  category    String?
-  avatar      String?
-  cover       String?
-  privacy     String         @default("public") // public, private, hidden
-  ownerEmail  String
-  owner       User           @relation("PageOwner", fields: [ownerEmail], references: [email], onDelete: Cascade)
-  members     PageMember[]
-  posts       PagePost[]
-  followers   PageFollower[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id                   Int            @id @default(autoincrement())
+  name                 String
+  description          String?
+  category             String?
+  subcategory          String?
+  address              String?
+  phone                String?
+  website              String?
+  contactEmail         String?
+  avatar               String?
+  cover                String?
+  privacy              String         @default("public") // public, private, hidden
+  isPublic             Boolean        @default(true)
+  isPublished         Boolean        @default(true)
+  notificationsEnabled Boolean        @default(true)
+  visits               Int            @default(0)
+  ownerEmail           String
+  owner                User           @relation("PageOwner", fields: [ownerEmail], references: [email], onDelete: Cascade)
+  members              PageMember[]
+  posts                PagePost[]
+  followers            PageFollower[]
+  likes                PageLike[]
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
 }
 
 model PageMember {
@@ -350,22 +374,88 @@ model PageFollower {
   @@unique([pageId, userEmail])
 }
 
-model PagePost {
+model PageLike {
+  id        Int      @id @default(autoincrement())
+  pageId    Int
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  userEmail String
+  user      User     @relation(fields: [userEmail], references: [email], onDelete: Cascade)
+  likedAt   DateTime @default(now())
+
+  @@unique([pageId, userEmail])
+}
+
+model PageReview {
   id          Int      @id @default(autoincrement())
   pageId      Int
-  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
   authorEmail String
-  author      User     @relation(fields: [authorEmail], references: [email], onDelete: Cascade)
-  content     String
-  images      String? // JSON array of image URLs
-  tags        String? // JSON array of tags
-  feeling     String? // feeling label
-  location    String? // location name
-  event       String? // JSON object with event details
-  likes       Int      @default(0)
-  comments    Int      @default(0)
+  rating      Int // 1-5 stars
+  text        String?
+  recommends  Boolean?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([pageId])
+  @@index([authorEmail])
+}
+
+model PageReviewHelpful {
+  id        Int      @id @default(autoincrement())
+  reviewId  Int
+  userEmail String
+  createdAt DateTime @default(now())
+
+  @@unique([reviewId, userEmail])
+  @@index([reviewId])
+}
+
+model PageReviewReply {
+  id          Int      @id @default(autoincrement())
+  reviewId    Int
+  authorEmail String
+  text        String
+  createdAt   DateTime @default(now())
+
+  @@index([reviewId])
+}
+
+model PagePost {
+  id              Int      @id @default(autoincrement())
+  pageId          Int
+  page            Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  authorEmail     String
+  author          User     @relation(fields: [authorEmail], references: [email], onDelete: Cascade)
+  content         String
+  images          String? // JSON array of image URLs
+  video           String? // video URL
+  tags            String? // JSON array of tags
+  feeling         String? // feeling label
+  location        String? // location name
+  event           String? // JSON object with event details
+  backgroundColor String? // background color for text posts
+  textColor       String? // text color for text posts
+  backgroundImage String? // background image URL for text posts
+  likes           Int      @default(0)
+  commentsCount   Int      @default(0)
+  reactions       String?  // JSON array of reaction types
+  shares          Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  comments        PagePostComment[]
+}
+
+model PagePostComment {
+  id            Int       @id @default(autoincrement())
+  pagePostId    Int
+  pagePost      PagePost  @relation(fields: [pagePostId], references: [id], onDelete: Cascade)
+  authorEmail   String
+  text          String
+  parentId      Int?
+  parent        PagePostComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies       PagePostComment[] @relation("CommentReplies")
+  likes         Int       @default(0)
+  likedBy       String?   // JSON array of user emails who liked
+  createdAt     DateTime  @default(now())
 }
 
 model Video {
@@ -411,4 +501,17 @@ model VideoLike {
   createdAt DateTime @default(now())
 
   @@unique([videoId, userId])
+}
+
+model EventParticipant {
+  id            Int       @id @default(autoincrement())
+  postId        Int
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventTitle    String?
+  eventDate     DateTime?
+  eventLocation String?
+  createdAt     DateTime  @default(now())
+
+  @@unique([postId, userId])
 }

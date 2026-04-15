@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react'
 import ProfessionalLiveVideo from './ProfessionalLiveVideo'
 
-export default function CreatePost({ onOpen, user, onOpenTextPublication, sponsorTitle = null }) {
+export default function CreatePost({ onOpen, user, onOpenTextPublication, sponsorTitle = null, sponsorAvatar = null }) {
   const name = user?.prenom || user?.nomUtilisateur || (user?.email ? user.email.split('@')[0] : 'Jean')
   const initials = user?.prenom ? `${user.prenom[0]}${(user.nom || '')[0] || ''}`.toUpperCase() : (user?.nomUtilisateur ? user.nomUtilisateur.slice(0, 2).toUpperCase() : 'JD')
   const [isHovered, setIsHovered] = useState(false)
@@ -31,7 +31,9 @@ export default function CreatePost({ onOpen, user, onOpenTextPublication, sponso
     <div className="create-post-card">
       <div className="create-post-header">
         <div className="create-post-avatar-wrapper">
-          {user && (user.avatarUrl || user.avatar) ? (
+          {sponsorAvatar ? (
+            <img src={sponsorAvatar} alt="avatar" className="create-post-avatar" />
+          ) : user && (user.avatarUrl || user.avatar) ? (
             <img src={user.avatarUrl || user.avatar} alt="avatar" className="create-post-avatar" />
           ) : (
             <div className="create-post-avatar-placeholder">{initials}</div>

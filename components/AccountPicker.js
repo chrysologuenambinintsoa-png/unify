@@ -355,10 +355,6 @@ export default function AccountPicker() {
                     >
                       <FontAwesomeIcon icon={faSignOut} />
                     </button>
-                    {/* Flèche ronde animée pour changement de compte */}
-                    <span className={styles.switchArrowWrapper} title="Changer de compte">
-                      <FontAwesomeIcon icon={faRotate} className={styles.switchArrow} />
-                    </span>
                   </div>
 
                   <h3 className={styles.accountName}>

@@ -1,0 +1,27 @@
+.up-contribute-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--up-radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--up-transition);
+  border: 1px solid var(--up-primary);
+  background: var(--up-primary-light, #f3f6fd);
+  color: var(--up-primary, #1877f2);
+  white-space: nowrap;
+}
+
+.up-contribute-btn:hover {
+  background: var(--up-primary, #1877f2);
+  color: #fff;
+  border-color: var(--up-primary, #1877f2);
+}
+
+.up-contribute-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}

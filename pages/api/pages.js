@@ -60,6 +60,12 @@ export default async function handler(req, res) {
     switch (method) {
       case 'GET':
         if (pageId) {
+          // Increment visit count for the page
+          await prisma.page.update({
+            where: { id: parseInt(pageId) || pageId },
+            data: { visits: { increment: 1 } }
+          }).catch(() => {})
+
           const page = await prisma.page.findUnique({
             where: { id: parseInt(pageId) || pageId },
             include: {
@@ -79,7 +85,8 @@ export default async function handler(req, res) {
             profileImage: page.avatar,
             coverImage: page.cover,
             following: !!isFollowing,
-            followers: page._count.followers
+            followers: page._count.followers,
+            checkInsCount: page.visits
           })
         } else {
           const pages = await prisma.page.findMany({
@@ -107,6 +114,11 @@ export default async function handler(req, res) {
         const name = fields.name?.[0]
         const description = fields.description?.[0] || ''
         const category = fields.category?.[0]
+        const subcategory = fields.subcategory?.[0] || ''
+        const address = fields.address?.[0] || ''
+        const phone = fields.phone?.[0] || ''
+        const website = fields.website?.[0] || ''
+        const contactEmail = fields.contactEmail?.[0] || ''
         const privacy = fields.privacy?.[0] || 'public'
         
         if (!name || !category) {
@@ -140,9 +152,17 @@ export default async function handler(req, res) {
             name,
             description: description || '',
             category: category || 'Autre',
+            subcategory: subcategory || '',
+            address: address || '',
+            phone: phone || '',
+            website: website || '',
+            contactEmail: contactEmail || '',
             avatar: profileImageBase64 || '',
             cover: coverImageBase64 || '',
             privacy: privacy || 'public',
+            isPublic: true,
+            isPublished: true,
+            notificationsEnabled: true,
             ownerEmail: user.email
           },
           include: { owner: true }
@@ -182,7 +202,7 @@ export default async function handler(req, res) {
         }
 
         // Update page data
-        const { name, description, privacy, profileImage, coverImage } = req.body
+        const { name, description, category, subcategory, address, phone, website, contactEmail, privacy, profileImage, coverImage, isPublic, isPublished, notificationsEnabled } = req.body
         console.log('PUT request for page update:', {
           pageId,
           userEmail: user?.email,
@@ -193,9 +213,18 @@ export default async function handler(req, res) {
         const updateData = {}
         if (name !== undefined) updateData.name = name
         if (description !== undefined) updateData.description = description
+        if (category !== undefined) updateData.category = category
+        if (subcategory !== undefined) updateData.subcategory = subcategory
+        if (address !== undefined) updateData.address = address
+        if (phone !== undefined) updateData.phone = phone
+        if (website !== undefined) updateData.website = website
+        if (contactEmail !== undefined) updateData.contactEmail = contactEmail
         if (privacy !== undefined) updateData.privacy = privacy
         if (profileImage !== undefined) updateData.avatar = profileImage
         if (coverImage !== undefined) updateData.cover = coverImage
+        if (isPublic !== undefined) updateData.isPublic = isPublic
+        if (isPublished !== undefined) updateData.isPublished = isPublished
+        if (notificationsEnabled !== undefined) updateData.notificationsEnabled = notificationsEnabled
 
         console.log('Update data prepared:', updateData)
 
@@ -229,6 +258,17 @@ export default async function handler(req, res) {
         }
 
         const updateData = {}
+
+        // Process text fields
+        if (fields.name?.[0]) updateData.name = fields.name[0]
+        if (fields.description?.[0] !== undefined) updateData.description = fields.description[0]
+        if (fields.category?.[0]) updateData.category = fields.category[0]
+        if (fields.subcategory?.[0] !== undefined) updateData.subcategory = fields.subcategory[0]
+        if (fields.address?.[0] !== undefined) updateData.address = fields.address[0]
+        if (fields.phone?.[0] !== undefined) updateData.phone = fields.phone[0]
+        if (fields.website?.[0] !== undefined) updateData.website = fields.website[0]
+        if (fields.contactEmail?.[0] !== undefined) updateData.contactEmail = fields.contactEmail[0]
+        if (fields.privacy?.[0]) updateData.privacy = fields.privacy[0]
 
         // Process profile image if provided
         if (files.profileImage) {

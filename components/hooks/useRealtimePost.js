@@ -5,7 +5,8 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 
-export const useRealtimePost = (postId, initialPost = null) => {
+// Troisième argument optionnel: apiUrl
+export const useRealtimePost = (postId, initialPost = null, apiUrl = null) => {
   const [post, setPost] = useState(initialPost)
   const [isUpdating, setIsUpdating] = useState(false)
   const [lastUpdate, setLastUpdate] = useState(Date.now())
@@ -18,7 +19,8 @@ export const useRealtimePost = (postId, initialPost = null) => {
 
     try {
       setIsUpdating(true)
-      const response = await fetch(`/api/items/${postId}`)
+      const url = apiUrl || `/api/items/${postId}`;
+      const response = await fetch(url)
       
       if (response.ok) {
         const updatedPost = await response.json()

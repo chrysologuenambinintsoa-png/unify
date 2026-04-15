@@ -1,4 +1,47 @@
-'use client';
+"use client";
+// Labels pour les étoiles (avis)
+const STAR_LABELS = {
+  1: 'Très mauvais',
+  2: 'Mauvais',
+  3: 'Moyen',
+  4: 'Bon',
+  5: 'Excellent',
+};
+// Formateur de date relative (ex: "il y a 2h", "hier", etc.)
+function formatTimeAgo(date) {
+  if (!date) return '';
+  const now = new Date();
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  const diff = now - d;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  if (diff < 60000) return "A l'instant";
+  if (diff < 3600000) return `Il y a ${Math.floor(diff / 60000)} min`;
+  if (diff < 86400000) return `Il y a ${Math.floor(diff / 3600000)} h`;
+  if (days === 1) return 'Hier';
+  if (days < 7) return `Il y a ${days} j`;
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+}
+
+// Formateur de nombres avec séparateur de milliers
+function formatNumber(n) {
+  if (typeof n !== 'number') return n;
+  return n.toLocaleString('fr-FR');
+}
+
+const PAGE_TABS = [
+  { id: 'publications', label: 'Publications', icon: 'FileText' },
+  { id: 'about', label: 'À propos', icon: 'Info' },
+  { id: 'photos', label: 'Photos', icon: 'Image' },
+  { id: 'videos', label: 'Vidéos', icon: 'Video' },
+  { id: 'events', label: 'Événements', icon: 'Calendar' },
+  { id: 'reviews', label: 'Avis', icon: 'Star' },
+  { id: 'community', label: 'Communauté', icon: 'Users' },
+];
+
+import { Icons } from '../../Icons.js';
+import stylesContrib from './Page.contribute-btn.module.css';
+import eventCardStyles from '../../../styles/up-event-card.module.css';
 
 import React, {
   useState,
@@ -60,107 +103,10 @@ import Modal from '../../Modal';
 import { PageSkeleton } from '../../Skeleton';
 import CreatePost from '../../CreatePost';
 import CreatePostModal from '../../CreatePostModal';
-import PostCard from '../../PostCard';
-
-/* ============================================
-   Constants
-   ============================================ */
-const REACTION_EMOJIS = [
-  { emoji: '👍', label: "J'aime", color: '#003d5c' },
-  { emoji: '❤️', label: "J'adore", color: '#F33E58' },
-  { emoji: '😂', label: 'Haha', color: '#F7B125' },
-  { emoji: '😮', label: 'Wouah', color: '#F7B125' },
-  { emoji: '😢', label: 'Triste', color: '#F7B125' },
-  { emoji: '😡', label: 'Grrr', color: '#F33E58' },
-];
-
-const PAGE_TABS = [
-  { id: 'publications', label: 'Publications', icon: 'FileText' },
-  { id: 'about', label: 'À propos', icon: 'Info' },
-  { id: 'photos', label: 'Photos', icon: 'Image' },
-  { id: 'videos', label: 'Vidéos', icon: 'Video' },
-  { id: 'events', label: 'Événements', icon: 'Calendar' },
-  { id: 'reviews', label: 'Avis', icon: 'Star' },
-  { id: 'community', label: 'Communauté', icon: 'Users' },
-];
-
-const STAR_LABELS = ['', 'Très mauvais', 'Mauvais', 'Correct', 'Bien', 'Excellent'];
-
-const DAYS_FR = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-
-/* ============================================
-   Utility Functions
-   ============================================ */
-const formatNumber = (num) => {
-  if (!num && num !== 0) return '';
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-  return num.toString();
-};
-
-const formatTimeAgo = (dateStr) => {
-  if (!dateStr) return '';
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diff = Math.floor((now - date) / 1000);
-  if (diff < 60) return "À l'instant";
-  if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)} h`;
-  if (diff < 604800) return `Il y a ${Math.floor(diff / 86400)} j`;
-  if (diff < 2592000) return `Il y a ${Math.floor(diff / 604800)} sem`;
-  return `Il y a ${Math.floor(diff / 2592000)} m`;
-};
-
-const generateId = () => Math.random().toString(36).substr(2, 9);
-
-/* ============================================
-   Icons (FontAwesome)
-   ============================================ */
-const Icons = {
-  Globe: () => <FontAwesomeIcon icon={faGlobe} />,
-  Users: () => <FontAwesomeIcon icon={faUsers} />,
-  Plus: () => <FontAwesomeIcon icon={faPlus} />,
-  Image: () => <FontAwesomeIcon icon={faImage} />,
-  Video: () => <FontAwesomeIcon icon={faVideo} />,
-  Smile: () => <FontAwesomeIcon icon={faFaceSmile} />,
-  ThumbsUp: () => <FontAwesomeIcon icon={faThumbsUp} />,
-  Comment: () => <FontAwesomeIcon icon={faComment} />,
-  Share: () => <FontAwesomeIcon icon={faShare} />,
-  MoreHorizontal: () => <FontAwesomeIcon icon={faEllipsisH} />,
-  Bookmark: () => <FontAwesomeIcon icon={faBookmark} />,
-  Check: () => <FontAwesomeIcon icon={faCheck} />,
-  X: () => <FontAwesomeIcon icon={faXmark} />,
-  ChevronDown: () => <FontAwesomeIcon icon={faChevronDown} />,
-  Calendar: () => <FontAwesomeIcon icon={faCalendar} />,
-  MapPin: () => <FontAwesomeIcon icon={faMapPin} />,
-  Phone: () => <FontAwesomeIcon icon={faPhone} />,
-  Mail: () => <FontAwesomeIcon icon={faEnvelope} />,
-  Link: () => <FontAwesomeIcon icon={faLink} />,
-  Star: () => <FontAwesomeIcon icon={faStar} />,
-  StarEmpty: () => <FontAwesomeIcon icon={faStar} />,
-  Heart: () => <FontAwesomeIcon icon={faHeart} />,
-  Send: () => <FontAwesomeIcon icon={faPaperPlane} />,
-  Camera: () => <FontAwesomeIcon icon={faCamera} />,
-  Edit: () => <FontAwesomeIcon icon={faPen} />,
-  Search: () => <FontAwesomeIcon icon={faSearch} />,
-  Flag: () => <FontAwesomeIcon icon={faFlag} />,
-  Pinned: () => <FontAwesomeIcon icon={faThumbtack} />,
-  ExternalLink: () => <FontAwesomeIcon icon={faExternalLinkAlt} />,
-  Clock: () => <FontAwesomeIcon icon={faClock} />,
-  Play: () => <FontAwesomeIcon icon={faPlay} />,
-  Tag: () => <FontAwesomeIcon icon={faTag} />,
-  MessageCircle: () => <FontAwesomeIcon icon={faComments} />,
-  UserPlus: () => <FontAwesomeIcon icon={faUserPlus} />,
-  FileText: () => <FontAwesomeIcon icon={faFileAlt} />,
-  Info: () => <FontAwesomeIcon icon={faInfoCircle} />,
-  Copy: () => <FontAwesomeIcon icon={faCopy} />,
-  Filter: () => <FontAwesomeIcon icon={faFilter} />,
-  Sort: () => <FontAwesomeIcon icon={faSort} />,
-  Settings: () => <FontAwesomeIcon icon={faCog} />,
-  Megaphone: () => <FontAwesomeIcon icon={faBullhorn} />,
-  Map: () => <FontAwesomeIcon icon={faMap} />,
-  Shield: () => <FontAwesomeIcon icon={faShieldAlt} />,
-};
+import TextPostCreator from '../../TextPostCreator';
+import PagePostCard from '../../PagePostCard';
+import InviteModal from '../../InviteModal';
+import Toast from '../../Toast';
 
 const FEELING_OPTIONS = [
   { emoji: '😊', label: 'Joyeux' },
@@ -174,6 +120,217 @@ const FEELING_OPTIONS = [
 /* ============================================
    Sub-Components
    ============================================ */
+
+// ================= VIDEO VIEWER MODAL =================
+const VideoViewerModal = ({ video, videoIndex, totalVideos, onClose, onPrev, onNext, canPrev, canNext, pageId, currentUser }) => {
+  const [videoPlayerRef, setVideoPlayerRef] = useState(null);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [videoMuted, setVideoMuted] = useState(false);
+  const [videoCurrentTime, setVideoCurrentTime] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [videoProgress, setVideoProgress] = useState(0);
+  const [likeCount, setLikeCount] = useState(video.likes || 0);
+  const [liked, setLiked] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [followed, setFollowed] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [shareCopied, setShareCopied] = useState(false);
+
+  useEffect(() => {
+    setLikeCount(video.likes || 0);
+    setLiked(false);
+    setComments([]);
+    setCommentText("");
+    setShareCopied(false);
+    setLoadingComments(true);
+    fetch(`/api/items/${video.id}/comments`)
+      .then(res => res.json())
+      .then(data => setComments(Array.isArray(data) ? data : []))
+      .catch(() => {})
+      .finally(() => setLoadingComments(false));
+    if (pageId) {
+      fetch(`/api/pages/${pageId}/follow`, { method: 'GET', credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+          setFollowed(!!data.isFollowing);
+          setFollowersCount(data.followersCount || 0);
+        })
+        .catch(() => {});
+    }
+  }, [video.id, pageId]);
+
+  const handleLike = async () => {
+    if (!currentUser || liked) return;
+    setLiked(true);
+    setLikeCount(prev => prev + 1);
+    await fetch(`/api/items/${video.id}/reactions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'like', userEmail: currentUser.email })
+    }).catch(() => {});
+  };
+
+  const handleComment = async () => {
+    if (!currentUser || !commentText.trim()) return;
+    try {
+      const res = await fetch(`/api/items/${video.id}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: commentText, author: currentUser.email, authorEmail: currentUser.email })
+      });
+      if (res.ok) {
+        const newComment = await res.json();
+        setComments(prev => [...prev, newComment]);
+        setCommentText("");
+      }
+    } catch (e) {}
+  };
+
+  const handleFollow = async () => {
+    if (!currentUser || !pageId) return;
+    try {
+      if (followed) {
+        await fetch(`/api/pages/${pageId}/follow`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userEmail: currentUser.email })
+        });
+        setFollowed(false);
+        setFollowersCount(prev => prev - 1);
+      } else {
+        await fetch(`/api/pages/${pageId}/follow`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userEmail: currentUser.email })
+        });
+        setFollowed(true);
+        setFollowersCount(prev => prev + 1);
+      }
+    } catch (e) {}
+  };
+
+  const handleShare = () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.origin + `/videos/${video.id}`);
+    }
+    setShareCopied(true);
+    setTimeout(() => setShareCopied(false), 2000);
+  };
+
+  return (
+    <div className="up-modal-overlay" onClick={onClose} style={{zIndex: 9999, background: 'rgba(0,0,0,0.92)'}}>
+      <div className="up-video-viewer" onClick={e => e.stopPropagation()} style={{position: 'relative', width: '90vw', maxWidth: 1000, background: '#000', borderRadius: 12, overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,0.6)'}}>
+        {/* Header */}
+        <div style={{position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)', flexWrap: 'wrap', gap: 8}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+            <span style={{color: '#fff', fontSize: 16, fontWeight: 600}}>{video.title}</span>
+            <button onClick={handleFollow} style={{marginLeft: 16, background: followed ? '#1877f2' : '#fff', color: followed ? '#fff' : '#1877f2', border: 'none', borderRadius: 20, padding: '4px 16px', fontWeight: 600, cursor: 'pointer'}}>
+              {followed ? 'Abonn\u00e9' : "S'abonner"} ({followersCount})
+            </button>
+          </div>
+          <button onClick={onClose} style={{background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%', width: 36, height: 36, color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s'}}>
+            <Icons.X size={20} />
+          </button>
+        </div>
+
+        {/* Video Player */}
+        <div style={{position: 'relative', paddingTop: '56.25%'}}>
+          <video
+            ref={setVideoPlayerRef}
+            src={video.url || video.videoUrl}
+            poster={video.thumbnail}
+            style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain', background: '#000'}}
+            onPlay={() => setVideoPlaying(true)}
+            onPause={() => setVideoPlaying(false)}
+            onTimeUpdate={e => {
+              setVideoCurrentTime(e.target.currentTime);
+              setVideoProgress((e.target.currentTime / e.target.duration) * 100);
+            }}
+            onLoadedMetadata={e => setVideoDuration(e.target.duration)}
+            onEnded={() => setVideoPlaying(false)}
+            onVolumeChange={e => setVideoMuted(e.target.muted)}
+            onClick={e => { if (e.target.paused) { e.target.play(); } else { e.target.pause(); } }}
+            controls
+          />
+        </div>
+
+        {/* Action Bar */}
+        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#1a1a1a', flexWrap: 'wrap', gap: 12}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
+            <button onClick={handleLike} style={{background: liked ? '#1877f2' : 'transparent', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 10px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6}}>
+              <Icons.ThumbsUp size={18} /> J&apos;aime ({likeCount})
+            </button>
+            <button onClick={() => videoPlayerRef && (videoPlayerRef.paused ? videoPlayerRef.play() : videoPlayerRef.pause())} style={{background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, padding: '6px 10px', borderRadius: 6}}>
+              {videoPlaying ? <Icons.Pause size={18} /> : <Icons.Play size={18} />}
+              <span>{videoPlaying ? 'Pause' : 'Lecture'}</span>
+            </button>
+            <button onClick={handleShare} style={{background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, padding: '6px 10px', borderRadius: 6}}>
+              <Icons.Share size={18} /> {shareCopied ? 'Lien copi\u00e9 !' : 'Partager'}
+            </button>
+          </div>
+          <div style={{color: '#b0b3b8', fontSize: 13}}>{formatNumber(video.views || 0)} vues · {formatTimeAgo(video.createdAt)}</div>
+        </div>
+
+        {/* Progress Bar */}
+        <div style={{height: 5, background: 'rgba(255,255,255,0.2)', cursor: 'pointer', position: 'relative'}} onClick={e => {
+          if (videoPlayerRef && videoDuration) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            videoPlayerRef.currentTime = percent * videoDuration;
+          }
+        }}>
+          <div style={{height: '100%', width: `${videoProgress}%`, background: '#1877f2', transition: 'width 0.1s linear'}} />
+        </div>
+
+        {/* Comments Section */}
+        <div style={{background: '#18191a', padding: 16, minHeight: 180}}>
+          <h4 style={{color: '#fff', marginBottom: 8}}>Commentaires</h4>
+          {loadingComments ? <div style={{color: '#b0b3b8'}}>Chargement...</div> : (
+            <div style={{maxHeight: 200, overflowY: 'auto', marginBottom: 8}}>
+              {comments.length === 0 && <div style={{color: '#b0b3b8'}}>Aucun commentaire</div>}
+              {comments.map((c, i) => (
+                <div key={c.id || i} style={{display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 8}}>
+                  <img src={c.authorUser?.avatar || '/images/default-page.png'} alt="avatar" style={{width: 32, height: 32, borderRadius: '50%'}} />
+                  <div>
+                    <div style={{color: '#fff', fontWeight: 600, fontSize: 14}}>{c.authorUser?.prenom || c.authorUser?.email || c.author || 'Utilisateur'}</div>
+                    <div style={{color: '#b0b3b8', fontSize: 13}}>{c.text}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {currentUser && (
+            <div style={{display: 'flex', alignItems: 'center', gap: 8, marginTop: 8}}>
+              <input type="text" value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Ajouter un commentaire..." style={{flex: 1, borderRadius: 20, border: 'none', padding: '8px 14px', fontSize: 14}} onKeyDown={e => e.key === 'Enter' && handleComment()} />
+              <button onClick={handleComment} style={{background: '#1877f2', color: '#fff', border: 'none', borderRadius: 20, padding: '8px 16px', fontWeight: 600, cursor: 'pointer'}}>Envoyer</button>
+            </div>
+          )}
+        </div>
+
+        {/* Navigation arrows & counter */}
+        {totalVideos > 1 && (
+          <>
+            {canPrev && (
+              <button onClick={onPrev} style={{position: 'absolute', left: 16, top: '40%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: 48, height: 48, color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s', zIndex: 10}}>
+                <Icons.ArrowLeft size={24} />
+              </button>
+            )}
+            {canNext && (
+              <button onClick={onNext} style={{position: 'absolute', right: 16, top: '40%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: 48, height: 48, color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s', zIndex: 10}}>
+                <Icons.ArrowRight size={24} />
+              </button>
+            )}
+            <div style={{position: 'absolute', top: 16, right: 60, background: 'rgba(0,0,0,0.6)', borderRadius: 20, padding: '6px 12px', color: '#fff', fontSize: 13}}>
+              {videoIndex + 1} / {totalVideos}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 
 /* --- Reaction Tooltip --- */
 const ReactionTooltip = ({ show, onReaction, onClose }) => {
@@ -297,7 +454,7 @@ const CommentItem = ({ comment, onLike, onReply, currentUserId, depth = 0 }) => 
 };
 
 /* --- Post Item --- */
-const PostItem = ({ post, currentUser, currentPageData, onReaction, onComment, onLikeComment, onReplyComment, onToggleSave, onDelete, onShare }) => {
+const PostItem = ({ post, currentUser, currentPageData, currentPageId, router, onReaction, onComment, onLikeComment, onReplyComment, onToggleSave, onDelete, onShare }) => {
   const [commentText, setCommentText] = useState('');
   const [showComments, setShowComments] = useState(false);
   const [showReactionBar, setShowReactionBar] = useState(false);
@@ -356,68 +513,47 @@ const PostItem = ({ post, currentUser, currentPageData, onReaction, onComment, o
 
       <div className="up-post-header">
         <div className="up-post-author-info">
-          <div className="up-post-avatar">
-            <img src={post.author.avatar} alt={post.author.name} />
-          </div>
-          <div className="up-post-author-details">
-            <div className="up-post-author-name-row">
-              <span className="up-post-author-name">{post.author.name}</span>
-              {post.author.verified && (
-                <span className="up-verified-badge" title="Vérifié">
-                  <Icons.Check />
-                </span>
-              )}
-              {post.isSponsor && (
-                <span className="up-sponsor-badge" title="Sponsorisé">
-                  <Icons.Megaphone />
-                  Sponsorisé
-                </span>
-              )}
-            </div>
-            <div className="up-post-meta">
-              <span className="up-post-time">{formatTimeAgo(post.createdAt)}</span>
-              <span className="up-post-separator">·</span>
-              <span className="up-post-visibility">
-                <Icons.Globe />
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="up-post-actions">
-          {(isPageOwner) && (
-            <div className="up-post-menu">
+          <div className="up-dashboard-actions">
+            <button className="up-dashboard-btn-compact" onClick={() => router.push(`/dashboard/page-admin/${currentPageId}`)}>
+              <Icons.User /> <span>Tableau de bord</span>
+            </button>
+            <button className="up-dashboard-btn-compact" onClick={() => setShowInviteModal(true)}>
+              <Icons.UserPlus /> <span>Inviter</span>
+            </button>
+            <button className="up-dashboard-btn-compact" onClick={handleOpenSponsorModal}>
+              <Icons.Megaphone /> <span>Promouvoir</span>
+            </button>
+            <div className="up-owner-menu">
               <button
                 className="up-icon-btn"
-                onClick={() => setShowPostMenu(!showPostMenu)}
+                onClick={() => setShowOwnerMenu(!showOwnerMenu)}
               >
                 <Icons.MoreHorizontal />
               </button>
-              {showPostMenu && (
+              {showOwnerMenu && (
                 <>
-                  <div className="up-overlay" onClick={() => setShowPostMenu(false)} />
+                  <div className="up-overlay" onClick={() => setShowOwnerMenu(false)} />
                   <div className="up-dropdown-menu up-dropdown-top">
-                    {!post.pinned && (
-                      <button onClick={() => { setShowPostMenu(false); }}>
-                        <Icons.Pinned /> Épingler la publication
-                      </button>
-                    )}
-                    {post.pinned && (
-                      <button onClick={() => { setShowPostMenu(false); }}>
-                        <Icons.Pinned /> Désépingler la publication
-                      </button>
-                    )}
-                    <button onClick={() => setShowPostMenu(false)}>
-                      <Icons.Edit /> Modifier la publication
+                    <button onClick={() => handleOwnerAction('edit')}>
+                      <Icons.Edit /> Modifier la page
                     </button>
-                    <button className="up-dropdown-danger" onClick={() => { onDelete(post.id); setShowPostMenu(false); }}>
-                      <Icons.X /> Supprimer la publication
+                    <button onClick={() => handleOwnerAction('settings')}>
+                      <Icons.Settings /> Paramètres
+                    </button>
+                    <button onClick={handleOpenSponsorModal}>
+                      <Icons.Megaphone /> Promouvoir
+                    </button>
+                    <button onClick={() => setShowInviteModal(true)}>
+                      <Icons.UserPlus /> Inviter
+                    </button>
+                    <button className="up-dropdown-danger" onClick={() => handleOwnerAction('delete')}>
+                      <Icons.Trash2 /> Supprimer la page
                     </button>
                   </div>
                 </>
               )}
             </div>
-          )}
+          </div>
           <button 
             className="up-icon-btn" 
             onClick={() => onToggleSave(post.id)}
@@ -437,27 +573,88 @@ const PostItem = ({ post, currentUser, currentPageData, onReaction, onComment, o
             ))}
           </div>
         )}
-        {(post.feeling || post.location || post.event) && (
-          <div className="up-post-meta-flair up-meta-box">
-            {post.feeling && (
-              <span className="up-feeling-badge">
-                <span>{FEELING_OPTIONS.find((f) => f.label === post.feeling)?.emoji || '🙂'}</span>
-                {post.feeling}
-              </span>
+
+        {/* Special Event Card Display */}
+        {post.event && post.event.title && (
+          <div className={eventCardStyles['up-event-card']}>
+            {post.event.coverImage && (
+              <img src={post.event.coverImage} alt={post.event.title} className={eventCardStyles['up-event-card-cover']} />
             )}
-            {post.location && (
-              <span className="up-location-badge">
-                <Icons.MapPin /> {post.location}
-              </span>
-            )}
-            {post.event && (
-              <span className="up-event-badge">
-                <Icons.Calendar /> {post.event.title}
-              </span>
-            )}
+            <div className={eventCardStyles['up-event-card-content']}>
+              <div className={eventCardStyles['up-event-card-date']}>
+                <Icons.Calendar />
+                {post.event.date && (
+                  <span>
+                    {new Date(post.event.date).toLocaleDateString('fr-FR', {
+                      weekday: 'long',
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                )}
+              </div>
+              <h4 className={eventCardStyles['up-event-card-title']}>{post.event.title}</h4>
+              {post.event.location && (
+                <div className={eventCardStyles['up-event-card-location']}>
+                  <Icons.MapPin /> {post.event.location}
+                </div>
+              )}
+              {post.event.description && (
+                <p className={eventCardStyles['up-event-card-desc']}>{post.event.description}</p>
+              )}
+              <button 
+                className={eventCardStyles['up-event-card-btn']}
+                onClick={() => {
+                  let userEmail = currentUser?.email || null;
+                  if (!userEmail && typeof window !== 'undefined') {
+                    try {
+                      const storedUser = localStorage.getItem('user');
+                      if (storedUser) {
+                        const parsedUser = JSON.parse(storedUser);
+                        userEmail = parsedUser?.email || null;
+                      }
+                    } catch (e) {}
+                    if (!userEmail) {
+                      userEmail = localStorage.getItem('user_email');
+                    }
+                  }
+                  if (!userEmail) {
+                    alert('Vous devez être connecté pour participer à un événement.');
+                    return;
+                  }
+                  handleEventParticipate(post.id);
+                }}
+              >
+                {post.userParticipating ? 'Participe' : 'Participer'}
+              </button>
+            </div>
           </div>
         )}
-        <p className="up-post-text">{post.content}</p>
+
+        {/* Regular Meta (when no special event card) */}
+        {!post.event && (
+          <>
+            {(post.feeling || post.location) && (
+              <div className="up-post-meta-flair up-meta-box">
+                {post.feeling && (
+                  <span className="up-feeling-badge">
+                    <span>{FEELING_OPTIONS.find((f) => f.label === post.feeling)?.emoji || '🙂'}</span>
+                    {post.feeling}
+                  </span>
+                )}
+                {post.location && (
+                  <span className="up-location-badge">
+                    <Icons.MapPin /> {post.location}
+                  </span>
+                )}
+              </div>
+            )}
+            <p className="up-post-text">{post.content}</p>
+          </>
+        )}
       </div>
 
       {post.images && post.images.length > 0 && (
@@ -472,6 +669,23 @@ const PostItem = ({ post, currentUser, currentPageData, onReaction, onComment, o
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Video Post - Using professional video viewer */}
+      {(post.video || (post.media && post.media.type === 'video')) && (
+        <div className="up-post-video">
+          <video 
+            src={post.video || post.media?.url} 
+            controls 
+            style={{
+              width: '100%',
+              maxHeight: '500px',
+              borderRadius: '8px',
+              backgroundColor: '#000'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
 
@@ -593,52 +807,103 @@ const PostItem = ({ post, currentUser, currentPageData, onReaction, onComment, o
 };
 
 /* --- Review Item --- */
-const ReviewItem = ({ review }) => (
-  <div className="up-review-item">
-    <div className="up-review-header">
-      <div className="up-review-author">
-        <img src={review.author.avatar} alt={review.author.name} className="up-review-avatar" />
-        <div className="up-review-author-info">
-          <span className="up-review-name">{review.author.name}</span>
-          <span className="up-review-date">{formatTimeAgo(review.createdAt)}</span>
+const ReviewItem = ({ review, helpfulCount = 0, userVoted = false, replies = [], onHelpful, onReply, currentUserEmail }) => {
+  const [showReplyInput, setShowReplyInput] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [showReplies, setShowReplies] = useState(false);
+
+  const handleHelpfulClick = () => {
+    if (onHelpful) onHelpful();
+  };
+
+  const handleSubmitReply = () => {
+    if (replyText.trim() && onReply) {
+      onReply(replyText);
+      setReplyText('');
+      setShowReplyInput(false);
+    }
+  };
+
+  return (
+    <div className="up-review-item">
+      <div className="up-review-header">
+        <div className="up-review-author">
+          <img src={review.author.avatar} alt={review.author.name} className="up-review-avatar" />
+          <div className="up-review-author-info">
+            <span className="up-review-name">{review.author.name}</span>
+            <span className="up-review-date">{formatTimeAgo(review.createdAt)}</span>
+          </div>
+        </div>
+        <div className="up-review-rating">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              className={`up-star ${star <= review.rating ? 'up-star-filled' : 'up-star-empty'}`}
+            >
+              {star <= review.rating ? <Icons.Star /> : <Icons.StarEmpty />}
+            </span>
+          ))}
         </div>
       </div>
-      <div className="up-review-rating">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <span
-            key={star}
-            className={`up-star ${star <= review.rating ? 'up-star-filled' : 'up-star-empty'}`}
-          >
-            {star <= review.rating ? <Icons.Star /> : <Icons.StarEmpty />}
-          </span>
-        ))}
+      {review.recommends !== undefined && (
+        <div className={`up-review-recommend ${review.recommends ? 'up-recommend-yes' : 'up-recommend-no'}`}>
+          {review.recommends ? <Icons.ThumbsUp /> : <Icons.ThumbsUp />}
+          <span>{review.recommends ? 'Recommande' : 'Ne recommande pas'}</span>
+        </div>
+      )}
+      {review.text && (
+        <p className="up-review-text">{review.text}</p>
+      )}
+      <div className="up-review-footer">
+        <button className={`up-review-action ${userVoted ? 'up-review-action-voted' : ''}`} onClick={handleHelpfulClick}>
+          <Icons.ThumbsUp /> Utile ({helpfulCount})
+        </button>
+        <button className="up-review-action" onClick={() => setShowReplyInput(!showReplyInput)}>
+          <Icons.Comment /> Répondre
+        </button>
       </div>
+
+      {showReplyInput && (
+        <div className="up-review-reply-input">
+          <input
+            type="text"
+            placeholder="Écrire une réponse..."
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmitReply()}
+          />
+          <button onClick={handleSubmitReply} disabled={!replyText.trim()}>
+            <Icons.Send />
+          </button>
+        </div>
+      )}
+
+      {replies && replies.length > 0 && (
+        <div className="up-review-replies">
+          <button className="up-replies-toggle" onClick={() => setShowReplies(!showReplies)}>
+            {showReplies ? 'Masquer' : 'Afficher'} les réponses ({replies.length})
+          </button>
+          {showReplies && replies.map((reply) => (
+            <div key={reply.id} className="up-review-reply-item">
+              <div className="up-reply-author">
+                <img src={reply.author.avatar} alt={reply.author.name} className="up-reply-avatar" />
+                <span className="up-reply-name">{reply.author.name}</span>
+                <span className="up-reply-date">{formatTimeAgo(review.createdAt)}</span>
+              </div>
+              <p className="up-reply-text">{reply.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-    {review.recommends !== undefined && (
-      <div className={`up-review-recommend ${review.recommends ? 'up-recommend-yes' : 'up-recommend-no'}`}>
-        {review.recommends ? <Icons.ThumbsUp /> : <Icons.ThumbsUp />}
-        <span>{review.recommends ? 'Recommande' : 'Ne recommande pas'}</span>
-      </div>
-    )}
-    {review.text && (
-      <p className="up-review-text">{review.text}</p>
-    )}
-    <div className="up-review-footer">
-      <button className="up-review-action">
-        <Icons.ThumbsUp /> Utile ({review.helpfulCount || 0})
-      </button>
-      <button className="up-review-action">
-        <Icons.Comment /> Répondre
-      </button>
-    </div>
-  </div>
-);
+  );
+};
 
 /* --- Photo Grid --- */
-const PhotoGrid = ({ photos }) => (
+const PhotoGrid = ({ photos, onPhotoClick }) => (
   <div className="up-photo-grid">
     {photos.map((photo, idx) => (
-      <div key={idx} className="up-photo-item">
+      <div key={idx} className="up-photo-item" onClick={() => onPhotoClick && onPhotoClick(idx)}>
         <img src={photo.url} alt={photo.caption || ''} />
         <div className="up-photo-overlay">
           <span className="up-photo-likes"><Icons.Heart /> {photo.likes || 0}</span>
@@ -650,8 +915,8 @@ const PhotoGrid = ({ photos }) => (
 );
 
 /* --- Video Item --- */
-const VideoItem = ({ video }) => (
-  <div className="up-video-item">
+const VideoItem = ({ video, onClick }) => (
+  <div className="up-video-item" onClick={() => onClick && onClick(video)}>
     <div className="up-video-thumbnail">
       <img src={video.thumbnail} alt={video.title} />
       <div className="up-video-play-btn">
@@ -673,37 +938,44 @@ const VideoItem = ({ video }) => (
 );
 
 /* --- Event Item --- */
-const EventItem = ({ event }) => (
-  <div className="up-event-item">
-    <div className="up-event-date">
-      <span className="up-event-month">
-        {new Date(event.date).toLocaleDateString('fr-FR', { month: 'short' })}
-      </span>
-      <span className="up-event-day">
-        {new Date(event.date).getDate()}
-      </span>
-    </div>
-    <div className="up-event-info">
-      <p className="up-event-title">{event.title}</p>
-      <p className="up-event-time">
-        {new Date(event.date).toLocaleDateString('fr-FR', {
-          weekday: 'long',
-          hour: '2-digit',
-          minute: '2-digit',
-        })}
-      </p>
-      {event.location && (
-        <p className="up-event-location">
-          <Icons.MapPin /> {event.location}
-        </p>
-      )}
-      <div className="up-event-interested">
-        <span>{event.interestedCount || 0} intéressés</span>
+const EventItem = ({ event }) => {
+  if (!event || !event.date) return null;
+  
+  const eventDate = new Date(event.date);
+  if (isNaN(eventDate.getTime())) return null;
+  
+  return (
+    <div className="up-event-item">
+      <div className="up-event-date">
+        <span className="up-event-month">
+          {eventDate.toLocaleDateString('fr-FR', { month: 'short' })}
+        </span>
+        <span className="up-event-day">
+          {eventDate.getDate()}
+        </span>
       </div>
+      <div className="up-event-info">
+        <p className="up-event-title">{event.title}</p>
+        <p className="up-event-time">
+          {eventDate.toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </p>
+        {event.location && (
+          <p className="up-event-location">
+            <Icons.MapPin /> {event.location}
+          </p>
+        )}
+        <div className="up-event-interested">
+          <span>{event.interestedCount || 0} intéressés</span>
+        </div>
+      </div>
+      <button className="up-event-join-btn">Intéressé(e)</button>
     </div>
-    <button className="up-event-join-btn">Intéressé(e)</button>
-  </div>
-);
+  );
+};
 
 /* --- Business Hours --- */
 const emptySubscribe = () => () => {};
@@ -783,16 +1055,20 @@ const StarRatingInput = ({ rating, onChange }) => (
    Main Page Component
    ============================================ */
 const UnifyPage = forwardRef(function UnifyPage(props, ref) {
-    // Rafraîchit la liste des posts après création via CreatePostModal
-useEffect(() => {
+  useEffect(() => {
     function handlePostCreated(e) {
       console.log('[Page] postCreated event received:', e?.detail);
       if (e?.detail && e.detail.id) {
+        const postWithCleanedMedia = {
+          ...e.detail,
+          media: null,
+          image: null
+        };
         setLocalPosts((prev) => {
           const exists = prev.some((p) => p.id === e.detail.id);
           if (exists) return prev;
           console.log('[Page] Adding post from event to localPosts:', e.detail.id);
-          return [e.detail, ...prev];
+          return [postWithCleanedMedia, ...prev];
         });
       }
     }
@@ -834,16 +1110,19 @@ useEffect(() => {
     onPostDelete,
     onTabChange,
     onPageUpdate,
+    onEventParticipate,
   } = props;
 
 
   /* --- State --- */
   const [activeTab, setActiveTab] = useState('publications');
+  // State pour la modale Contribuer
+  const [showContributeModal, setShowContributeModal] = useState(false);
   const [isFollowing, setIsFollowing] = useState(pageProp.isFollowing || false);
   const [isLiked, setIsLiked] = useState(pageProp.isLiked || false);
   const [localLikesCount, setLocalLikesCount] = useState(likesCountProp || pageProp.likesCount || 0);
   const [localFollowersCount, setLocalFollowersCount] = useState(followersCountProp || pageProp.followersCount || 0);
-  const [localCheckInsCount] = useState(checkInsCountProp || pageProp.checkInsCount || 0);
+  const [localCheckInsCount, setLocalCheckInsCount] = useState(checkInsCountProp || pageProp.checkInsCount || 0);
   const [showPostComposer, setShowPostComposer] = useState(false);
   const [postText, setPostText] = useState('');
   const [postImages, setPostImages] = useState([]);
@@ -858,6 +1137,9 @@ useEffect(() => {
   const [eventDate, setEventDate] = useState('');
   const [eventLocation, setEventLocation] = useState('');
   const [showEventForm, setShowEventForm] = useState(false);
+  const [postBackgroundColor, setPostBackgroundColor] = useState('');
+  const [postTextColor, setPostTextColor] = useState('');
+  const [postBackgroundImage, setPostBackgroundImage] = useState('');
   const [localPosts, setLocalPosts] = useState(posts || []);
   const [postsLoaded, setPostsLoaded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -865,6 +1147,7 @@ useEffect(() => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [sharedPostId, setSharedPostId] = useState(null);
   const [showOwnerMenu, setShowOwnerMenu] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showSponsorModal, setShowSponsorModal] = useState(false);
   const [sponsorLoading, setSponsorLoading] = useState(false);
@@ -900,6 +1183,28 @@ useEffect(() => {
   const [uploadModal, setUploadModal] = useState(null); // 'avatar' | 'cover' | null
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [pagePhotos, setPagePhotos] = useState(photos || []);
+  const [pageVideos, setPageVideos] = useState(videos || []);
+  const [pageReviews, setPageReviews] = useState(reviews || []);
+  const [pageEvents, setPageEvents] = useState(events || []);
+  const [eventsLoaded, setEventsLoaded] = useState(false);
+  const [reviewsLoaded, setReviewsLoaded] = useState(false);
+  const [reviewHelpfulCounts, setReviewHelpfulCounts] = useState({});
+  const [reviewUserVoted, setReviewUserVoted] = useState({});
+  const [reviewReplies, setReviewReplies] = useState({});
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
+  const [photoViewerOpen, setPhotoViewerOpen] = useState(false);
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState(null);
+  const [videoViewerOpen, setVideoViewerOpen] = useState(false);
+  const [videoPlayerRef, setVideoPlayerRef] = useState(null);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [videoProgress, setVideoProgress] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [videoCurrentTime, setVideoCurrentTime] = useState(0);
+  const [videoVolume, setVideoVolume] = useState(1);
+  const [videoMuted, setVideoMuted] = useState(false);
+  const [videoFullscreen, setVideoFullscreen] = useState(false);
 
   const fileInputRef = useRef(null);
   const coverInputRef = useRef(null);
@@ -924,11 +1229,13 @@ useEffect(() => {
           })
           .then(data => {
             const fetchedPosts = Array.isArray(data) ? data : (data.posts || []);
+            // Ne pas écraser media, image, video : garder les champs d'origine
+            const cleanedPosts = fetchedPosts.map(p => ({ ...p }));
             // Fusionne les posts locaux non encore en base (id temporaire ou id non trouvé dans l'API)
             setLocalPosts(prev => {
               const apiIds = new Set(fetchedPosts.map(p => p.id));
               const localOnly = prev.filter(p => !apiIds.has(p.id));
-              return [...localOnly, ...fetchedPosts];
+              return [...localOnly, ...cleanedPosts];
             });
             setPostsLoaded(true);
           })
@@ -954,6 +1261,10 @@ useEffect(() => {
       notificationsEnabled: pageProp.notificationsEnabled !== undefined ? pageProp.notificationsEnabled : true,
       publishEnabled: pageProp.isPublished !== undefined ? pageProp.isPublished : true,
     });
+    // Sync checkInsCount from props
+    if (pageProp.checkInsCount !== undefined) {
+      setLocalCheckInsCount(pageProp.checkInsCount);
+    }
   }, [pageProp.id]);
 
   // --- Fetch posts depuis l'API si besoin ---
@@ -968,23 +1279,23 @@ useEffect(() => {
         setPostsLoaded(true);
         return;
       }
-      // Use localPosts if already loaded with posts (avoid re-fetch)
-      if (postsLoaded && localPosts.length > 0) {
-        return;
-      }
-      setPostsLoaded(false);
-      if (posts && posts.length > 0 && !postsLoaded) {
+      // Always try to fetch fresh data when pageId changes
+      // First check props for posts (these come from server-side rendering)
+      if (posts && posts.length > 0) {
         console.log('[Page] Setting posts from props:', posts.length);
         setLocalPosts(posts);
         setPostsLoaded(true);
         return;
       }
-      if (pageProp.posts && pageProp.posts.length > 0 && !postsLoaded) {
+      if (pageProp.posts && pageProp.posts.length > 0) {
         console.log('[Page] Setting posts from pageProp.posts:', pageProp.posts.length);
         setLocalPosts(pageProp.posts);
         setPostsLoaded(true);
         return;
       }
+      // No posts in props, fetch from API
+      setPostsLoaded(false);
+      console.log('[Page] Fetching posts from API for page:', numericPageId);
       fetch(`/api/pages/${numericPageId}/posts`, { signal: controller.signal })
         .then(res => {
           if (controller.signal.aborted) return;
@@ -993,11 +1304,16 @@ useEffect(() => {
         .then(data => {
           if (controller.signal.aborted) return;
           const fetchedPosts = Array.isArray(data) ? data : (data.posts || []);
-          // Fusionne les posts locaux temporaires (id commençant par temp-) avec ceux de l'API
+const cleanedPosts = fetchedPosts.map(p => ({
+              ...p,
+              media: null,
+              image: null
+            }));
+            // Fusionne les posts locaux temporaires (id commençant par temp-) avec ceux de l'API
           setLocalPosts(prev => {
             const apiIds = new Set(fetchedPosts.map(p => p.id));
             const localOnly = prev.filter(p => String(p.id).startsWith('temp-'));
-            return [...localOnly, ...fetchedPosts];
+            return [...localOnly, ...cleanedPosts];
           });
           setPostsLoaded(true);
         })
@@ -1008,6 +1324,56 @@ useEffect(() => {
     };
     fetchPosts();
     return () => controller.abort();
+  }, [pageProp.id]);
+
+  // --- Fetch initial follow, like and visit status ---
+  useEffect(() => {
+    const fetchFollowLikeStatus = async () => {
+      const pageId = pageProp.id;
+      if (!pageId) return;
+      
+      const numericPageId = parseInt(pageId, 10);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      
+      try {
+        const [followRes, likeRes, pageRes] = await Promise.all([
+          fetch(`/api/pages/${numericPageId}/follow`, {
+            headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+          }),
+          fetch(`/api/pages/${numericPageId}/like`, {
+            headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+          }),
+          fetch(`/api/pages/${numericPageId}`, {
+            headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+          })
+        ]);
+        
+        if (followRes.ok) {
+          const followData = await followRes.json();
+          setIsFollowing(followData.isFollowing);
+          setLocalFollowersCount(followData.followersCount);
+        }
+        
+        if (likeRes.ok) {
+          const likeData = await likeRes.json();
+          setIsLiked(likeData.isLiked);
+          setLocalLikesCount(likeData.likesCount);
+        }
+
+        if (pageRes.ok) {
+          const pageData = await pageRes.json();
+          if (pageData.checkInsCount !== undefined) {
+            setLocalCheckInsCount(pageData.checkInsCount);
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to fetch follow/like/page status:', e);
+      }
+    };
+    
+    if (pageProp.id) {
+      fetchFollowLikeStatus();
+    }
   }, [pageProp.id]);
 
   // --- Check if currentPage is sponsored ---
@@ -1026,6 +1392,158 @@ useEffect(() => {
     checkSponsored();
   }, [pageProp.ownerEmail]);
 
+  // --- Detect mobile viewport ---
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // --- Fetch photos when photos tab is active ---
+  useEffect(() => {
+    if (activeTab !== 'photos' || !pageProp.id) return;
+    
+    const numericPageId = parseInt(pageProp.id, 10);
+    if (isNaN(numericPageId)) return;
+    
+    fetch(`/api/pages/${numericPageId}/photos`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPagePhotos(data);
+        }
+      })
+      .catch(e => console.warn('Failed to fetch page photos:', e));
+  }, [activeTab, pageProp.id]);
+
+  // --- Fetch videos when videos tab is active ---
+  useEffect(() => {
+    if (activeTab !== 'videos' || !pageProp.id) return;
+    
+    const numericPageId = parseInt(pageProp.id, 10);
+    if (isNaN(numericPageId)) return;
+    
+    fetch(`/api/pages/${numericPageId}/videos`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPageVideos(data);
+        }
+      })
+      .catch(e => console.warn('Failed to fetch page videos:', e));
+  }, [activeTab, pageProp.id]);
+
+  // --- Fetch events when events tab is active ---
+  useEffect(() => {
+    if (activeTab !== 'events' || !pageProp.id) return;
+    
+    const numericPageId = parseInt(pageProp.id, 10);
+    if (isNaN(numericPageId) || numericPageId === 0) return;
+
+    // Use events from props if available
+    if (events && events.length > 0 && !eventsLoaded) {
+      setPageEvents(events);
+      setEventsLoaded(true);
+      return;
+    }
+
+    // Events are extracted from posts automatically, no need to fetch from API
+    // Only fetch if we have page events but no events have been loaded from posts
+  }, [activeTab, pageProp.id, events, eventsLoaded]);
+
+  // --- Load reviews on page load (for stats display) ---
+  useEffect(() => {
+    if (!pageProp.id || reviewsLoaded) return;
+    
+    const numericPageId = parseInt(pageProp.id, 10);
+    if (isNaN(numericPageId)) return;
+    
+    if (reviews && reviews.length > 0) {
+      setPageReviews(reviews);
+      setReviewsLoaded(true);
+      return;
+    }
+    
+    fetch(`/api/pages/${numericPageId}/reviews`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPageReviews(data);
+          setReviewsLoaded(true);
+        }
+      })
+      .catch(e => console.warn('Failed to fetch page reviews on load:', e));
+  }, [pageProp.id]);
+
+  // --- Fetch reviews when reviews tab is active ---
+  useEffect(() => {
+    if (activeTab !== 'reviews' || !pageProp.id) return;
+    
+    if (reviews && reviews.length > 0 && !reviewsLoaded) {
+      setPageReviews(reviews);
+      setReviewsLoaded(true);
+      return;
+    }
+    
+    const numericPageId = parseInt(pageProp.id, 10);
+    if (isNaN(numericPageId)) return;
+    
+    if (pageReviews.length > 0) return;
+    
+    fetch(`/api/pages/${numericPageId}/reviews`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPageReviews(data);
+          setReviewsLoaded(true);
+        }
+      })
+      .catch(e => console.warn('Failed to fetch page reviews:', e));
+  }, [activeTab, pageProp.id, reviews, reviewsLoaded]);
+
+  // --- Fetch review interactions (helpful counts and replies) ---
+  useEffect(() => {
+    if (activeTab !== 'reviews' || !pageProp.id || !pageReviews.length) return;
+    
+    const numericPageId = parseInt(pageProp.id, 10);
+    if (isNaN(numericPageId)) return;
+    
+    let userEmail = currentUser?.email || null;
+    if (!userEmail && typeof window !== 'undefined') {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          userEmail = parsedUser?.email || null;
+        }
+      } catch (e) {}
+      if (!userEmail) {
+        userEmail = localStorage.getItem('user_email');
+      }
+    }
+    
+    pageReviews.forEach(review => {
+      const url = userEmail 
+        ? `/api/pages/${numericPageId}/reviews/${review.id}?userEmail=${encodeURIComponent(userEmail)}`
+        : `/api/pages/${numericPageId}/reviews/${review.id}`;
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          setReviewHelpfulCounts(prev => ({ ...prev, [review.id]: data.helpfulCount || 0 }));
+          if (data.userVoted !== undefined) {
+            setReviewUserVoted(prev => ({ ...prev, [review.id]: data.userVoted }));
+          }
+          if (data.replies && data.replies.length > 0) {
+            setReviewReplies(prev => ({ ...prev, [review.id]: data.replies }));
+          }
+        })
+        .catch(e => console.warn('Failed to fetch review interactions:', e));
+    });
+  }, [activeTab, pageProp.id, pageReviews, currentUser]);
+
   /* --- Derived data --- */
   const enabledTabs = useMemo(() => {
     return PAGE_TABS.filter((tab) => {
@@ -1041,13 +1559,29 @@ useEffect(() => {
     // Enrichit chaque post avec les infos de la currentPage si manquantes
     let filtered = localPosts.map((p) => {
       let enriched = { ...p };
-      // Ne pas écraser author si déjà bien formé (objet avec name et avatar)
-      if (!enriched.author || typeof enriched.author !== 'object' || !enriched.author.name || !enriched.author.avatar) {
+      // Si le post est de la page (author.email === page.ownerEmail OU author.id === page.id OU author.name === pageProp.name), afficher la page comme auteur
+      // Sinon, garder l'auteur réel (objet ou string)
+      const pageIsAuthor = (
+        (typeof enriched.author === 'object' && (
+          (enriched.author.email && pageProp.ownerEmail && enriched.author.email === pageProp.ownerEmail) ||
+          (enriched.author.id && pageProp.id && String(enriched.author.id) === String(pageProp.id)) ||
+          (enriched.author.name && pageProp.name && enriched.author.name === pageProp.name)
+        )) ||
+        (typeof enriched.author === 'string' && enriched.author === pageProp.name)
+      );
+      if (pageIsAuthor || !enriched.author) {
         enriched.author = {
           id: pageProp.id || 'currentPage-1',
           name: pageProp.name || 'Page',
           avatar: pageProp.avatar || '/images/default-page.png',
           verified: pageProp.verified || false,
+        };
+      } else if (typeof enriched.author === 'string' || !enriched.author.avatar) {
+        // Si l'auteur est une string ou un objet sans avatar, on garde le nom mais on met un avatar par défaut
+        enriched.author = {
+          name: typeof enriched.author === 'string' ? enriched.author : enriched.author.name,
+          avatar: enriched.author.avatar || '/images/default-page.png',
+          verified: enriched.author.verified || false,
         };
       }
       // Ajoute createdAt si absent
@@ -1074,6 +1608,7 @@ useEffect(() => {
       console.log('[Page] Post enriched:', enriched.id, 'content:', enriched.content?.substring(0, 50));
       return enriched;
     });
+    console.log('[Page] filteredPosts before sort:', filtered.length, 'posts:', filtered.map(p => p.id));
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -1085,21 +1620,55 @@ useEffect(() => {
     }
     // Toujours trier du plus récent au plus ancien
     filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    console.log('[Page] filteredPosts after sort:', filtered.map(p => p.id));
     return filtered;
   }, [localPosts, searchQuery, sortBy]);
 
   const avgRating = useMemo(() => {
-    if (!reviews || reviews.length === 0) return 0;
-    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
-    return (sum / reviews.length).toFixed(1);
-  }, [reviews]);
+    if (!pageReviews || pageReviews.length === 0) return 0;
+    const sum = pageReviews.reduce((acc, r) => acc + r.rating, 0);
+    return (sum / pageReviews.length).toFixed(1);
+  }, [pageReviews]);
 
   const ratingDistribution = useMemo(() => {
     const dist = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    if (!reviews) return dist;
-    reviews.forEach((r) => { dist[r.rating] = (dist[r.rating] || 0) + 1; });
+    if (!pageReviews) return dist;
+    pageReviews.forEach((r) => { dist[r.rating] = (dist[r.rating] || 0) + 1; });
     return dist;
-  }, [reviews]);
+  }, [pageReviews]);
+
+  // Extract events from posts that have event data
+  useEffect(() => {
+    if (!localPosts || localPosts.length === 0) return;
+    const extractedEvents = localPosts
+      .filter(p => {
+        const eventData = typeof p.event === 'string' ? (() => { try { return JSON.parse(p.event); } catch { return null; } })() : p.event;
+        return eventData && (eventData.title || eventData.date);
+      })
+      .map(p => {
+        const eventData = typeof p.event === 'string' ? (() => { try { return JSON.parse(p.event); } catch { return null; } })() : p.event;
+        return {
+          id: p.id,
+          title: eventData?.title || p.content?.substring(0, 50),
+          date: eventData?.date,
+          location: eventData?.location,
+          description: eventData?.description,
+          coverImage: eventData?.coverImage,
+          content: p.content,
+          createdAt: p.createdAt
+        };
+      })
+      .filter(e => e.date) // Only events with valid dates
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    if (extractedEvents.length > 0) {
+      setPageEvents(prev => {
+        if (prev.length > 0 && !eventsLoaded) return prev;
+        return extractedEvents;
+      });
+      setEventsLoaded(true);
+    }
+  }, [localPosts]);
 
 
 
@@ -1125,21 +1694,69 @@ useEffect(() => {
   }));
 
   /* --- Callbacks --- */
-  const handleFollow = useCallback(() => {
-    setIsFollowing((prev) => !prev);
-    setLocalFollowersCount((prev) => isFollowing ? prev - 1 : prev + 1);
-    if (!isFollowing) {
-      onFollow?.();
-    } else {
-      onUnfollow?.();
+  const handleFollow = useCallback(async () => {
+    const pageId = pageProp.id;
+    if (!pageId) return;
+    
+    const numericPageId = parseInt(pageId, 10);
+    const method = isFollowing ? 'DELETE' : 'POST';
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    
+    try {
+      const res = await fetch(`/api/pages/${numericPageId}/follow`, {
+        method,
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setIsFollowing(data.isFollowing);
+        setLocalFollowersCount(data.followersCount);
+        if (!isFollowing) {
+          onFollow?.();
+        } else {
+          onUnfollow?.();
+        }
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        console.warn('Follow action failed:', errorData.error);
+      }
+    } catch (error) {
+      console.warn('Follow API error:', error.message);
     }
-  }, [isFollowing, onFollow, onUnfollow]);
+  }, [isFollowing, onFollow, onUnfollow, pageProp.id]);
 
-  const handleLike = useCallback(() => {
-    setIsLiked((prev) => !prev);
-    setLocalLikesCount((prev) => isLiked ? prev - 1 : prev + 1);
-    onLike?.();
-  }, [isLiked, onLike]);
+  const handleLike = useCallback(async () => {
+    const pageId = pageProp.id;
+    if (!pageId) return;
+    
+    const numericPageId = parseInt(pageId, 10);
+    const method = isLiked ? 'DELETE' : 'POST';
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    
+    try {
+      const res = await fetch(`/api/pages/${numericPageId}/like`, {
+        method,
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setIsLiked(data.isLiked);
+        setLocalLikesCount(data.likesCount);
+        onLike?.();
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        console.warn('Like action failed:', errorData.error);
+      }
+    } catch (error) {
+      console.warn('Like API error:', error.message);
+    }
+  }, [isLiked, onLike, pageProp.id]);
 
   const handleTabChange = useCallback((tab) => {
     setActiveTab(tab);
@@ -1235,6 +1852,9 @@ useEffect(() => {
         feeling: postFeeling?.label,
         location: postLocation || undefined,
         event: eventTitle ? { title: eventTitle, date: eventDate, location: eventLocation } : undefined,
+        backgroundColor: postBackgroundColor || undefined,
+        textColor: postTextColor || undefined,
+        backgroundImage: postBackgroundImage || undefined,
       };
       console.log('[Page] postData envoyé à l\'API:', postData);
       const numericPageId = parseInt(currentPage.id, 10);
@@ -1255,6 +1875,8 @@ useEffect(() => {
         const tempId = 'temp-' + generateId();
         const tempPost = {
           id: tempId,
+          media: null,
+          image: null,
           author: {
             id: currentPage.id || 'page-1',
             name: currentPage.name || 'Page',
@@ -1267,6 +1889,9 @@ useEffect(() => {
           location: postLocation || undefined,
           event: eventTitle ? { title: eventTitle, date: eventDate, location: eventLocation } : undefined,
           images: imageUrls.length > 0 ? imageUrls : undefined,
+          backgroundColor: postBackgroundColor || null,
+          textColor: postTextColor || null,
+          backgroundImage: postBackgroundImage || null,
           reactions: [],
           comments: [],
           shares: 0,
@@ -1289,7 +1914,9 @@ useEffect(() => {
         setShowLocationInput(false);
         setEventTitle('');
         setEventDate('');
-        setEventLocation('');
+        setPostBackgroundColor('');
+        setPostTextColor('');
+        setPostBackgroundImage('');
         setShowEventForm(false);
         setShowPostComposer(false);
 
@@ -1303,6 +1930,9 @@ useEffect(() => {
           // remplace le post temporaire par le vrai (même contenu, vrai id/images)
           return prev.map(p => p.id === tempId ? createdPost : p);
         });
+
+        // Dispatch postCreated event for other components
+        window.dispatchEvent(new CustomEvent('postCreated', { detail: createdPost }));
       } else {
         // En cas d'erreur, tente de recharger le feed
         window.dispatchEvent(new CustomEvent('reloadFeed'));
@@ -1315,7 +1945,7 @@ useEffect(() => {
       console.error('Error creating post:', error);
       alert(`Erreur lors de la publication: ${error.message}`);
     }
-  }, [postText, postImages, currentPage, onPostCreate, postFeeling, postLocation, eventTitle, eventDate, eventLocation, postTags]);
+  }, [postText, postImages, currentPage, onPostCreate, postFeeling, postLocation, eventTitle, eventDate, eventLocation, postTags, postBackgroundColor, postTextColor, postBackgroundImage]);
 
   const handlePostReaction = useCallback((postId, emoji) => {
     setLocalPosts((prev) =>
@@ -1335,6 +1965,78 @@ useEffect(() => {
     );
     onPostReaction?.(postId, emoji);
   }, [onPostReaction]);
+
+  const handleEventParticipate = useCallback(async (postId) => {
+    let userEmail = currentUser?.email || null;
+    if (!userEmail && typeof window !== 'undefined') {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          userEmail = parsedUser?.email || null;
+        }
+      } catch (e) {}
+      if (!userEmail) {
+        userEmail = localStorage.getItem('user_email');
+      }
+    }
+
+    if (!userEmail) {
+      alert('Vous devez être connecté pour participer à un événement.');
+      return;
+    }
+
+    const post = localPosts.find(p => p.id === postId);
+    if (!post) return;
+
+    const eventData = post.event;
+    if (!eventData) return;
+
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const pageId = pageProp.id;
+      if (!pageId) {
+        console.warn('No page ID for event participation');
+        return;
+      }
+
+      const numericPageId = parseInt(pageId, 10);
+      const res = await fetch(`/api/pages/${numericPageId}/events/participate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          postId,
+          userEmail,
+          eventTitle: eventData.title,
+          eventDate: eventData.date,
+          eventLocation: eventData.location
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setLocalPosts(prev => prev.map(p => {
+          if (p.id !== postId) return p;
+          return {
+            ...p,
+            userParticipating: data.isParticipating,
+            participantsCount: data.participantsCount
+          };
+        }));
+        onEventParticipate?.(postId, data.isParticipating);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        console.warn('Event participation failed:', errorData.error);
+        alert(`Erreur: ${errorData.error || 'Impossible de participer à l\'événement'}`);
+      }
+    } catch (error) {
+      console.error('Event participation error:', error);
+      alert('Erreur lors de la participation à l\'événement');
+    }
+  }, [currentUser, localPosts, pageProp.id, onEventParticipate]);
 
   const handlePostComment = useCallback((postId, text) => {
     const newComment = {
@@ -1414,10 +2116,32 @@ useEffect(() => {
     onPostSave?.(postId);
   }, [onPostSave]);
 
-  const handleDeletePost = useCallback((postId) => {
-    setLocalPosts((prev) => prev.filter((p) => p.id !== postId));
-    onPostDelete?.(postId);
-  }, [onPostDelete]);
+  const handleDeletePost = useCallback(async (postId) => {
+    // Si le post a un ID temporaire (créé localement), on le supprime juste de l'état local
+    if (String(postId).startsWith('temp-')) {
+      setLocalPosts((prev) => prev.filter((p) => p.id !== postId));
+      onPostDelete?.(postId);
+      return;
+    }
+    
+    // Appelle l'API pour supprimer le post côté serveur
+    try {
+      const pageId = pageProp.id;
+      if (!pageId) throw new Error('Page ID manquant');
+      const numericPageId = parseInt(pageId, 10);
+      const res = await fetch(`/api/pages/${numericPageId}/posts/${postId}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        const errorMsg = errorData?.error || `Erreur ${res.status}: Impossible de supprimer le post`;
+        alert(errorMsg);
+        return;
+      }
+      setLocalPosts((prev) => prev.filter((p) => p.id !== postId));
+      onPostDelete?.(postId);
+    } catch (e) {
+      alert('Erreur lors de la suppression du post: ' + (e.message || e));
+    }
+  }, [onPostDelete, pageProp.id]);
 
   const handleAddTag = useCallback(() => {
     const trimmedTag = tagInput.trim();
@@ -1474,23 +2198,169 @@ useEffect(() => {
     setPostImages((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
-  const handleReviewSubmit = useCallback(() => {
+  const handleReviewSubmit = useCallback(async () => {
     if (!reviewRating) return;
-    const newReview = {
-      id: generateId(),
-      author: currentUser || { id: 'me', name: 'Vous', avatar: '/images/default-page.png' },
-      rating: reviewRating,
-      text: reviewText.trim(),
-      recommends: reviewRecommends,
-      helpfulCount: 0,
-      createdAt: new Date().toISOString(),
-    };
-    onReviewSubmit?.(newReview);
+    
+    const pageId = currentPage?.id;
+    if (!pageId) {
+      console.warn('No page ID for review submit');
+      return;
+    }
+    
+    let userEmail = currentUser?.email || null;
+    if (!userEmail && typeof window !== 'undefined') {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          userEmail = parsedUser?.email || null;
+        }
+      } catch (e) {}
+      if (!userEmail) {
+        userEmail = localStorage.getItem('user_email');
+      }
+    }
+    
+    if (!userEmail) {
+      alert('Vous devez être connecté pour laisser un avis.');
+      return;
+    }
+    
+    const numericPageId = parseInt(pageId, 10);
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const res = await fetch(`/api/pages/${numericPageId}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          rating: reviewRating,
+          text: reviewText.trim(),
+          recommends: reviewRecommends,
+          userEmail
+        })
+      });
+      
+      if (res.ok) {
+        const createdReview = await res.json();
+        setPageReviews(prev => [createdReview, ...prev]);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        console.warn('Failed to submit review:', errorData.error);
+        alert(`Erreur: ${errorData.error || 'Impossible de soumettre l\'avis'}`);
+      }
+    } catch (e) {
+      console.error('Review submit error:', e);
+      alert('Erreur lors de la soumission de l\'avis');
+    }
+    
     setReviewRating(0);
     setReviewText('');
     setReviewRecommends(true);
     setShowReviewForm(false);
-  }, [reviewRating, reviewText, reviewRecommends, currentUser, onReviewSubmit]);
+  }, [reviewRating, reviewText, reviewRecommends, currentUser, currentPage]);
+
+  const handleReviewHelpful = useCallback(async (reviewId) => {
+    const pageId = currentPage?.id;
+    console.log('[Review] handleReviewHelpful called', { pageId, reviewId, currentPageId: currentPage?.id });
+    if (!pageId || !reviewId) return;
+    
+    let userEmail = currentUser?.email || null;
+    if (!userEmail && typeof window !== 'undefined') {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          userEmail = parsedUser?.email || null;
+        }
+      } catch (e) {}
+      if (!userEmail) {
+        userEmail = localStorage.getItem('user_email');
+      }
+    }
+    console.log('[Review] userEmail:', userEmail);
+    
+    if (!userEmail) {
+      alert('Vous devez être connecté pour voter.');
+      return;
+    }
+    
+    const numericPageId = parseInt(pageId, 10);
+    const numericReviewId = parseInt(reviewId, 10);
+    console.log('[Review] API call:', `/api/pages/${numericPageId}/reviews/${numericReviewId}`);
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const res = await fetch(`/api/pages/${numericPageId}/reviews/${numericReviewId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ action: 'helpful', userEmail })
+      });
+      console.log('[Review] Response:', res.status, await res.text().catch(() => ''));
+      
+      if (res.ok) {
+        const data = await res.json();
+        setReviewHelpfulCounts(prev => ({ ...prev, [reviewId]: data.helpfulCount }));
+        setReviewUserVoted(prev => ({ ...prev, [reviewId]: !prev[reviewId] }));
+      }
+    } catch (e) {
+      console.error('Error toggling helpful:', e);
+    }
+  }, [currentUser, currentPage]);
+
+  const handleReviewReply = useCallback(async (reviewId, text) => {
+    console.log('[Review] handleReviewReply called', { reviewId, text });
+    const pageId = currentPage?.id;
+    if (!pageId || !reviewId || !text.trim()) return;
+    
+    let userEmail = currentUser?.email || null;
+    if (!userEmail && typeof window !== 'undefined') {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          userEmail = parsedUser?.email || null;
+        }
+      } catch (e) {}
+      if (!userEmail) {
+        userEmail = localStorage.getItem('user_email');
+      }
+    }
+    
+    if (!userEmail) {
+      alert('Vous devez être connecté pour répondre.');
+      return;
+    }
+    
+    const numericPageId = parseInt(pageId, 10);
+    const numericReviewId = parseInt(reviewId, 10);
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const res = await fetch(`/api/pages/${numericPageId}/reviews/${numericReviewId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ action: 'reply', text: text.trim(), userEmail })
+      });
+      console.log('[Review] Reply response:', res.status);
+      
+      if (res.ok) {
+        const reply = await res.json();
+        setReviewReplies(prev => {
+          const existing = prev[reviewId] || [];
+          return { ...prev, [reviewId]: [...existing, reply] };
+        });
+      }
+    } catch (e) {
+      console.error('Error submitting reply:', e);
+    }
+  }, [currentUser, currentPage]);
 
   const handleShare = useCallback((postId) => {
     setSharedPostId(postId);
@@ -1513,6 +2383,11 @@ useEffect(() => {
         name: currentPage.name || '',
         category: currentPage.category || '',
         description: currentPage.description || '',
+        subcategory: currentPage.subcategory || '',
+        address: currentPage.address || '',
+        phone: currentPage.phone || '',
+        website: currentPage.website || '',
+        contactEmail: currentPage.contactEmail || '',
       });
     }
     if (action === 'settings') {
@@ -1522,7 +2397,7 @@ useEffect(() => {
         publishEnabled: currentPage.isPublished !== undefined ? currentPage.isPublished : true,
       });
     }
-  }, [currentPage.name, currentPage.category, currentPage.description, currentPage.isPublic, currentPage.isPublished, currentPage.notificationsEnabled]);
+  }, [currentPage.name, currentPage.category, currentPage.description, currentPage.isPublic, currentPage.isPublished, currentPage.notificationsEnabled, currentPage.subcategory, currentPage.address, currentPage.phone, currentPage.website, currentPage.contactEmail]);
 
   const handleOwnerModalClose = useCallback(() => setOwnerAction(null), []);
 
@@ -1534,16 +2409,64 @@ useEffect(() => {
     setPageSettings((prev) => ({ ...prev, [field]: !prev[field] }));
   }, []);
 
-  const handleSavePageDraft = useCallback(() => {
-    onPageUpdate?.({
+  const handleSavePageDraft = useCallback(async () => {
+    const pageData = {
       ...currentPage,
       ...currentPageDraft,
+      subcategory: currentPage.subcategory || currentPageDraft.subcategory || '',
+      address: currentPage.address || currentPageDraft.address || '',
+      phone: currentPage.phone || currentPageDraft.phone || '',
+      website: currentPage.website || currentPageDraft.website || '',
+      contactEmail: currentPage.contactEmail || currentPageDraft.contactEmail || '',
       isPublic: currentPageSettings.isPublic,
       isPublished: currentPageSettings.publishEnabled,
       notificationsEnabled: currentPageSettings.notificationsEnabled,
-    });
+    };
+
+    try {
+      const userEmail = currentUser?.email || '';
+      const url = `/api/pages/${currentPage.id}?userEmail=${encodeURIComponent(userEmail)}`;
+      const bodyWithEmail = { ...pageData, userEmail };
+      console.log('[Page] Saving page - URL:', url);
+      console.log('[Page] Saving page - body:', JSON.stringify(bodyWithEmail));
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyWithEmail)
+      });
+      console.log('[Page] Save response status:', res.status);
+      if (res.ok) {
+        const data = await res.json();
+        console.log('[Page] Save response data:', data);
+        if (data.page) {
+          setLocalPage(data.page);
+          setToast({ message: 'Modifications enregistrées avec succès', type: 'success' });
+        }
+      } else {
+        const errorData = await res.json();
+        console.error('[Page] Save error response:', errorData);
+        setToast({ message: errorData.error || 'Erreur lors de la sauvegarde', type: 'error' });
+      }
+    } catch (e) {
+      setToast({ message: 'Erreur lors de la sauvegarde', type: 'error' });
+      console.error('[Page] Failed to save page:', e);
+    }
+    setTimeout(() => setToast(null), 3000);
     setOwnerAction(null);
-  }, [onPageUpdate, currentPageDraft, currentPageSettings, pageProp]);
+  }, [currentPageDraft, currentPageSettings, currentPage, currentUser]);
+
+  // Fonction utilitaire pour re-fetch la page après modification
+  const fetchPageData = async (id) => {
+    try {
+      const res = await fetch(`/api/pages/${id || currentPage.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.page) setLocalPage(data.page);
+      }
+    } catch (e) {
+      console.error('Failed to fetch page data:', e);
+    }
+  };
 
   const isOwner = currentUser && (
     currentUser.email && currentPage.ownerEmail && currentUser.email === currentPage.ownerEmail
@@ -1557,13 +2480,18 @@ useEffect(() => {
       name: currentPage.name || '',
       category: currentPage.category || '',
       description: currentPage.description || '',
+      subcategory: currentPage.subcategory || '',
+      address: currentPage.address || '',
+      phone: currentPage.phone || '',
+      website: currentPage.website || '',
+      contactEmail: currentPage.contactEmail || '',
     });
     setPageSettings({
       isPublic: currentPage.isPublic !== undefined ? currentPage.isPublic : true,
       notificationsEnabled: currentPage.notificationsEnabled !== undefined ? currentPage.notificationsEnabled : true,
       publishEnabled: currentPage.isPublished !== undefined ? currentPage.isPublished : true,
     });
-  }, [currentPage.id]); // Only sync when currentPage ID changes, not every property
+  }, [currentPage.id, currentPage]); // Sync when currentPage ID changes or currentPage object changes
 
   // Sync localPage when page prop changes (but not when we have localPage from URL)
   useEffect(() => {
@@ -1829,66 +2757,151 @@ useEffect(() => {
         </div>
         <div className="up-info-right">
           <div className="up-info-actions">
-            <button
-              className={`up-follow-btn ${isFollowing ? 'up-following' : ''}`}
-              onClick={handleFollow}
-            >
-              {isFollowing ? (
-                <>
-                  <Icons.Check /> <span>Suivi</span>
-                </>
-              ) : (
-                <>
-                  <Icons.UserPlus /> <span>Suivre</span>
-                </>
-              )}
-            </button>
-            <button
-              className={`up-like-btn ${isLiked ? 'up-liked' : ''}`}
-              onClick={handleLike}
-            >
-              <Icons.ThumbsUp /> <span>J&apos;aime</span>
-            </button>
-            <button className="up-msg-btn" onClick={onMessage}>
-              <Icons.MessageCircle /> <span>Message</span>
-            </button>
-            <button className="up-invite-btn" onClick={() => setShowInviteModal(true)}>
-              <Icons.UserPlus /> <span>Inviter</span>
-            </button>
-            <button className="up-share-btn" onClick={handleCopyLink}>
-              <Icons.Share /> <span>Partager</span>
-            </button>
-            {isOwner && (
-              <div className="up-owner-menu">
-                <button
-                  className="up-icon-btn"
-                  onClick={() => setShowOwnerMenu(!showOwnerMenu)}
-                >
-                  <Icons.MoreHorizontal />
-                </button>
-                {showOwnerMenu && (
-                  <>
-                    <div className="up-overlay" onClick={() => setShowOwnerMenu(false)} />
-                    <div className="up-dropdown-menu up-dropdown-top">
-                      <button onClick={() => handleOwnerAction('edit')}>
-                        <Icons.Edit /> Modifier la currentPage
+            {isOwner ? (
+              <>
+                <div className="up-dashboard-actions">
+                  {isMobile ? (
+                    <div style={{display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', width: '100%'}}>
+                      <button className="up-dashboard-btn-compact" onClick={() => router.push(`/dashboard/page-admin/${currentPage.id}`)}>
+                        <Icons.User /> <span>Tableau de bord</span>
                       </button>
-                      <button onClick={() => handleOwnerAction('settings')}>
-                        <Icons.Settings /> Paramètres
+                      <button className="up-dashboard-btn-compact" onClick={handleOpenSponsorModal}>
+                        <Icons.Megaphone /> <span>Promouvoir</span>
                       </button>
-                      <button onClick={handleOpenSponsorModal}>
-                        <Icons.Megaphone /> Créer une publicité
+                      <button className="up-dashboard-btn-compact" onClick={() => setShowInviteModal(true)}>
+                        <Icons.UserPlus /> <span>Inviter</span>
                       </button>
-                      <button onClick={() => handleOwnerAction('info')}>
-                        <Icons.Info /> Informations sur la currentPage
+                      <button
+                        className="up-dashboard-btn-round"
+                        onClick={() => setShowOwnerMenu(!showOwnerMenu)}
+                      >
+                        <Icons.MoreHorizontal />
                       </button>
-                      <button onClick={() => handleOwnerAction('transparency')}>
-                        <Icons.Shield /> Transparence de la currentPage
-                      </button>
+                      {showOwnerMenu && (
+                        <>
+                          <div className="up-overlay" onClick={() => setShowOwnerMenu(false)} />
+                          <div className="up-dropdown-menu up-dropdown-top">
+                            <button onClick={() => { setShowOwnerMenu(false); handleOwnerAction('edit'); }}>
+                              <Icons.Edit /> Modifier la page
+                            </button>
+                            <button onClick={() => { setShowOwnerMenu(false); handleOwnerAction('settings'); }}>
+                              <Icons.Settings /> Paramètres
+                            </button>
+                            <button onClick={() => { setShowOwnerMenu(false); handleOwnerAction('info'); }}>
+                              <Icons.Info /> Informations sur la page
+                            </button>
+                            <button onClick={() => { setShowOwnerMenu(false); handleOwnerAction('transparency'); }}>
+                              <Icons.Shield /> Transparence de la page
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
+                    ) : (
+                    <>
+                      <button className="up-dashboard-btn-compact" onClick={() => router.push(`/dashboard/page-admin/${currentPage.id}`)}>
+                        <Icons.User /> <span>Tableau de bord</span>
+                      </button>
+                      <button className="up-dashboard-btn-compact" onClick={() => setShowInviteModal(true)}>
+                        <Icons.UserPlus /> <span>Inviter</span>
+                      </button>
+                      <button className="up-dashboard-btn-compact" onClick={handleOpenSponsorModal}>
+                        <Icons.Megaphone /> <span>Promouvoir</span>
+                      </button>
+                      <button
+                        className="up-dashboard-btn-round"
+                        onClick={() => setShowOwnerMenu(!showOwnerMenu)}
+                      >
+                        <Icons.MoreHorizontal />
+                      </button>
+                      {showOwnerMenu && (
+                        <>
+                          <div className="up-overlay" onClick={() => setShowOwnerMenu(false)} />
+                          <div className="up-dropdown-menu up-dropdown-top">
+                            <button onClick={() => handleOwnerAction('edit')}>
+                              <Icons.Edit /> Modifier la page
+                            </button>
+                            <button onClick={() => handleOwnerAction('settings')}>
+                              <Icons.Settings /> Paramètres
+                            </button>
+                            <button onClick={handleOpenSponsorModal}>
+                              <Icons.Megaphone /> Créer une publicité
+                            </button>
+                            <button onClick={() => handleOwnerAction('info')}>
+                              <Icons.Info /> Informations sur la page
+                            </button>
+                            <button onClick={() => handleOwnerAction('transparency')}>
+                              <Icons.Shield /> Transparence de la page
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                {isMobile ? (
+                  <div className="up-owner-menu-mobile" style={{display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center'}}>
+                    <button
+                      className={`up-dashboard-btn-compact ${isFollowing ? '' : ''}`}
+                      onClick={handleFollow}
+                    >
+                      {isFollowing ? (
+                        <>
+                          <Icons.Check /> <span>Suivi</span>
+                        </>
+                      ) : (
+                        <>
+                          <Icons.UserPlus /> <span>Suivre</span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      className={`up-dashboard-btn-compact ${isLiked ? 'up-liked' : ''}`}
+                      onClick={handleLike}
+                    >
+                      <Icons.ThumbsUp /> <span>J&apos;aime</span>
+                    </button>
+                    <button className="up-dashboard-btn-compact" onClick={() => setShowInviteModal(true)}>
+                      <Icons.UserPlus /> <span>Inviter</span>
+                    </button>
+                    <button className="up-dashboard-btn-compact" onClick={onMessage}>
+                      <Icons.MessageCircle /> <span>Message</span>
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      className={`up-dashboard-btn-compact ${isFollowing ? '' : ''}`}
+                      onClick={handleFollow}
+                    >
+                      {isFollowing ? (
+                        <>
+                          <Icons.Check /> <span>Suivi</span>
+                        </>
+                      ) : (
+                        <>
+                          <Icons.UserPlus /> <span>Suivre</span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      className={`up-dashboard-btn-compact ${isLiked ? 'up-liked' : ''}`}
+                      onClick={handleLike}
+                    >
+                      <Icons.ThumbsUp /> <span>J&apos;aime</span>
+                    </button>
+                    <button className="up-dashboard-btn-compact" onClick={onMessage}>
+                      <Icons.MessageCircle /> <span>Message</span>
+                    </button>
+                    <button className="up-dashboard-btn-compact" onClick={() => setShowInviteModal(true)}>
+                      <Icons.UserPlus /> <span>Inviter</span>
+                    </button>
                   </>
                 )}
-              </div>
+              </>
             )}
           </div>
         </div>
@@ -1909,7 +2922,7 @@ useEffect(() => {
           <span className="up-stat-label">Visites</span>
         </div>
         <div className="up-stat-item">
-          <span className="up-stat-number">{reviews ? reviews.length : 0}</span>
+          <span className="up-stat-number">{pageReviews.length}</span>
           <span className="up-stat-label">Avis</span>
         </div>
       </div>
@@ -1941,10 +2954,26 @@ useEffect(() => {
 
             <div className="up-publications">
               {/* Post Composer (Feed logic) */}
+
               {isOwner && (
                 <>
-                  <CreatePost user={currentUser} sponsorTitle={currentPage.name} />
-                  <CreatePostModal currentUser={currentUser} sponsorId={currentPage.id} sponsorTitle={currentPage.name} />
+                  <CreatePost
+                    user={currentUser}
+                    sponsorTitle={currentPage.name}
+                    sponsorAvatar={currentPage.avatar || '/images/default-page.png'}
+                  />
+                  <CreatePostModal
+                    currentUser={currentUser}
+                    sponsorId={currentPage.id}
+                    sponsorTitle={currentPage.name}
+                    sponsorAvatar={currentPage.avatar || '/images/default-page.png'}
+                  />
+                  <TextPostCreator
+                    currentUser={currentUser}
+                    sponsorId={currentPage.id}
+                    sponsorTitle={currentPage.name}
+                    sponsorAvatar={currentPage.avatar || '/images/default-page.png'}
+                  />
                 </>
               )}
 
@@ -1978,6 +3007,7 @@ useEffect(() => {
 
               {/* Posts Feed */}
               <div className="up-feed">
+                {console.log('[Page] Rendering, filteredPosts length:', filteredPosts.length) || null}
                 {filteredPosts.length === 0 ? (
                   <div className="up-no-posts">
                     <div className="up-no-posts-icon">
@@ -1988,27 +3018,89 @@ useEffect(() => {
                   </div>
                 ) : (
                   filteredPosts.map((post) => {
-                    // Si author est un objet, on le garde, sinon on fallback sur l'ancien format
+                    // Check if post has event data - display special event card instead of PostCard
+                    const eventData = typeof post.event === 'string' 
+                      ? (() => { try { return JSON.parse(post.event); } catch { return null; } })() 
+                      : post.event;
+                    
+                    if (eventData && (eventData.title || eventData.date)) {
+                      // Render special Event Card
+                      const eventDateObj = eventData.date ? new Date(eventData.date) : null;
+                      const isValidDate = eventDateObj && !isNaN(eventDateObj.getTime());
+                      return (
+                        <div key={post.id} className="up-feed-event-card">
+                          {eventData.coverImage && (
+                            <img src={eventData.coverImage} alt={eventData.title} className="up-event-cover" />
+                          )}
+                          <div className="up-event-content">
+                            <div className="up-event-date-badge">
+                              <Icons.Calendar />
+                              {isValidDate && (
+                                <span>
+                                  {eventDateObj.toLocaleDateString('fr-FR', {
+                                    weekday: 'short',
+                                    day: 'numeric',
+                                    month: 'short'
+                                  })} à {eventDateObj.toLocaleTimeString('fr-FR', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </span>
+                              )}
+                            </div>
+                            <h4 className="up-event-title">{eventData.title}</h4>
+                            {eventData.location && (
+                              <p className="up-event-location">
+                                <Icons.MapPin /> {eventData.location}
+                              </p>
+                            )}
+                            {eventData.description && (
+                              <p className="up-event-description">{eventData.description}</p>
+                            )}
+                            {post.participantsCount !== undefined && (
+                              <p className="up-event-participants">{post.participantsCount} participant(s)</p>
+                            )}
+                            <button 
+                              className={`up-event-cta ${post.userParticipating ? 'is-participating' : ''}`}
+                              onClick={() => handleEventParticipate(post.id)}
+                            >
+                              {post.userParticipating ? 'Participe' : 'Participer'}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // Use only the images array, not a separate image property
+                    // Preserve video/media for video posts, nullify only image media
+                    const hasVideo = post.video || (post.media && post.media.type === 'video');
                     const postForCard = {
                       ...post,
-                      author: typeof post.author === 'object' && post.author !== null
+                      media: hasVideo ? post.media : null,
+                      image: null,
+                      video: post.video || null,
+                      author: (typeof post.author === 'object' && post.author !== null && typeof post.author.name === 'string')
                         ? post.author
-                        : { name: post.author || '', avatar: post.avatar || '/images/default-page.png', verified: post.verified || false },
+                        : { name: String(post.author || ''), avatar: post.avatar || '/images/default-page.png', verified: post.verified || false },
                       avatar: post.author?.avatar || post.avatar || '/images/default-page.png',
                       verified: post.author?.verified || false,
+                      pageName: currentPage.name,
+                      pageAvatar: currentPage.avatar || '/images/default-page.png',
                     };
-                    // Ne passe une image que si le post en a vraiment une
-                    if (Array.isArray(post.images) && post.images.length > 0 && post.images[0]) {
-                      postForCard.image = post.images[0];
-                    } else {
-                      delete postForCard.image;
-                    }
+                    // Remove separate image property to avoid duplication
+                    delete postForCard.image;
                     return (
-                      <PostCard
+                      <PagePostCard
                         key={post.id}
                         post={postForCard}
                         currentUser={currentUser}
                         onDelete={handleDeletePost}
+                        page={{
+                          id: currentPage.id,
+                          name: currentPage.name,
+                          profileImage: currentPage.avatar || '/images/default-page.png',
+                          ownerEmail: currentPage.ownerEmail
+                        }}
                       />
                     );
                   })
@@ -2047,11 +3139,11 @@ useEffect(() => {
                       <span className="up-info-value">{currentPage.phone}</span>
                     </div>
                   )}
-                  {currentPage.email && (
+                  {(currentPage.contactEmail || currentPage.email) && (
                     <div className="up-info-item">
                       <Icons.Mail />
                       <span className="up-info-label">Email</span>
-                      <span className="up-info-value">{currentPage.email}</span>
+                      <span className="up-info-value">{currentPage.contactEmail || currentPage.email}</span>
                     </div>
                   )}
                   {currentPage.website && (
@@ -2126,10 +3218,13 @@ useEffect(() => {
           {activeTab === 'photos' && (
             <div className="up-photos-section">
               <div className="up-section-header">
-                <h3 className="up-section-title">Photos de la currentPage</h3>
-                <span className="up-section-count">{photos.length} photos</span>
+                <h3 className="up-section-title">Photos de la page</h3>
+                <span className="up-section-count">{pagePhotos.length} photos</span>
               </div>
-              <PhotoGrid photos={photos} />
+              <PhotoGrid photos={pagePhotos} onPhotoClick={(idx) => {
+                setSelectedPhotoIndex(idx);
+                setPhotoViewerOpen(true);
+              }} />
             </div>
           )}
 
@@ -2138,11 +3233,19 @@ useEffect(() => {
             <div className="up-videos-section">
               <div className="up-section-header">
                 <h3 className="up-section-title">Vidéos</h3>
-                <span className="up-section-count">{videos.length} vidéos</span>
+                <span className="up-section-count">{pageVideos.length} vidéos</span>
               </div>
               <div className="up-video-list">
-                {videos.map((video, idx) => (
-                  <VideoItem key={idx} video={video} />
+                {pageVideos.map((video, idx) => (
+                  <VideoItem 
+                    key={video.id || idx} 
+                    video={video} 
+                    onClick={(v) => {
+                      const index = pageVideos.findIndex(x => (x.id || idx) === (v.id || idx));
+                      setSelectedVideoIndex(index >= 0 ? index : idx);
+                      setVideoViewerOpen(true);
+                    }} 
+                  />
                 ))}
               </div>
             </div>
@@ -2153,13 +3256,21 @@ useEffect(() => {
             <div className="up-events-section">
               <div className="up-section-header">
                 <h3 className="up-section-title">Événements à venir</h3>
-                <span className="up-section-count">{events.length} événements</span>
+                <span className="up-section-count">{pageEvents.length} événements</span>
               </div>
-              <div className="up-events-list">
-                {events.map((event, idx) => (
-                  <EventItem key={idx} event={event} />
-                ))}
-              </div>
+              {pageEvents.length === 0 ? (
+                <div className="up-empty-section">
+                  <div className="up-empty-icon"><Icons.Calendar /></div>
+                  <h4>Aucun événement</h4>
+                  <p>Crééz un post avec un événement pour en afficher un ici.</p>
+                </div>
+              ) : (
+                <div className="up-events-list">
+                  {pageEvents.filter(e => e.date).map((event, idx) => (
+                    <EventItem key={event.id || idx} event={event} />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -2180,12 +3291,12 @@ useEffect(() => {
                       </span>
                     ))}
                   </div>
-                  <span className="up-rating-total">{reviews.length} avis</span>
+                  <span className="up-rating-total">{pageReviews.length} avis</span>
                 </div>
                 <div className="up-rating-distribution">
                   {[5, 4, 3, 2, 1].map((star) => {
                     const count = ratingDistribution[star] || 0;
-                    const percentage = reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0;
+                    const percentage = pageReviews.length > 0 ? Math.round((count / pageReviews.length) * 100) : 0;
                     return (
                       <div key={star} className="up-rating-bar-row">
                         <span className="up-rating-bar-label">{star} ★</span>
@@ -2260,8 +3371,17 @@ useEffect(() => {
 
               {/* Reviews List */}
               <div className="up-reviews-list">
-                {reviews.map((review) => (
-                  <ReviewItem key={review.id} review={review} />
+                {pageReviews.map((review) => (
+                  <ReviewItem 
+                    key={review.id} 
+                    review={review} 
+                    helpfulCount={reviewHelpfulCounts[review.id] || 0}
+                    userVoted={reviewUserVoted[review.id] || false}
+                    replies={reviewReplies[review.id] || []}
+                    onHelpful={() => handleReviewHelpful(review.id)}
+                    onReply={(text) => handleReviewReply(review.id, text)}
+                    currentUserEmail={currentUser?.email}
+                  />
                 ))}
               </div>
             </div>
@@ -2405,7 +3525,7 @@ useEffect(() => {
 
             {/* Page Transparency */}
             <div className="up-sidebar-card">
-              <h4 className="up-sidebar-title">Transparence de la currentPage</h4>
+              <h4 className="up-sidebar-title">Transparence de la page</h4>
               <div className="up-transparency-info">
                 <div className="up-transparency-item">
                   <Icons.Shield />
@@ -2471,28 +3591,7 @@ useEffect(() => {
 
       {/* ====== INVITE MODAL ====== */}
       {showInviteModal && (
-        <div className="up-modal-overlay" onClick={() => setShowInviteModal(false)}>
-          <div className="up-invite-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="up-modal-header">
-              <h3>Inviter des amis</h3>
-              <button className="up-modal-close" onClick={() => setShowInviteModal(false)}>
-                <Icons.X />
-              </button>
-            </div>
-            <div className="up-invite-content">
-              <div className="up-invite-search">
-                <Icons.Search />
-                <input type="text" placeholder="Rechercher des amis..." />
-              </div>
-              <p className="up-invite-hint">
-                Sélectionnez des amis à inviter à aimer {currentPage.name || 'cette page'}.
-              </p>
-              <button className="up-invite-send-btn" onClick={() => setShowInviteModal(false)}>
-                <Icons.Send /> Envoyer les invitations
-              </button>
-            </div>
-          </div>
-        </div>
+        <InviteModal currentUser={currentUser} pageName={currentPage.name} onClose={() => setShowInviteModal(false)} />
       )}
 
       {showSponsorModal && (
@@ -2510,8 +3609,26 @@ useEffect(() => {
             <div className="up-sponsor-create-content">
               <form onSubmit={(e) => {
                 e.preventDefault();
-                // Handle sponsor creation logic here
-                setShowSponsorModal(false);
+                setSponsorError("");
+                setSponsorLoading(true);
+                fetch('/api/sponsors/create', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(sponsorFormData),
+                })
+                  .then(res => {
+                    if (!res.ok) throw new Error('Erreur lors de la création de la publicité');
+                    return res.json();
+                  })
+                  .then(() => {
+                    setSponsorLoading(false);
+                    setShowSponsorModal(false);
+                    // Optionnel: afficher un toast ou recharger la liste
+                  })
+                  .catch(err => {
+                    setSponsorError(err.message || 'Erreur inconnue');
+                    setSponsorLoading(false);
+                  });
               }} className="up-sponsor-form">
                 <div className="up-sponsor-form-grid">
                   <div className="up-sponsor-form-field" style={{gridColumn:'1 / -1'}}>
@@ -2658,9 +3775,11 @@ useEffect(() => {
                   <button
                     type="submit"
                     className="up-sponsor-submit-btn"
+                    disabled={sponsorLoading}
                   >
-                    Créer la publicité
+                    {sponsorLoading ? 'Création...' : 'Créer la publicité'}
                   </button>
+                  {sponsorError && <div className="up-sponsor-error">{sponsorError}</div>}
 
                   {/* Pay CTA shown if user hasn't paid */}
                   <div className="up-sponsor-pay-cta">
@@ -2688,48 +3807,153 @@ useEffect(() => {
           <div className="up-action-modal" onClick={(e) => e.stopPropagation()}>
             <div className="up-modal-header">
               <h3>
-                {ownerAction === 'edit' && 'Modifier la currentPage'}
-                {ownerAction === 'settings' && 'Paramètres de la currentPage'}
+                {ownerAction === 'edit' && 'Modifier la page'}
+                {ownerAction === 'settings' && 'Paramètres de la page'}
                 {ownerAction === 'advertise' && 'Créer une publicité'}
-                {ownerAction === 'info' && 'Informations sur la currentPage'}
-                {ownerAction === 'transparency' && 'Transparence de la currentPage'}
+                {ownerAction === 'info' && 'Informations sur la page'}
+                {ownerAction === 'transparency' && 'Transparence de la page'}
               </h3>
               <button className="up-modal-close" onClick={handleOwnerModalClose}>
                 <Icons.X />
               </button>
             </div>
             <div className="up-action-content">
-              {ownerAction === 'edit' && (
-                <div className="up-action-form">
-                  <label>
-                    Nom de la currentPage
-                    <input
-                      className="up-action-input"
-                      value={currentPageDraft.name}
-                      onChange={(e) => handlePageDraftChange('name', e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    Catégorie
-                    <input
-                      className="up-action-input"
-                      value={currentPageDraft.category}
-                      onChange={(e) => handlePageDraftChange('category', e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    Description
-                    <textarea
-                      className="up-action-textarea"
-                      value={currentPageDraft.description}
-                      onChange={(e) => handlePageDraftChange('description', e.target.value)}
-                      rows={4}
-                    />
-                  </label>
-                  <div className="up-action-button-row">
-                    <button className="up-invite-send-btn" onClick={handleSavePageDraft}>
-                      Enregistrer
+              {ownerAction === 'dashboard' && (
+                <div className="up-dashboard-modal-ui">
+                  <div className="up-dashboard-stats">
+                    <div className="up-dashboard-stat">
+                      <span className="up-dashboard-stat-number">{formatNumber(localFollowersCount)}</span>
+                      <span className="up-dashboard-stat-label">Abonnés</span>
+                    </div>
+                    <div className="up-dashboard-stat">
+                      <span className="up-dashboard-stat-number">{formatNumber(localLikesCount)}</span>
+                      <span className="up-dashboard-stat-label">J'aime</span>
+                    </div>
+                    <div className="up-dashboard-stat">
+                      <span className="up-dashboard-stat-number">{formatNumber(localCheckInsCount)}</span>
+                      <span className="up-dashboard-stat-label">Visites</span>
+                    </div>
+                  </div>
+                  <div className="up-dashboard-actions-modal">
+                    <button className="up-dashboard-btn-compact" onClick={() => handleOwnerAction('edit')}>
+                      <Icons.Edit /> <span>Modifier la page</span>
                     </button>
+                    <button className="up-dashboard-btn-compact" onClick={() => handleOwnerAction('settings')}>
+                      <Icons.Settings /> <span>Paramètres</span>
+                    </button>
+                    <button className="up-dashboard-btn-compact" onClick={handleOpenSponsorModal}>
+                      <Icons.Megaphone /> <span>Promouvoir</span>
+                    </button>
+                    <button className="up-dashboard-btn-compact" onClick={() => setShowInviteModal(true)}>
+                      <Icons.UserPlus /> <span>Inviter</span>
+                    </button>
+                  </div>
+                  <div className="up-dashboard-links">
+                    <a href="#publications" className="up-dashboard-link">Voir les publications</a>
+                    <a href="#about" className="up-dashboard-link">À propos</a>
+                    <a href="#photos" className="up-dashboard-link">Photos</a>
+                    <a href="#videos" className="up-dashboard-link">Vidéos</a>
+                  </div>
+                </div>
+              )}
+              {ownerAction === 'edit' && (
+                <div className="up-action-edit">
+                  <div className="up-edit-form">
+                    <div className="up-edit-field">
+                      <label className="up-edit-label">Nom de la page</label>
+                      <input
+                        type="text"
+                        className="up-edit-input"
+                        value={currentPageDraft.name}
+                        onChange={(e) => handlePageDraftChange('name', e.target.value)}
+                        placeholder="Nom de votre page"
+                      />
+                    </div>
+                    <div className="up-edit-field">
+                      <label className="up-edit-label">Catégorie</label>
+                      <select
+                        className="up-edit-select"
+                        value={currentPageDraft.category}
+                        onChange={(e) => handlePageDraftChange('category', e.target.value)}
+                      >
+                        <option value="">Sélectionner une catégorie</option>
+                        <option value="Entreprise">Entreprise</option>
+                        <option value="Marque">Marque</option>
+                        <option value="Artiste">Artiste</option>
+                        <option value="Cause">Cause</option>
+                        <option value="Divertissement">Divertissement</option>
+                        <option value="communauté">Communauté</option>
+                        <option value="Restaurant">Restaurant</option>
+                        <option value="Shop">Boutique</option>
+                        <option value="Service">Service</option>
+                        <option value="Autre">Autre</option>
+                      </select>
+                    </div>
+                    <div className="up-edit-field">
+                      <label className="up-edit-label">Description</label>
+                      <textarea
+                        className="up-edit-textarea"
+                        value={currentPageDraft.description}
+                        onChange={(e) => handlePageDraftChange('description', e.target.value)}
+                        placeholder="Décrivez votre page..."
+                        rows={4}
+                      />
+                    </div>
+                    <div className="up-edit-field">
+                      <label className="up-edit-label">Sous-catégorie</label>
+                      <input
+                        type="text"
+                        className="up-edit-input"
+                        value={currentPageDraft.subcategory || ''}
+                        onChange={(e) => handlePageDraftChange('subcategory', e.target.value)}
+                        placeholder="Sous-catégorie (optionnel)"
+                      />
+                    </div>
+                    <div className="up-edit-field">
+                      <label className="up-edit-label">Adresse</label>
+                      <input
+                        type="text"
+                        className="up-edit-input"
+                        value={currentPageDraft.address || ''}
+                        onChange={(e) => handlePageDraftChange('address', e.target.value)}
+                        placeholder="Adresse de la page (optionnel)"
+                      />
+                    </div>
+                    <div className="up-edit-field">
+                      <label className="up-edit-label">Téléphone</label>
+                      <input
+                        type="tel"
+                        className="up-edit-input"
+                        value={currentPageDraft.phone || ''}
+                        onChange={(e) => handlePageDraftChange('phone', e.target.value)}
+                        placeholder="Numéro de téléphone (optionnel)"
+                      />
+                    </div>
+                    <div className="up-edit-field">
+                      <label className="up-edit-label">Site web</label>
+                      <input
+                        type="url"
+                        className="up-edit-input"
+                        value={currentPageDraft.website || ''}
+                        onChange={(e) => handlePageDraftChange('website', e.target.value)}
+                        placeholder="https://votre-site.com (optionnel)"
+                      />
+                    </div>
+                    <div className="up-edit-field">
+                      <label className="up-edit-label">Email de contact</label>
+                      <input
+                        type="email"
+                        className="up-edit-input"
+                        value={currentPageDraft.contactEmail || ''}
+                        onChange={(e) => handlePageDraftChange('contactEmail', e.target.value)}
+                        placeholder="contact@exemple.com (optionnel)"
+                      />
+                    </div>
+                    <div className="up-action-button-row">
+                      <button className="up-invite-send-btn" onClick={handleSavePageDraft}>
+                        Enregistrer les modifications
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -2742,7 +3966,7 @@ useEffect(() => {
                         checked={currentPageSettings.publishEnabled}
                         onChange={() => handleSettingsToggle('publishEnabled')}
                       />
-                      Publier les mises à jour de la currentPage
+                      Publier les mises à jour de la page
                     </label>
                   </div>
                   <div className="up-action-setting-item">
@@ -2948,13 +4172,38 @@ useEffect(() => {
               )}
               {ownerAction === 'info' && (
                 <div className="up-action-summary">
-                  <p className="up-action-hint">Informations de la currentPage {currentPage.name || 'Ma Page'}.</p>
+                  <p className="up-action-hint">Informations de la page {currentPage.name || 'Ma Page'}.</p>
                   <div className="up-action-summary-item">
                     <strong>Catégorie :</strong> {currentPage.category || 'Entreprise'}
                   </div>
                   {currentPage.subcategory && (
                     <div className="up-action-summary-item">
                       <strong>Sous-catégorie :</strong> {currentPage.subcategory}
+                    </div>
+                  )}
+                  {currentPage.description && (
+                    <div className="up-action-summary-item">
+                      <strong>Description :</strong> {currentPage.description}
+                    </div>
+                  )}
+                  {currentPage.address && (
+                    <div className="up-action-summary-item">
+                      <strong>Adresse :</strong> {currentPage.address}
+                    </div>
+                  )}
+                  {currentPage.phone && (
+                    <div className="up-action-summary-item">
+                      <strong>Téléphone :</strong> {currentPage.phone}
+                    </div>
+                  )}
+                  {currentPage.website && (
+                    <div className="up-action-summary-item">
+                      <strong>Site web :</strong> {currentPage.website}
+                    </div>
+                  )}
+                  {currentPage.contactEmail && (
+                    <div className="up-action-summary-item">
+                      <strong>Email :</strong> {currentPage.contactEmail}
                     </div>
                   )}
                   <div className="up-action-summary-item">
@@ -3018,8 +4267,212 @@ useEffect(() => {
           </div>
         </Modal>
       )}
+
+      {/* Photo Viewer Modal */}
+      {photoViewerOpen && selectedPhotoIndex !== null && pagePhotos[selectedPhotoIndex] && (
+        <div className="up-modal-overlay" onClick={() => setPhotoViewerOpen(false)} style={{zIndex:9999}}>
+          <div className="up-photo-viewer" onClick={(e) => e.stopPropagation()} style={{
+            position:'relative',maxWidth:'90vw',maxHeight:'90vh',background:'#000',borderRadius:8,overflow:'hidden'
+          }}>
+            {/* Header with close button */}
+            <div style={{
+              position:'absolute',top:0,left:0,right:0,zIndex:10,
+              display:'flex',justifyContent:'space-between',alignItems:'center',
+              padding:'8px 12px',background:'linear-gradient(to bottom,rgba(0,0,0,0.7),transparent)',
+              flexWrap:'wrap',gap:8
+            }}>
+              <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
+                <button 
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(pagePhotos[selectedPhotoIndex].url);
+                      const blob = await response.blob();
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = 'photo-' + Date.now() + '.jpg';
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      window.URL.revokeObjectURL(url);
+                    } catch (e) {
+                      alert('Erreur lors du téléchargement');
+                    }
+                  }}
+                  style={{
+                    background:'rgba(255,255,255,0.2)',border:'none',borderRadius:4,
+                    padding:'6px 10px',color:'#fff',cursor:'pointer',display:'flex',alignItems:'center',gap:4,fontSize:13
+                  }}
+                >
+                  <Icons.Download size={16} /> <span className="btn-text">Télécharger</span>
+                </button>
+                {currentUser && currentUser.email === currentPage.ownerEmail && (
+                  <>
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+                          const userEmail = currentUser?.email || '';
+                          const res = await fetch(`/api/pages/${currentPage.id}?userEmail=${encodeURIComponent(userEmail)}`, {
+                            method: 'PUT',
+                            headers: { 
+                              'Content-Type': 'application/json',
+                              ...(token ? { Authorization: `Bearer ${token}` } : {})
+                            },
+                            body: JSON.stringify({ 
+                              avatar: pagePhotos[selectedPhotoIndex].url
+                            })
+                          });
+                          if (res.ok) {
+                            setToast({ message: 'Photo de profil mise à jour', type: 'success' });
+                            setPhotoViewerOpen(false);
+                          } else {
+                            const err = await res.json();
+                            setToast({ message: err.error || 'Erreur lors de la mise à jour', type: 'error' });
+                          }
+                        } catch (e) {
+                          setToast({ message: 'Erreur lors de la mise à jour', type: 'error' });
+                        }
+                      }}
+                      style={{
+                        background:'rgba(255,255,255,0.2)',border:'none',borderRadius:4,
+                        padding:'6px 10px',color:'#fff',cursor:'pointer',display:'flex',alignItems:'center',gap:4,fontSize:13
+                      }}
+                    >
+                      <Icons.User size={16} /> <span className="btn-text">Profil</span>
+                    </button>
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+                          const res = await fetch(`/api/pages/${currentPage.id}`, {
+                            method: 'PUT',
+                            headers: { 
+                              'Content-Type': 'application/json',
+                              ...(token ? { Authorization: `Bearer ${token}` } : {})
+                            },
+                            body: JSON.stringify({ 
+                              cover: pagePhotos[selectedPhotoIndex].url
+                            })
+                          });
+                          if (res.ok) {
+                            setToast({ message: 'Photo de couverture mise à jour', type: 'success' });
+                            setPhotoViewerOpen(false);
+                          } else {
+                            const err = await res.json();
+                            setToast({ message: err.error || 'Erreur lors de la mise à jour', type: 'error' });
+                          }
+                        } catch (e) {
+                          setToast({ message: 'Erreur lors de la mise à jour', type: 'error' });
+                        }
+                      }}
+                      style={{
+                        background:'rgba(255,255,255,0.2)',border:'none',borderRadius:4,
+                        padding:'6px 10px',color:'#fff',cursor:'pointer',display:'flex',alignItems:'center',gap:4,fontSize:13
+                      }}
+                    >
+                      <Icons.Image size={16} /> <span className="btn-text">Couverture</span>
+                    </button>
+                  </>
+                )}
+              </div>
+              <button 
+                onClick={() => setPhotoViewerOpen(false)}
+                style={{
+                  background:'rgba(255,255,255,0.2)',border:'none',borderRadius:'50%',
+                  width:32,height:32,color:'#fff',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'
+                }}
+              >
+                <Icons.X size={18} />
+              </button>
+            </div>
+
+            {/* Photo */}
+            <img 
+              src={pagePhotos[selectedPhotoIndex].url} 
+              alt={pagePhotos[selectedPhotoIndex].caption || ''}
+              style={{
+                maxWidth:'90vw',maxHeight:'85vh',width:'auto',height:'auto',
+                display:'block',margin:'0 auto'
+              }}
+            />
+
+            {/* Caption */}
+            {pagePhotos[selectedPhotoIndex].caption && (
+              <div style={{
+                position:'absolute',bottom:0,left:0,right:0,
+                padding:'16px',background:'linear-gradient(to top,rgba(0,0,0,0.8),transparent)',
+                color:'#fff'
+              }}>
+                <p style={{margin:0}}>{pagePhotos[selectedPhotoIndex].caption}</p>
+              </div>
+            )}
+
+            {/* Navigation arrows */}
+            {pagePhotos.length > 1 && (
+              <>
+                {selectedPhotoIndex > 0 && (
+                  <button 
+                    onClick={() => setSelectedPhotoIndex(selectedPhotoIndex - 1)}
+                    style={{
+                      position:'absolute',left:16,top:'50%',transform:'translateY(-50%)',
+                      background:'rgba(255,255,255,0.3)',border:'none',borderRadius:'50%',
+                      width:44,height:44,color:'#fff',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'
+                    }}
+                  >
+                    <Icons.ArrowLeft />
+                  </button>
+                )}
+                {selectedPhotoIndex < pagePhotos.length - 1 && (
+                  <button 
+                    onClick={() => setSelectedPhotoIndex(selectedPhotoIndex + 1)}
+                    style={{
+                      position:'absolute',right:16,top:'50%',transform:'translateY(-50%)',
+                      background:'rgba(255,255,255,0.3)',border:'none',borderRadius:'50%',
+                      width:44,height:44,color:'#fff',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'
+                    }}
+                  >
+                    <Icons.ArrowRight />
+                  </button>
+                )}
+              </>
+            )}
+
+            {/* Photo counter */}
+            <div style={{
+              position:'absolute',bottom:16,right:16,
+              background:'rgba(0,0,0,0.6)',borderRadius:20,
+              padding:'6px 12px',color:'#fff',fontSize:13
+            }}>
+              {selectedPhotoIndex + 1} / {pagePhotos.length}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Video Viewer Modal - version professionnelle avec actions dynamiques, commentaires, follow */}
+      {videoViewerOpen && selectedVideoIndex !== null && pageVideos[selectedVideoIndex] && (
+        <VideoViewerModal
+          video={pageVideos[selectedVideoIndex]}
+          videoIndex={selectedVideoIndex}
+          totalVideos={pageVideos.length}
+          onClose={() => setVideoViewerOpen(false)}
+          onPrev={() => {
+            setSelectedVideoIndex(selectedVideoIndex - 1); setVideoPlaying(false);
+          }}
+          onNext={() => {
+            setSelectedVideoIndex(selectedVideoIndex + 1); setVideoPlaying(false);
+          }}
+          canPrev={selectedVideoIndex > 0}
+          canNext={selectedVideoIndex < pageVideos.length - 1}
+          pageId={pageProp.id}
+          currentUser={currentUser}
+        />
+      )}
     </div>
   );
+
 });
 
 export default UnifyPage;
+

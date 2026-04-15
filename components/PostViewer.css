@@ -488,8 +488,8 @@
 .emoji-picker-popup {
   position: absolute;
   bottom: 100%;
-  left: 0;
-  transform: none;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-wrap: nowrap;
   gap: 6px;

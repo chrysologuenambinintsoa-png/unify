@@ -77,6 +77,10 @@ export default async function handler(req, res) {
           date: p.createdAt.toISOString(),
           likes: p.likes || 0,
           comments: Array.isArray(p.comments) ? p.comments : [],
+          backgroundColor: p.backgroundColor || null,
+          textColor: p.textColor || null,
+          backgroundImage: p.backgroundImage || null,
+          video: p.video || null,
           images: (() => {
             if (Array.isArray(p.images)) return p.images;
             if (typeof p.images === 'string') {
@@ -103,12 +107,14 @@ export default async function handler(req, res) {
         return res.status(200).json(formattedPosts)
 
       case 'POST': {
-        const { content, tags, feeling, location, event, images } = req.body
-        // Autoriser si content OU images OU video (dans payload, images ou video)
+        const { content, tags, feeling, location, event, images, backgroundColor, textColor, backgroundImage, video } = req.body
+        // Autoriser si content OU images OU event OU video (dans payload, images ou event ou video)
         const hasContent = content && content.trim();
         const hasImages = images && (Array.isArray(images) ? images.length > 0 : typeof images === 'string' && images.length > 0);
-        if (!hasContent && !hasImages) {
-          return res.status(422).json({ error: 'Contenu ou image requis' })
+        const hasEvent = event && (event.title || event.date);
+        const hasVideo = video && typeof video === 'string' && video.length > 0;
+        if (!hasContent && !hasImages && !hasEvent && !hasVideo) {
+          return res.status(422).json({ error: 'Contenu, image, vidéo ou événement requis' })
         }
 
         // Check if page exists and user owns it
@@ -136,10 +142,14 @@ if (page.ownerEmail !== user.email && process.env.NODE_ENV === 'production') {
             authorEmail: user.email,
             content: content.trim(),
             images: images ? JSON.stringify(images) : null,
+            video: video || null,
             tags: tags ? JSON.stringify(tags) : null,
             feeling: feeling || null,
             location: location || null,
-            event: event ? JSON.stringify(event) : null
+            event: event ? JSON.stringify(event) : null,
+            backgroundColor: backgroundColor || null,
+            textColor: textColor || null,
+            backgroundImage: backgroundImage || null
           },
           include: { author: true, page: true }
         })
@@ -202,6 +212,10 @@ if (page.ownerEmail !== user.email && process.env.NODE_ENV === 'production') {
           date: newPost.createdAt.toISOString(),
           likes: newPost.likes || 0,
           comments: Array.isArray(newPost.comments) ? newPost.comments : [],
+          backgroundColor: newPost.backgroundColor || null,
+          textColor: newPost.textColor || null,
+          backgroundImage: newPost.backgroundImage || null,
+          video: newPost.video || null,
           images: (() => {
             if (Array.isArray(newPost.images)) return newPost.images;
             if (typeof newPost.images === 'string') {

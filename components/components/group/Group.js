@@ -70,9 +70,10 @@ const formatNumber = (num) => {
 const formatTimeAgo = (dateStr) => {
   if (!dateStr) return '';
   const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
   const now = new Date();
   const diff = Math.floor((now - date) / 1000);
-  if (diff < 60) return 'Ã€ l\'instant';
+  if (diff < 60) return 'A l\'instant';
   if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
   if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)} h`;
   if (diff < 604800) return `Il y a ${Math.floor(diff / 86400)} j`;
@@ -402,7 +403,7 @@ const CommentItem = ({ comment, onLike, onReply, currentUserId, depth = 0 }) => 
           <div className="ug-comment-meta">
             <span className="ug-comment-time">{formatTimeAgo(comment.createdAt)}</span>
             <button className="ug-comment-action-btn" onClick={() => onLike(comment.id)}>
-              {comment.liked ? 'J\'aime Â· ' : 'J\'aime'}
+              {comment.liked ? 'J\'aime · ' : 'J\'aime'}
             </button>
             {comment.likes > 0 && <span className="ug-comment-likes-count">{comment.likes}</span>}
             {depth < 2 && (
@@ -410,7 +411,7 @@ const CommentItem = ({ comment, onLike, onReply, currentUserId, depth = 0 }) => 
                 className="ug-comment-action-btn"
                 onClick={() => setShowReplyInput(!showReplyInput)}
               >
-                RÃ©pondre
+                Repondre
               </button>
             )}
           </div>
@@ -427,7 +428,7 @@ const CommentItem = ({ comment, onLike, onReply, currentUserId, depth = 0 }) => 
             <div className="ug-reply-input">
               <input
                 type="text"
-                placeholder="RÃ©pondre..."
+                placeholder="Repondre..."
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleReply()}
@@ -589,7 +590,7 @@ const FileItem = ({ file }) => (
     <div className="ug-file-info">
       <p className="ug-file-name">{file.name}</p>
       <p className="ug-file-meta">
-        {file.size} Â· {formatTimeAgo(file.uploadedAt)} Â· par {file.uploadedBy}
+        {file.size} · {formatTimeAgo(file.uploadedAt)} · par {file.uploadedBy}
       </p>
     </div>
     <button className="ug-file-download">
@@ -1563,7 +1564,7 @@ const UnifyGroup = forwardRef(function UnifyGroup(props, ref) {
             <div className="ug-about-panel">
               <div className="ug-about-header">
                 <h2 className="ug-about-title">
-                  <Icons.Users /> Ã€ propos
+                  <Icons.Users /> A propos
                 </h2>
               </div>
 
@@ -1676,7 +1677,7 @@ const UnifyGroup = forwardRef(function UnifyGroup(props, ref) {
           <aside className="ug-sidebar">
             {/* Group Description */}
             <div className="ug-sidebar-card">
-              <h3 className="ug-sidebar-title">Ã€ propos</h3>
+              <h3 className="ug-sidebar-title">A propos</h3>
               <p className="ug-sidebar-description">
                 {group.description
                   ? group.description.length > 120
@@ -1809,4 +1810,5 @@ const UnifyGroup = forwardRef(function UnifyGroup(props, ref) {
 });
 
 export default UnifyGroup;
+
 

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Modal from './Modal'
 
-export default function TextPostCreator({ currentUser, sponsorId = null, sponsorTitle = null }) {
+export default function TextPostCreator({ currentUser, sponsorId = null, sponsorTitle = null, sponsorAvatar = null }) {
   const [content, setContent] = useState('')
   const [bgType, setBgType] = useState('color')
   const [bgColor, setBgColor] = useState('#667eea')
@@ -47,7 +47,16 @@ export default function TextPostCreator({ currentUser, sponsorId = null, sponsor
     try {
       const userStr = localStorage.getItem('user')
       const localUser = userStr ? JSON.parse(userStr) : null
-      const authorName = localUser ? (localUser.prenom || localUser.nomUtilisateur || (localUser.email||'').split('@')[0]) : 'Jean Dupont'
+
+      // Always use sponsorTitle and sponsorAvatar for page posts (when sponsorId is present)
+      let authorName, avatarUrl;
+      if (sponsorId && sponsorTitle && sponsorAvatar) {
+        authorName = typeof sponsorTitle === 'string' ? sponsorTitle : (sponsorTitle?.name || '');
+        avatarUrl = sponsorAvatar;
+      } else {
+        authorName = localUser ? (localUser.prenom || localUser.nomUtilisateur || (localUser.email||'').split('@')[0]) : 'Jean Dupont';
+        avatarUrl = localUser?.avatarUrl || localUser?.avatar || null;
+      }
 
       const payload = {
         title: content.trim().split('\n')[0].slice(0, 60) || 'Publication',
@@ -56,9 +65,9 @@ export default function TextPostCreator({ currentUser, sponsorId = null, sponsor
         textColor: textColor,
         backgroundImage: bgType === 'image' ? bgImage : null,
         privacy: 'public',
-        author: sponsorTitle || authorName,
+        author: authorName,
         sponsorId: sponsorId || null,
-        avatarUrl: sponsorTitle ? null : (localUser?.avatarUrl || localUser?.avatar || null)
+        avatarUrl: avatarUrl
       }
 
       const res = await fetch('/api/items', {
@@ -100,7 +109,9 @@ export default function TextPostCreator({ currentUser, sponsorId = null, sponsor
         {/* User Info */}
         <div className="text-post-creator-user">
           <div className="text-post-creator-avatar">
-            {currentUser?.avatarUrl || currentUser?.avatar ? (
+            {sponsorId && sponsorAvatar ? (
+              <img src={sponsorAvatar} alt="avatar" />
+            ) : currentUser?.avatarUrl || currentUser?.avatar ? (
               <img src={currentUser.avatarUrl || currentUser.avatar} alt="avatar" />
             ) : (
               <div className="text-post-creator-avatar-placeholder">
@@ -110,7 +121,7 @@ export default function TextPostCreator({ currentUser, sponsorId = null, sponsor
           </div>
           <div className="text-post-creator-user-info">
             <span className="text-post-creator-user-name">
-              {currentUser?.prenom || currentUser?.nomUtilisateur || 'Utilisateur'}
+              {sponsorTitle || currentUser?.prenom || currentUser?.nomUtilisateur || 'Utilisateur'}
             </span>
             <span className="text-post-creator-privacy">
               <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">

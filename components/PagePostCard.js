@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
-import PostViewer from './PostViewer'
+import PagePostViewer from './PagePostViewer'
 import ClickableAvatar from './ClickableAvatar'
 import useSaved from '../hooks/useSaved'
 import useRealtimePost from './hooks/useRealtimePost'
@@ -30,11 +30,12 @@ export default function PagePostCard({ post: initialPost, onDelete, currentUser,
   const formatTime = (timestamp) => {
     if (!timestamp) return '';
     const date = new Date(timestamp);
+    if (isNaN(date.getTime())) return '';
     const now = new Date();
     const diff = now - date;
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if (diff < 60000) return 'Ã€ l\'instant';
+    if (diff < 60000) return 'A l\'instant';
     if (diff < 3600000) return `Il y a ${Math.floor(diff / 60000)} min`;
     if (diff < 86400000) return `Il y a ${Math.floor(diff / 3600000)} h`;
     if (days === 1) return 'Hier';
@@ -62,6 +63,40 @@ export default function PagePostCard({ post: initialPost, onDelete, currentUser,
   const [isHidden, setIsHidden] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [editedContent, setEditedContent] = useState(post.content || '')
+  const [savingEdit, setSavingEdit] = useState(false)
+
+  // Sync editedContent when post content changes
+  useEffect(() => {
+    if (!editMode && post?.content !== editedContent) {
+      setEditedContent(post.content || '')
+    }
+  }, [post?.content, editMode])
+
+  // Fonction pour sauvegarder l'édition du post
+  async function handleSaveEdit() {
+    if (!editedContent.trim()) return;
+    setSavingEdit(true);
+    try {
+      // On suppose que le post de page a pageId ou sponsorId
+      const pageId = page?.id || post.pageId || post.sponsorId;
+      if (!pageId || !post.id) throw new Error('ID manquant');
+      const res = await fetch(`/api/pages/${pageId}/posts/${post.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: editedContent })
+      });
+      if (!res.ok) throw new Error('Erreur API');
+      const updated = await res.json();
+      setEditMode(false);
+      setEditedContent(updated.content || editedContent);
+      // Met à jour le post localement si besoin
+      // (optionnel: notifier le parent ou forcer un refresh)
+    } catch (e) {
+      alert('Erreur lors de la sauvegarde: ' + (e.message || e));
+    } finally {
+      setSavingEdit(false);
+    }
+  }
   const [reportOpen, setReportOpen] = useState(false)
   const [reportReason, setReportReason] = useState('')
   const [expanded, setExpanded] = useState(false)
@@ -546,10 +581,10 @@ export default function PagePostCard({ post: initialPost, onDelete, currentUser,
               </div>
               <div className="post-meta">
                 <span className="post-time">{formatTime(post.createdAt || post.date)}</span>
-                <span className="meta-dot">Â·</span>
+                <span className="meta-dot">·</span>
                 <span className="post-privacy">
                   <i className={`fas fa-${post.privacy || 'globe'}`}></i>
-                  {post.privacy === 'user' ? 'PrivÃ©' : post.privacy === 'friends' ? 'Amis' : 'Public'}
+                  {post.privacy === 'user' ? 'Prive' : post.privacy === 'friends' ? 'Amis' : 'Public'}
                 </span>
               </div>
             </div>
@@ -562,16 +597,26 @@ export default function PagePostCard({ post: initialPost, onDelete, currentUser,
               <div className="post-menu-dropdown">
                 <button className="menu-item" onClick={() => { toggle(); setMenuOpen(false) }}>
                   <i className={`fa${saved ? 's' : 'r'} fa-bookmark`}></i>
-                  <span>{saved ? 'EnregistrÃ©' : 'Enregistrer'}</span>
+                  <span>{saved ? 'Enregistré' : 'Enregistrer'}</span>
                 </button>
                 <button className="menu-item" onClick={() => { toggleNotifications(); setMenuOpen(false) }}>
                   <i className={`fas fa-${notificationsEnabled ? 'bell-slash' : 'bell'}`}></i>
-                  <span>{notificationsEnabled ? 'DÃ©sactiver notifications' : 'Activer notifications'}</span>
+                  <span>{notificationsEnabled ? 'Désactiver notifications' : 'Activer notifications'}</span>
                 </button>
                 <button className="menu-item" onClick={() => { toggleHidePost(); setMenuOpen(false) }}>
                   <i className="fas fa-eye-slash"></i>
                   <span>{isHidden ? 'Afficher la publication' : 'Masquer la publication'}</span>
                 </button>
+                {/* Option de suppression visible pour le propriétaire/admin */}
+                {currentUser && (currentUser.role === 'owner' || currentUser.role === 'admin' || (page && currentUser.email && page.ownerEmail && currentUser.email === page.ownerEmail)) && (
+                  <>
+                    <div className="menu-divider"></div>
+                    <button className="menu-item danger" onClick={async () => { if (onDelete) await onDelete(post.id); setMenuOpen(false) }}>
+                      <i className="fas fa-trash"></i>
+                      <span>Supprimer la publication</span>
+                    </button>
+                  </>
+                )}
                 <div className="menu-divider"></div>
                 <button className="menu-item" onClick={() => { setReportOpen(true); setMenuOpen(false) }}>
                   <i className="fas fa-flag"></i>
@@ -596,8 +641,8 @@ export default function PagePostCard({ post: initialPost, onDelete, currentUser,
                 <button className="btn-cancel" onClick={() => { setEditMode(false); setEditedContent(post.content || '') }}>
                   Annuler
                 </button>
-                <button className="btn-save" onClick={() => { setEditMode(false) }}>
-                  Enregistrer
+                <button className="btn-save" onClick={handleSaveEdit} disabled={savingEdit}>
+                  {savingEdit ? 'Enregistrement...' : 'Enregistrer'}
                 </button>
               </div>
             </div>
@@ -741,7 +786,7 @@ export default function PagePostCard({ post: initialPost, onDelete, currentUser,
                   {getReactionEmoji(reactionType)}
                 </span>
               ) : (
-                <i className={`fa${liked ? 's' : 'r'} fa-thumbs-up action-icon`} style={{color: liked ? '#1a1a2e' : 'white'}}></i>
+                <i className={`fa${liked ? 's' : 'r'} fa-thumbs-up action-icon`} style={{color: liked ? '#e74c3c' : 'white'}}></i>
               )}
               <span>{liked ? (reactionType === 'love' ? 'J\'adore' : reactionType === 'haha' ? 'Haha' : reactionType === 'sad' ? 'Triste' : reactionType === 'wow' ? 'Waooo' : reactionType === 'solidarity' ? 'Solidaire' : 'J\'aime') : 'J\'aime'}</span>
             </button>
@@ -796,7 +841,7 @@ export default function PagePostCard({ post: initialPost, onDelete, currentUser,
                   style={{ flex: 1, minWidth: 0, width: '100%' }}
                   ref={commentInputRef}
                   type="text"
-                  placeholder={replyTo ? `RÃ©pondre Ã  ${replyTo.author}...` : 'Ajouter un commentaire...'}
+                  placeholder={replyTo ? `Repondre a ${replyTo.author}...` : 'Ajouter un commentaire...'}
                   value={commentInput}
                   onChange={(e) => setCommentInput(e.target.value)}
                   onKeyDown={handleKey}
@@ -814,7 +859,7 @@ export default function PagePostCard({ post: initialPost, onDelete, currentUser,
             {/* Reply indicator */}
             {replyTo && (
               <div className="reply-indicator">
-                <span>RÃ©ponse Ã  <strong>{replyTo.author}</strong></span>
+                <span>Reponse a <strong>{replyTo.author}</strong></span>
                 <button className="cancel-reply" onClick={() => setReplyTo(null)}>
                   <i className="fas fa-times"></i>
                 </button>
@@ -847,12 +892,12 @@ export default function PagePostCard({ post: initialPost, onDelete, currentUser,
                           className={`comment-action-btn ${commentLikes[comment.id] ? 'liked' : ''}`}
                           onClick={() => toggleCommentLike(comment)}
                         >
-                          J'aime{comment.likes > 0 ? ` Â· ${comment.likes}` : ''}
+                          J'aime{comment.likes > 0 ? ` · ${comment.likes}` : ''}
                         </button>
                         <button className="comment-action-btn" onClick={() => handleReply(comment)}>
-                          RÃ©pondre
+                          Repondre
                         </button>
-                        <span className="comment-time">{comment.date || 'Ã€ l\'instant'}</span>
+                        <span className="comment-time">{comment.date || 'A l\'instant'}</span>
                       </div>
                     </div>
                   </div>
@@ -898,10 +943,11 @@ export default function PagePostCard({ post: initialPost, onDelete, currentUser,
         )}
       </article>
 
-      {/* Post Viewer Modal */}
+      {/* Page Post Viewer Modal */}
       {postViewerOpen && !disableModal && (
-        <PostViewer
+        <PagePostViewer
           post={post}
+          page={page}
           onClose={() => setPostViewerOpen(false)}
           onDelete={onDelete}
         />

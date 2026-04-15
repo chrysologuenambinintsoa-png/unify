@@ -1,6 +1,7 @@
 import Layout from '../components/Layout'
 import { UnifyPage, CreatePageForm, PagesList } from '../components/components/pages'
 import { useState, useRef, useEffect } from 'react'
+import PagePostViewer from '../components/PagePostViewer.js';
 
 const MOCK_CURRENT_USER = {
   id: 'user-1',
@@ -47,6 +48,25 @@ export default function PagesPage() {
     setSelectedPage(null)
   }
 
+  const handlePageUpdate = async (updatedPageData) => {
+    try {
+      const response = await fetch(`/api/pages/${updatedPageData.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedPageData)
+      })
+      const data = await response.json()
+      if (response.ok && data.page) {
+        setSelectedPage(data.page)
+        setRefreshTrigger(prev => prev + 1)
+      } else {
+        console.error('Failed to update page:', data.error)
+      }
+    } catch (error) {
+      console.error('Error updating page:', error)
+    }
+  }
+
   return (
     <Layout>
       <div ref={containerRef}>
@@ -60,7 +80,7 @@ export default function PagesPage() {
             >
               <span>←</span> Retour
             </button>
-            <UnifyPage page={selectedPage} currentUser={currentUser} onClose={handlePageClose} />
+            <UnifyPage page={selectedPage} currentUser={currentUser} onClose={handlePageClose} onPageUpdate={handlePageUpdate} />
           </div>
         ) : (
           // Show pages list and create form

@@ -53,7 +53,38 @@ export default async function handler(req, res) {
         return res.status(200).json({ page })
 
       case 'PUT':
-        const { action, userEmail, privacy } = req.body
+        const user = await getUser(req)
+        console.log('[pages/[id]] PUT - user:', user?.email);
+        
+        // Fallback: if no JWT but userEmail provided in body or query, try to get user
+        let currentUser = user;
+        if (!currentUser) {
+          const email = req.body?.userEmail || req.query?.userEmail;
+          if (email) {
+            currentUser = await prisma.user.findUnique({ 
+              where: { email } 
+            });
+            console.log('[pages/[id]] PUT - fallback user from:', email, currentUser?.email);
+          }
+        }
+        
+        if (!currentUser) {
+          return res.status(401).json({ error: 'Non autorisé' })
+        }
+
+        const { action, privacy, name, description, category, subcategory, address, phone, website, contactEmail, isPublic, isPublished, notificationsEnabled, userEmail, avatar, cover } = req.body
+        console.log('[pages/[id]] PUT - body:', req.body);
+
+        const targetPage = await prisma.page.findUnique({ where: { id: pageId } })
+        console.log('[pages/[id]] PUT - targetPage:', targetPage?.id, 'ownerEmail:', targetPage?.ownerEmail);
+        console.log('[pages/[id]] PUT - currentUser:', currentUser?.email);
+        if (!targetPage) {
+          return res.status(404).json({ error: 'Page non trouvée' })
+        }
+        if (targetPage.ownerEmail !== currentUser.email) {
+          console.log('[pages/[id]] PUT - Permission denied:', targetPage.ownerEmail, '!=', currentUser.email);
+          return res.status(403).json({ error: 'Non autorisé à modifier cette page' })
+        }
 
         if (action === 'updatePrivacy') {
           const updatedPage = await prisma.page.update({
@@ -63,7 +94,31 @@ export default async function handler(req, res) {
           return res.status(200).json({ page: updatedPage })
         }
 
-        return res.status(400).json({ error: 'Action non reconnue' })
+        const updateData = {}
+        if (name !== undefined) updateData.name = name
+        if (description !== undefined) updateData.description = description
+        if (category !== undefined) updateData.category = category
+        if (subcategory !== undefined) updateData.subcategory = subcategory
+        if (address !== undefined) updateData.address = address
+        if (phone !== undefined) updateData.phone = phone
+        if (website !== undefined) updateData.website = website
+        if (contactEmail !== undefined) updateData.contactEmail = contactEmail
+        if (privacy !== undefined) updateData.privacy = privacy
+        if (isPublic !== undefined) updateData.isPublic = isPublic
+        if (isPublished !== undefined) updateData.isPublished = isPublished
+        if (notificationsEnabled !== undefined) updateData.notificationsEnabled = notificationsEnabled
+        if (avatar !== undefined) updateData.avatar = avatar
+        if (cover !== undefined) updateData.cover = cover
+
+        if (Object.keys(updateData).length > 0) {
+          const updatedPage = await prisma.page.update({
+            where: { id: pageId },
+            data: updateData
+          })
+          return res.status(200).json({ page: updatedPage })
+        }
+
+        return res.status(400).json({ error: 'Aucune donnée à mettre à jour' })
 
       case 'DELETE': {
         const user = await getUser(req)

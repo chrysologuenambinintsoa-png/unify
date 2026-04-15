@@ -69,7 +69,7 @@ export default function Layout({ children, leftSidebar = true, rightSidebar, rig
           .center-feed { padding: 0; }
         }
       `}</style>
-      <TextPostCreator currentUser={currentUser} />
+      {/* <TextPostCreator currentUser={currentUser} /> */}
     </div>
   )
 }

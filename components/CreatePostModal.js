@@ -24,10 +24,11 @@ import {
   faPlus,
   faGift,
   faPoll,
-  faPen
+  faPen,
+  faCalendar
 } from '@fortawesome/free-solid-svg-icons'
 
-export default function CreatePostModal({ currentUser, sponsorId = null, sponsorTitle = null, open: controlledOpen, onClose: controlledOnClose }) {
+export default function CreatePostModal({ currentUser, sponsorId = null, sponsorTitle = null, sponsorAvatar = null, open: controlledOpen, onClose: controlledOnClose }) {
   const [isOpen, setIsOpen] = useState(false)
   const [postContent, setPostContent] = useState('')
   const [selectedImage, setSelectedImage] = useState(null)
@@ -42,15 +43,23 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
   const [showTagModal, setShowTagModal] = useState(false)
   const [showFeelingModal, setShowFeelingModal] = useState(false)
   const [showLocationModal, setShowLocationModal] = useState(false)
+  const [showEventModal, setShowEventModal] = useState(false)
   const [showPrivacyDropdown, setShowPrivacyDropdown] = useState(false)
   const [tagInput, setTagInput] = useState('')
   const [taggedUsers, setTaggedUsers] = useState([])
   const [feelingSelected, setFeelingSelected] = useState(null)
   const [locationInput, setLocationInput] = useState('')
+  const [eventTitle, setEventTitle] = useState('')
+  const [eventDate, setEventDate] = useState('')
+  const [eventLocation, setEventLocation] = useState('')
+  const [eventDescription, setEventDescription] = useState('')
+  const [eventCover, setEventCover] = useState(null)
+  const [eventCoverPreview, setEventCoverPreview] = useState(null)
   const [privacy, setPrivacy] = useState('public')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const textareaRef = useRef(null)
   const privacyDropdownRef = useRef(null)
+  const eventCoverInputRef = useRef(null)
 
   const isModalOpen = controlledOpen !== undefined ? controlledOpen : isOpen
 
@@ -69,8 +78,8 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
   }
 
   const modalTitle = sponsorTitle ? `Publier sur la page de ${sponsorTitle}` : 'Créer une publication'
-  const userName = currentUser ? (currentUser.prenom || currentUser.nomUtilisateur || (currentUser.email || '').split('@')[0]) : 'Jean Dupont'
-  const userInitials = currentUser ? (currentUser.prenom ? `${currentUser.prenom[0]}${(currentUser.nom || '')[0] || ''}`.toUpperCase() : (currentUser.nomUtilisateur ? currentUser.nomUtilisateur.slice(0, 2).toUpperCase() : (currentUser.email || '')[0]?.toUpperCase())) : 'JD'
+  const userName = sponsorTitle || (currentUser ? (currentUser.prenom || currentUser.nomUtilisateur || (currentUser.email || '').split('@')[0]) : 'Jean Dupont')
+  const userInitials = sponsorTitle ? (sponsorTitle[0] || 'P') : (currentUser ? (currentUser.prenom ? `${currentUser.prenom[0]}${(currentUser.nom || '')[0] || ''}`.toUpperCase() : (currentUser.nomUtilisateur ? currentUser.nomUtilisateur.slice(0, 2).toUpperCase() : (currentUser.email || '')[0]?.toUpperCase())) : 'JD')
   const moodOptions = [
     { emoji: '😊', label: 'Joyeux', icon: '😄' },
     { emoji: '😔', label: 'Triste', icon: '😢' },
@@ -161,6 +170,12 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
     setIsUploading(false)
     setFeelingSelected(null)
     setLocationInput('')
+    setEventTitle('')
+    setEventDate('')
+    setEventLocation('')
+    setEventDescription('')
+    setEventCover(null)
+    setEventCoverPreview(null)
     setTagInput('')
     setTaggedUsers([])
     setShowEmojiPicker(false)
@@ -221,6 +236,23 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
     if (videoInputRef.current) videoInputRef.current.value = ''
   }
 
+  function handleEventCoverSelect(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      setEventCoverPreview(ev.target.result)
+    }
+    reader.readAsDataURL(file)
+    setEventCover(file)
+  }
+
+  function removeEventCover() {
+    setEventCover(null)
+    setEventCoverPreview(null)
+    if (eventCoverInputRef.current) eventCoverInputRef.current.value = ''
+  }
+
   function removeTaggedUser(userId) {
     setTaggedUsers(prev => prev.filter(u => u.id !== userId))
   }
@@ -244,14 +276,14 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
   }
 
   async function handleCreate() {
-    if (!postContent.trim() && !selectedImage && !selectedVideo) {
-      showToast('Veuillez ajouter du contenu, une image ou une vidéo', 'warning');
+    if (!postContent.trim() && !selectedImage && !selectedVideo && !eventTitle) {
+      showToast('Veuillez ajouter du contenu, une image, une vidéo ou un événement', 'warning');
       return;
     }
 
-    // N'exige du texte que si aucune image/vidéo n'est présente
-    if (!postContent.trim() && !selectedImage && !selectedVideo) {
-      showToast('Le post doit contenir du texte, une image ou une vidéo.', 'error');
+    // N'exige du texte que si aucune image/vidéo/événement n'est présent
+    if (!postContent.trim() && !selectedImage && !selectedVideo && !eventTitle) {
+      showToast('Le post doit contenir du texte, une image, une vidéo ou un événement.', 'error');
       return;
     }
     
@@ -360,7 +392,14 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
         privacy: privacy,
         taggedUsers: taggedUsers.map(u => u.name),
         feeling: feelingSelected ? feelingSelected.label : null,
-        location: locationInput || null
+        location: locationInput || null,
+        event: eventTitle ? { 
+          title: eventTitle, 
+          date: eventDate, 
+          location: eventLocation,
+          description: eventDescription,
+          coverImage: eventCoverPreview
+        } : undefined
       };
       // N'ajoute sponsorId que s'il est défini (pour éviter les erreurs de clé étrangère)
       if (sponsorId) {
@@ -421,7 +460,9 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
         <div className="fb-post-header">
           <div className="fb-post-user-info">
             <div className="fb-post-avatar-wrapper">
-              {currentUser && (currentUser.avatarUrl || currentUser.avatar) ? (
+              {sponsorId && sponsorAvatar ? (
+                <img src={sponsorAvatar} alt="avatar" className="fb-post-avatar" />
+              ) : currentUser && (currentUser.avatarUrl || currentUser.avatar) ? (
                 <img src={currentUser.avatarUrl || currentUser.avatar} alt="avatar" className="fb-post-avatar" />
               ) : (
                 <div className="fb-post-avatar-placeholder">{userInitials}</div>
@@ -563,6 +604,25 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
               </button>
             </div>
           )}
+
+          {/* Event Display */}
+          {eventTitle && (
+            <div className="fb-event-display">
+              <FontAwesomeIcon icon={faCalendar} className="fb-event-icon" />
+              <div className="fb-event-info">
+                <span className="fb-event-title">{eventTitle}</span>
+                {eventDate && <span className="fb-event-date">{new Date(eventDate).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}</span>}
+                {eventLocation && <span className="fb-event-location">{eventLocation}</span>}
+              </div>
+              <button
+                className="fb-remove-event"
+                onClick={() => { setEventTitle(''); setEventDate(''); setEventLocation(''); }}
+                disabled={isUploading}
+              >
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Add to Post Section */}
@@ -608,6 +668,14 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
               disabled={isUploading}
             >
               <FontAwesomeIcon icon={faLocationDot} style={{ color: '#f3425f' }} />
+            </button>
+            <button
+              className="fb-add-icon-btn"
+              onClick={() => setShowEventModal(true)}
+              title="Créer un événement"
+              disabled={isUploading}
+            >
+              <FontAwesomeIcon icon={faCalendar} style={{ color: '#8b5cf6' }} />
             </button>
           </div>
         </div>
@@ -690,6 +758,112 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
           </div>
         )}
 
+        {/* Event Modal */}
+        {showEventModal && (
+          <div className="fb-modal-overlay" onClick={() => setShowEventModal(false)}>
+            <div className="fb-event-modal-large" onClick={(e) => e.stopPropagation()}>
+              <div className="fb-event-modal-header">
+                <div className="fb-event-modal-title">
+                  <FontAwesomeIcon icon={faCalendar} />
+                  <h3>Créer un événement</h3>
+                </div>
+                <button 
+                  className="fb-modal-close-btn"
+                  onClick={() => setShowEventModal(false)}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+              </div>
+              
+              {/* Event Cover Image */}
+              <div className="fb-event-cover-section">
+                {eventCoverPreview ? (
+                  <div className="fb-event-cover-preview">
+                    <img src={eventCoverPreview} alt="Event cover" />
+                    <button className="fb-remove-cover" onClick={removeEventCover}>
+                      <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="fb-event-cover-upload" onClick={() => eventCoverInputRef.current?.click()}>
+                    <FontAwesomeIcon icon={faImage} />
+                    <span>Ajouter une image de couverture</span>
+                    <small>Recommandé: 1200x630px</small>
+                  </div>
+                )}
+              </div>
+
+              {/* Event Title */}
+              <div className="fb-event-field">
+                <label>Titre de l'événement *</label>
+                <input
+                  type="text"
+                  value={eventTitle}
+                  onChange={(e) => setEventTitle(e.target.value)}
+                  placeholder="Nom de votre événement"
+                  className="fb-event-input-large"
+                />
+              </div>
+
+              {/* Event Date & Time */}
+              <div className="fb-event-row">
+                <div className="fb-event-field">
+                  <label><FontAwesomeIcon icon={faCalendar} /> Date et heure *</label>
+                  <input
+                    type="datetime-local"
+                    value={eventDate}
+                    onChange={(e) => setEventDate(e.target.value)}
+                    className="fb-event-input"
+                  />
+                </div>
+                <div className="fb-event-field">
+                  <label><FontAwesomeIcon icon={faLocationDot} /> Lieu</label>
+                  <input
+                    type="text"
+                    value={eventLocation}
+                    onChange={(e) => setEventLocation(e.target.value)}
+                    placeholder="Adresse ou lieu"
+                    className="fb-event-input"
+                  />
+                </div>
+              </div>
+
+              {/* Event Description */}
+              <div className="fb-event-field">
+                <label>Description</label>
+                <textarea
+                  value={eventDescription}
+                  onChange={(e) => setEventDescription(e.target.value)}
+                  placeholder="Décrivez votre événement..."
+                  rows={4}
+                  className="fb-event-textarea"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="fb-event-actions">
+                <button 
+                  className="fb-event-cancel-btn"
+                  onClick={() => setShowEventModal(false)}
+                >
+                  Annuler
+                </button>
+                <button 
+                  className="fb-event-publish-btn"
+                  onClick={() => {
+                    if (eventTitle.trim() && eventDate) {
+                      setShowEventModal(false)
+                    }
+                  }}
+                  disabled={!eventTitle.trim() || !eventDate}
+                >
+                  <FontAwesomeIcon icon={faCheck} /> Créer l'événement
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Hidden File Inputs */}
         <input
           ref={fileInputRef}
@@ -704,6 +878,13 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
           type="file"
           onChange={handleVideoSelect}
           accept="video/*"
+          style={{ display: 'none' }}
+        />
+        <input
+          ref={eventCoverInputRef}
+          type="file"
+          onChange={handleEventCoverSelect}
+          accept="image/*"
           style={{ display: 'none' }}
         />
 
@@ -1054,6 +1235,44 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
             color: #f3425f;
           }
 
+          .fb-event-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            padding: 10px;
+            background: #f0f2f5;
+            border-radius: 8px;
+            font-size: 14px;
+          }
+
+          .fb-event-icon {
+            color: #8b5cf6;
+            font-size: 18px;
+          }
+
+          .fb-event-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            gap: 2px;
+          }
+
+          .fb-event-title {
+            font-weight: 600;
+            color: #000;
+          }
+
+          .fb-event-date {
+            font-size: 12px;
+            color: #65676b;
+          }
+
+          .fb-event-location {
+            font-size: 12px;
+            color: #65676b;
+          }
+
           .fb-remove-location {
             margin-left: auto;
             background: none;
@@ -1065,6 +1284,20 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
           }
 
           .fb-remove-location:hover {
+            color: #f3425f;
+          }
+
+          .fb-remove-event {
+            margin-left: auto;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            font-size: 14px;
+          }
+
+          .fb-remove-event:hover {
             color: #f3425f;
           }
 
@@ -1129,7 +1362,8 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
 
           .fb-feeling-modal,
           .fb-tag-modal,
-          .fb-location-modal {
+          .fb-location-modal,
+          .fb-event-modal {
             background: white;
             border-radius: 8px;
             padding: 20px;
@@ -1140,7 +1374,8 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
 
           .fb-feeling-modal h3,
           .fb-tag-modal h3,
-          .fb-location-modal h3 {
+          .fb-location-modal h3,
+          .fb-event-modal h3 {
             font-size: 18px;
             margin: 0;
             color: #000;
@@ -1225,13 +1460,16 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
             outline: none;
           }
 
-          .fb-tag-modal input:focus,
-          .fb-location-modal input:focus {
+.fb-tag-modal input:focus,
+          .fb-location-modal input:focus,
+          .fb-event-modal-large input:focus,
+          .fb-event-modal-large textarea:focus {
             border-color: #667eea;
           }
 
           .fb-tag-add-btn,
-          .fb-location-confirm-btn {
+          .fb-location-confirm-btn,
+          .fb-event-confirm-btn {
             width: 100%;
             padding: 10px;
             background: #667eea;
@@ -1244,10 +1482,211 @@ export default function CreatePostModal({ currentUser, sponsorId = null, sponsor
           }
 
           .fb-tag-add-btn:hover,
-          .fb-location-confirm-btn:hover {
+          .fb-location-confirm-btn:hover,
+          .fb-event-confirm-btn:hover {
             background: #764ba2;
           }
 
+          /* Enriched Event Modal Styles */
+          .fb-event-modal-large {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 60px rgba(0, 0, 0, 0.2);
+          }
+
+          .fb-event-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e5e5;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+          }
+
+          .fb-event-modal-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #8b5cf6;
+          }
+
+          .fb-event-modal-title h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #1a1a1a;
+          }
+
+          .fb-event-cover-section {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e5e5;
+          }
+
+          .fb-event-cover-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            border: 2px dashed #e5e5e5;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #8b5cf6;
+          }
+
+          .fb-event-cover-upload:hover {
+            border-color: #8b5cf6;
+            background: #f8f5ff;
+          }
+
+          .fb-event-cover-upload span {
+            margin-top: 8px;
+            font-weight: 600;
+            color: #1a1a1a;
+          }
+
+          .fb-event-cover-upload small {
+            color: #65676b;
+            font-size: 12px;
+            margin-top: 4px;
+          }
+
+          .fb-event-cover-preview {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+          }
+
+          .fb-event-cover-preview img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+          }
+
+          .fb-remove-cover {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+          }
+
+          .fb-remove-cover:hover {
+            background: rgba(0, 0, 0, 0.8);
+          }
+
+          .fb-event-field {
+            padding: 16px 24px;
+          }
+
+          .fb-event-field label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+          }
+
+          .fb-event-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+          }
+
+          .fb-event-input,
+          .fb-event-input-large,
+          .fb-event-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #fafafa;
+          }
+
+          .fb-event-input:focus,
+          .fb-event-input-large:focus,
+          .fb-event-textarea:focus {
+            border-color: #8b5cf6;
+            background: white;
+          }
+
+          .fb-event-textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+          }
+
+          .fb-event-actions {
+            display: flex;
+            gap: 12px;
+            padding: 20px 24px;
+            border-top: 1px solid #e5e5e5;
+            background: #fafafa;
+          }
+
+          .fb-event-cancel-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #65676b;
+            transition: all 0.2s;
+          }
+
+          .fb-event-cancel-btn:hover {
+            background: #f5f5f5;
+          }
+
+          .fb-event-publish-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: #8b5cf6;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+          }
+
+          .fb-event-publish-btn:hover {
+            background: #7c3aed;
+          }
+
+          .fb-event-publish-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+          
           .fb-upload-progress {
             margin-bottom: 15px;
             display: flex;

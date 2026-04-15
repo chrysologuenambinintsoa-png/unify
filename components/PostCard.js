@@ -14,9 +14,20 @@ export default function PostCard({ post: initialPost, onDelete, currentUser, dis
   const commentInputRef = useRef(null)
   const hideTimeoutRef = useRef(null)
   const menuDropdownRef = useRef(null)
-  
+
+  // Détecte le bon endpoint pour le polling temps réel
+  let apiUrl = null;
+  if (initialPost?.pageId || initialPost?.sponsorId) {
+    // Post de page
+    const pageId = initialPost.pageId || initialPost.sponsorId;
+    apiUrl = `/api/pages/${pageId}/posts/${initialPost.id}`;
+  } else {
+    // Post global
+    apiUrl = `/api/items/${initialPost?.id}`;
+  }
+
   // Real-time post updates
-  const { post, isUpdating, lastUpdate, forceUpdate } = useRealtimePost(initialPost?.id, initialPost)
+  const { post, isUpdating, lastUpdate, forceUpdate } = useRealtimePost(initialPost?.id, initialPost, apiUrl)
 
   // Format timestamp relative to current time (like Groupe.js)
   const formatTime = (timestamp) => {
@@ -576,27 +587,44 @@ export default function PostCard({ post: initialPost, onDelete, currentUser, dis
           )}
           <div className="post-author-section">
             {(() => {
-              const userObj = post.authorUser ? {
-                prenom: post.authorUser.prenom || post.author,
-                nom: post.authorUser.nom,
-                nomUtilisateur: post.authorUser.nomUtilisateur || post.author,
-                email: post.authorUser.email,
-                avatarUrl: post.authorUser.avatarUrl || post.authorUser.avatar,
-                avatar: post.authorUser.avatar,
-                avatarBg: post.color
-              } : {
-                prenom: post.author,
-                nomUtilisateur: post.author,
-                avatarUrl: post.avatarUrl || post.avatar,
-                avatar: post.avatar,
-                avatarBg: post.color
-              }
+              // Si le post est de la page, forcer nom/avatar page
+              const isPageAuthor = post.author && post.pageName && (post.author === post.pageName || post.author.name === post.pageName);
+              const userObj = isPageAuthor
+                ? {
+                    prenom: post.pageName,
+                    nomUtilisateur: post.pageName,
+                    avatarUrl: post.pageAvatar,
+                    avatar: post.pageAvatar,
+                    avatarBg: post.color
+                  }
+                : post.authorUser
+                ? {
+                    prenom: post.authorUser.prenom || post.author,
+                    nom: post.authorUser.nom,
+                    nomUtilisateur: post.authorUser.nomUtilisateur || post.author,
+                    email: post.authorUser.email,
+                    avatarUrl: post.authorUser.avatarUrl || post.authorUser.avatar,
+                    avatar: post.authorUser.avatar,
+                    avatarBg: post.color
+                  }
+                : {
+                    prenom: post.author,
+                    nomUtilisateur: post.author,
+                    avatarUrl: post.avatarUrl || post.avatar,
+                    avatar: post.avatar,
+                    avatarBg: post.color
+                  };
               return <ClickableAvatar user={userObj} size="medium" />
             })()}
             <div className="post-author-info">
               <div className="author-name-row">
                 <span className="author-name" onClick={(e) => { e.stopPropagation(); navigateAuthor() }}>
-                  {typeof post.author === 'object' && post.author !== null ? post.author.name : post.author}
+                  {/* Si le post est de la page, afficher le nom de la page */}
+                  {post.pageName && ((post.author && post.author === post.pageName) || (typeof post.author === 'object' && post.author.name === post.pageName))
+                    ? post.pageName
+                    : typeof post.author === 'object' && post.author !== null
+                    ? post.author.name
+                    : post.author}
                 </span>
                 {post.isVerified && (
                   <span className="verified-badge" title="Compte vérifié">
@@ -820,7 +848,7 @@ export default function PostCard({ post: initialPost, onDelete, currentUser, dis
                   {getReactionEmoji(reactionType)}
                 </span>
               ) : (
-                <i className={`fa${liked ? 's' : 'r'} fa-thumbs-up action-icon`} style={{color: liked ? '#1a1a2e' : 'white'}}></i>
+                <i className={`fa${liked ? 's' : 'r'} fa-thumbs-up action-icon`} style={{color: liked ? '#e74c3c' : 'white'}}></i>
               )}
               <span>{liked ? (reactionType === 'love' ? 'J\'adore' : reactionType === 'haha' ? 'Haha' : reactionType === 'sad' ? 'Triste' : reactionType === 'wow' ? 'Waooo' : reactionType === 'solidarity' ? 'Solidaire' : 'J\'aime') : 'J\'aime'}</span>
             </button>

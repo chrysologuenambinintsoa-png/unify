@@ -3,8 +3,9 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartLine, faUsers, faEye, faHeart, faComment, faShare, faStore, faBullhorn, faCalendarAlt, faNewspaper, faSync } from '@fortawesome/free-solid-svg-icons'
 import { DashboardSkeleton } from '../components/Skeleton'
+const { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, Legend } = require('recharts')
 
-const POLL_INTERVAL = 15000 // 15 seconds
+const POLL_INTERVAL = 15000
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null)
@@ -19,6 +20,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(null)
   const [syncing, setSyncing] = useState(false)
+  const [activityData, setActivityData] = useState([])
   const emailRef = useRef(null)
   const intervalRef = useRef(null)
 
@@ -26,34 +28,19 @@ export default function DashboardPage() {
     if (!email) return
     if (showSyncIndicator) setSyncing(true)
     try {
-      // Fetch user stats
-      const userRes = await fetch(`/api/user?userEmail=${encodeURIComponent(email)}`)
-      const userData = await userRes.json()
-
-      if (userData.user) {
-        setStats({
-          followers: userData.user.followers?.length || 0,
-          views: userData.user.profileViews || 0,
-          likes: userData.user.totalLikes || 0,
-          comments: userData.user.totalComments || 0,
-          shares: userData.user.totalShares || 0
-        })
+      const res = await fetch(`/api/dashboard?userEmail=${encodeURIComponent(email)}&range=24`)
+      if (!res.ok) throw new Error('Failed to fetch dashboard data')
+      
+      const data = await res.json()
+      
+      if (data.stats) {
+        setStats(data.stats)
       }
-
-      // Fetch recent activity (posts, comments, etc.)
-      const postsRes = await fetch(`/api/posts?userEmail=${encodeURIComponent(email)}&limit=5`)
-      const postsData = await postsRes.json()
-
-      if (postsData.posts) {
-        const activities = postsData.posts.map(post => ({
-          id: post.id,
-          type: 'post',
-          content: post.content?.substring(0, 50) + (post.content?.length > 50 ? '...' : ''),
-          likes: post.likes?.length || 0,
-          comments: post.comments?.length || 0,
-          date: new Date(post.createdAt).toLocaleDateString('fr-FR')
-        }))
-        setRecentActivity(activities)
+      if (data.recentActivity) {
+        setRecentActivity(data.recentActivity)
+      }
+      if (data.activity) {
+        setActivityData(data.activity)
       }
       setLastUpdated(new Date())
     } catch (error) {
@@ -183,6 +170,110 @@ export default function DashboardPage() {
           </div>
 
           {/* Stats Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 20,
+            marginBottom: 32
+          }}>
+            <StatCard icon={faUsers} title="Abonnés" value={stats.followers} color="#3B82F6" />
+            <StatCard icon={faEye} title="Vues du profil" value={stats.views} color="#10B981" />
+            <StatCard icon={faHeart} title="J'aime" value={stats.likes} color="#EF4444" />
+            <StatCard icon={faComment} title="Commentaires" value={stats.comments} color="#F59E0B" />
+            <StatCard icon={faShare} title="Partages" value={stats.shares} color="#8B5CF6" />
+          </div>
+
+          {/* Courbe d'activité */}
+          <div style={{ background: 'white', borderRadius: 20, padding: 32, boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid #E2E8F0', marginBottom: 32 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                        <div>
+                          <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0, color: '#0F172A' }}>
+                            Activité en temps réel
+                          </h2>
+                          <p style={{ fontSize: 14, color: '#64748B', margin: '4px 0 0 0' }}>
+                            Vues et likes des dernières heures
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', gap: 16 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ width: 12, height: 12, background: '#3B82F6', borderRadius: 3 }}></span>
+                            <span style={{ fontSize: 13, color: '#64748B' }}>Vues</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ width: 12, height: 12, background: '#EF4444', borderRadius: 3 }}></span>
+                            <span style={{ fontSize: 13, color: '#64748B' }}>Likes</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ width: '100%', height: 320 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart data={activityData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                            <defs>
+                              <linearGradient id="colorVues" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.25}/>
+                                <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                              </linearGradient>
+                              <linearGradient id="colorLikes" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#EF4444" stopOpacity={0.25}/>
+                                <stop offset="95%" stopColor="#EF4444" stopOpacity={0}/>
+                              </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+                            <XAxis 
+                              dataKey="heure" 
+                              stroke="#94A3B8" 
+                              fontSize={12}
+                              tickLine={false}
+                              axisLine={false}
+                              dy={10}
+                            />
+                            <YAxis 
+                              stroke="#94A3B8" 
+                              fontSize={12}
+                              tickLine={false}
+                              axisLine={false}
+                              dx={-10}
+                            />
+                            <Tooltip 
+                              contentStyle={{ 
+                                background: '#fff', 
+                                border: '1px solid #E2E8F0', 
+                                borderRadius: 12, 
+                                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                                padding: '12px 16px'
+                              }}
+                              labelStyle={{ color: '#0F172A', fontWeight: 600, marginBottom: 4 }}
+                              itemStyle={{ color: '#64748B', fontSize: 13 }}
+                            />
+                            <Legend 
+                              wrapperStyle={{ display: 'none' }}
+                            />
+                            <Area 
+                              type="monotone" 
+                              dataKey="vues" 
+                              stroke="#3B82F6" 
+                              strokeWidth={3}
+                              fillOpacity={1} 
+                              fill="url(#colorVues)" 
+                              dot={{ r: 4, fill: '#fff', stroke: '#3B82F6', strokeWidth: 2 }}
+                              activeDot={{ r: 6, fill: '#3B82F6', stroke: '#fff', strokeWidth: 2 }}
+                              name="Vues"
+                            />
+                            <Area 
+                              type="monotone" 
+                              dataKey="likes" 
+                              stroke="#EF4444" 
+                              strokeWidth={3}
+                              fillOpacity={1} 
+                              fill="url(#colorLikes)" 
+                              dot={{ r: 4, fill: '#fff', stroke: '#EF4444', strokeWidth: 2 }}
+                              activeDot={{ r: 6, fill: '#EF4444', stroke: '#fff', strokeWidth: 2 }}
+                              name="Likes"
+                            />
+                          </AreaChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',

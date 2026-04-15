@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import Dropdown from './Dropdown'
 import ClickableAvatar from './ClickableAvatar'
+import AccountTransition from './AccountTransition'
 import { MessageInbox } from './messages'
 import { useTranslation } from '../hooks/useTranslation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -16,6 +17,9 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
   const [openId, setOpenId] = useState(null)
   const [notifLoading, setNotifLoading] = useState(false)
   const [user, setUser] = useState(null)
+  const [showAccountTransition, setShowAccountTransition] = useState(false)
+  const [transitionAccount, setTransitionAccount] = useState(null)
+  const [userPages, setUserPages] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState(null)
   const [searchLoading, setSearchLoading] = useState(false)
@@ -47,23 +51,33 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
     const userStr = localStorage.getItem('user')
     if (userStr) {
       const userData = JSON.parse(userStr)
-      console.log('👤 User loaded from localStorage:', userData?.email);
       setUser(userData)
+      // Récupérer les pages de l'utilisateur
+      if (userData?.email) {
+        fetch(`/api/pages?userEmail=${encodeURIComponent(userData.email)}`)
+          .then(res => res.json())
+          .then(data => {
+            if (Array.isArray(data.pages)) {
+              // On ne garde que les pages dont il est owner
+              setUserPages(data.pages.filter(p => p.ownerEmail === userData.email))
+            } else {
+              setUserPages([])
+            }
+          })
+          .catch(() => setUserPages([]))
+      }
     }
     function onUserUpdated() {
       const u = localStorage.getItem('user')
-      console.log('👤 User updated event received:', u ? JSON.parse(u)?.email : 'null');
       setUser(u ? JSON.parse(u) : null)
     }
     window.addEventListener('userUpdated', onUserUpdated)
-    
     // Initialize dark mode from localStorage
     const savedTheme = localStorage.getItem('unify-theme')
     if (savedTheme === 'dark') {
       setDarkMode(true)
       document.body.classList.add('dark')
     }
-    
     // Listen for theme changes from other components
     function onThemeChanged() {
       const theme = localStorage.getItem('unify-theme')
@@ -76,7 +90,6 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
       }
     }
     window.addEventListener('themeChanged', onThemeChanged)
-    
     // Screen size detection for search bar adaptation
     function handleResize() {
       setIsMobile(window.innerWidth <= 768)
@@ -84,7 +97,6 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
     }
     handleResize()
     window.addEventListener('resize', handleResize)
-    
     return () => {
       window.removeEventListener('userUpdated', onUserUpdated)
       window.removeEventListener('resize', handleResize)
@@ -863,15 +875,33 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
                     try {
                       savedAccounts = JSON.parse(localStorage.getItem('savedAccounts') || '[]');
                     } catch {}
-                    if (savedAccounts.length > 0) {
+                    // Fusionner comptes et pages
+                    const switchableAccounts = [
+                      ...savedAccounts,
+                      ...userPages.map(page => ({
+                        ...page,
+                        isPage: true,
+                        email: page.ownerEmail + '::page::' + page.id, // clé unique
+                        prenom: page.name,
+                        nom: '(Page)',
+                        avatar: page.avatar || '/images/default-page.png',
+                      }))
+                    ].filter(acc => acc.email !== user.email);
+                    if (switchableAccounts.length > 0) {
                       return (
                         <div style={{margin:'8px 0'}}>
-                          <div style={{fontSize:13,fontWeight:700,color:'var(--fb-text-secondary)',padding:'0 8px 4px'}}>Changer de compte</div>
-                          {savedAccounts.map(acc => (
-                            <div key={acc.email} style={{display:'flex',alignItems:'center',gap:10,padding:'8px',borderRadius:8,cursor:'pointer',transition:'background .15s',position:'relative'}} onClick={() => {
+                          <div style={{fontSize:13,fontWeight:700,color:'var(--fb-text-secondary)',padding:'0 8px 4px'}}>Changer de compte ou de page</div>
+                          {switchableAccounts.map(acc => (
+                            <div key={acc.email} style={{display:'flex',alignItems:'center',gap:10,padding:'8px',borderRadius:8,cursor:'pointer',transition:'background .15s',position:'relative'}} onClick={async () => {
+                              setTransitionAccount(acc);
+                              setShowAccountTransition(true);
+                              await new Promise(r => setTimeout(r, 1500));
                               localStorage.setItem('user', JSON.stringify(acc));
                               setUser(acc);
                               setOpenId(null);
+                              await new Promise(r => setTimeout(r, 500));
+                              setShowAccountTransition(false);
+                              setTransitionAccount(null);
                               window.location.reload();
                             }} onMouseEnter={e=>e.currentTarget.style.background='var(--fb-hover)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                               <div style={{position:'relative',width:56,height:56,display:'flex',alignItems:'center',justifyContent:'center'}}>
@@ -891,13 +921,11 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
                                 </div>
                               </div>
                               <div style={{flex:1}}>
-                                <div style={{fontWeight:600,fontSize:15}}>{acc.prenom} {acc.nom}</div>
-                                <div style={{fontSize:12,color:'var(--fb-text-secondary)'}}>{acc.email}</div>
+                                <div style={{fontWeight:600,fontSize:15}}>{acc.prenom} {acc.nom} {acc.isPage && <span style={{color:'#b8860b',fontWeight:700}}>&nbsp;[Page]</span>}</div>
+                                <div style={{fontSize:12,color:'var(--fb-text-secondary)'}}>{acc.isPage ? acc.ownerEmail : acc.email}</div>
                               </div>
-                              {user.email === acc.email && <span style={{fontSize:12,color:'#3b82f6',fontWeight:600,marginLeft:6}}>Actif</span>}
                             </div>
                           ))}
-
                         </div>
                       );
                     }
@@ -1017,6 +1045,9 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
           onClose={() => setShowMessages(false)}
         />
       )}
+
+      {/* Account Transition Overlay */}
+      <AccountTransition account={transitionAccount} visible={showAccountTransition} />
     </nav>
   )
 }

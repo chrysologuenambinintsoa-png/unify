@@ -1,3 +1,203 @@
+@media (max-width: 600px) {
+  .up-dropdown-menu {
+    min-width: 180px !important;
+    max-width: 96vw !important;
+    border-radius: 14px !important;
+    margin: 0 !important;
+    box-shadow: 0 2px 18px rgba(0,0,0,0.13);
+    left: auto !important;
+    right: 8px !important;
+    transform: none !important;
+  }
+  .up-dropdown-top {
+    left: auto !important;
+    right: 8px !important;
+    transform: none !important;
+    margin-bottom: 4px !important;
+  }
+}
+/* Desktop dashboard actions */
+.up-dashboard-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  position: relative;
+}
+.up-dashboard-btn-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: var(--up-primary);
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(24,119,242,0.06);
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+  outline: none;
+}
+.up-dashboard-btn-compact svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.up-dashboard-btn-compact:hover, .up-dashboard-btn-compact:focus {
+  background: var(--up-primary-hover);
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.13);
+}
+.up-dashboard-btn-round {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  padding: 0;
+  background: var(--up-primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(24,119,242,0.06);
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+.up-dashboard-btn-round svg {
+  width: 16px;
+  height: 16px;
+}
+.up-dashboard-btn-round:hover {
+  background: var(--up-primary-hover);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.13);
+}
+@media (max-width: 600px) {
+  .up-dashboard-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    width: 100%;
+    padding: 8px 12px;
+  }
+  .up-dashboard-btn-compact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(24,119,242,0.06);
+    white-space: nowrap;
+  }
+  .up-dashboard-btn-compact svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+  .up-dashboard-btn-round {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    padding: 0;
+    background: var(--up-primary);
+    color: #fff;
+    flex: 0 0 auto;
+  }
+  .up-dashboard-btn-round svg {
+    width: 14px;
+    height: 14px;
+  }
+  .up-dashboard-btn-round:hover {
+    background: var(--up-primary-hover);
+  }
+  .up-dashboard-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 100%;
+    justify-content: center;
+    font-size: 13px;
+    padding: 10px 0;
+    border-radius: 16px;
+    margin: 0;
+    box-shadow: 0 1px 4px rgba(24,119,242,0.06);
+    position: relative;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--up-primary) 80%, var(--up-primary-light) 100%);
+    border: none;
+    color: #fff;
+    transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+  }
+  .up-dashboard-btn svg {
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
+  }
+  .up-dashboard-btn-text {
+    display: inline-block;
+    margin-left: 0;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: left;
+  }
+}
+/* ============================================
+   DASHBOARD BUTTONS (TABLEAU DE BORD / INVITER / PROMOUVOIR)
+   ============================================ */
+/* Desktop: occuper toute la largeur, espacement pro */
+.up-dashboard-actions {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  padding: 0 24px 16px 24px;
+  justify-content: stretch;
+}
+
+/* Desktop bouton pro, occupe bien la carte */
+.up-dashboard-btn {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  border-radius: 22px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(90deg, var(--up-primary) 80%, var(--up-primary-light) 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(24, 119, 242, 0.08);
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+  letter-spacing: 0.01em;
+  outline: none;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.up-dashboard-btn:hover, .up-dashboard-btn:focus {
+  background: var(--up-primary-hover);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 18px rgba(24, 119, 242, 0.13);
+}
+
+.up-dashboard-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
 /* ============================================
    UNIFY PAGE COMPONENT
 Page Component CSS
@@ -209,7 +409,8 @@ Page Component CSS
   gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
-  row-gap: 10px;
+  row-gap: 8px;
+  width: 100%;
 }
 
 @media (min-width: 1024px) {
@@ -260,23 +461,25 @@ Page Component CSS
 .up-follow-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 20px;
-  border-radius: var(--up-radius-full);
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--up-transition);
+  transition: all 0.2s ease;
   border: none;
   background: var(--up-primary);
   color: white;
   white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .up-follow-btn:hover {
   background: var(--up-primary-hover);
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.35);
 }
 
 .up-follow-btn.up-following {
@@ -296,21 +499,25 @@ Page Component CSS
 .up-like-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--up-radius-full);
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--up-transition);
+  transition: all 0.2s ease;
   border: 1px solid var(--up-border);
   background: var(--up-bg-white);
   color: var(--up-text-primary);
   white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .up-like-btn:hover {
   background: var(--up-bg-hover);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
 }
 
 .up-like-btn.up-liked {
@@ -328,21 +535,25 @@ Page Component CSS
 .up-msg-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--up-radius-full);
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--up-transition);
+  transition: all 0.2s ease;
   border: 1px solid var(--up-border);
   background: var(--up-bg-white);
   color: var(--up-text-primary);
   white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .up-msg-btn:hover {
   background: var(--up-bg-hover);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
 }
 
 .up-msg-btn svg {
@@ -354,21 +565,25 @@ Page Component CSS
 .up-invite-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--up-radius-full);
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--up-transition);
+  transition: all 0.2s ease;
   border: 1px solid var(--up-border);
   background: var(--up-bg-white);
   color: var(--up-text-primary);
   white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .up-invite-btn:hover {
   background: var(--up-bg-hover);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
 }
 
 .up-invite-btn svg {
@@ -380,17 +595,19 @@ Page Component CSS
 .up-share-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--up-radius-full);
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--up-transition);
+  transition: all 0.2s ease;
   border: 1px solid var(--up-border);
   background: var(--up-bg-white);
   color: var(--up-text-primary);
   white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .up-share-btn:hover {
@@ -836,6 +1053,176 @@ Page Component CSS
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+/* ============================================
+   MOBILE OWNER MENU
+   ============================================ */
+.up-owner-menu-mobile {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.up-more-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: var(--up-bg-white);
+  border: 1px solid var(--up-border-light);
+  color: var(--up-text-primary);
+  transition: var(--up-transition);
+}
+
+.up-more-btn:hover {
+  background: var(--up-bg-hover);
+}
+
+.up-mobile-actions-dropdown button:hover {
+  background: var(--up-bg-hover);
+}
+
+.up-mobile-actions-dropdown button svg {
+  width: 18px;
+  height: 18px;
+  color: var(--up-text-secondary);
+  flex-shrink: 0;
+}
+
+.up-mobile-actions-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--up-bg-white);
+  border-radius: var(--up-radius-md);
+  box-shadow: var(--up-shadow-lg);
+  border: 1px solid var(--up-border-light);
+  min-width: 220px;
+  z-index: 1000;
+  padding: 8px 0;
+  overflow: hidden;
+  animation: up-dropdown-in 0.15s ease;
+}
+
+.up-mobile-actions-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: var(--up-text-primary);
+  cursor: pointer;
+  transition: var(--up-transition);
+  text-align: left;
+}
+
+.up-mobile-actions-dropdown button:hover {
+  background: var(--up-bg-hover);
+}
+
+.up-mobile-actions-dropdown button svg {
+  width: 16px;
+  height: 16px;
+  color: var(--up-text-secondary);
+}
+
+.up-mobile-actions-dropdown .up-dashboard-btn-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: var(--up-primary);
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(24,119,242,0.06);
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+  outline: none;
+  width: auto;
+  text-align: center;
+}
+
+.up-mobile-actions-dropdown .up-dashboard-btn-compact:hover, 
+.up-mobile-actions-dropdown .up-dashboard-btn-compact:focus {
+  background: var(--up-primary-hover);
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.13);
+}
+
+.up-mobile-actions-dropdown .up-dashboard-btn-compact svg {
+  width: 16px;
+  height: 16px;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .up-mobile-actions-dropdown .up-dashboard-btn-compact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(24,119,242,0.06);
+    white-space: nowrap;
+    width: calc(50% - 4px);
+  }
+  .up-mobile-actions-dropdown .up-dashboard-btn-compact svg {
+    width: 12px;
+    height: 12px;
+    color: #fff;
+  }
+  .up-mobile-actions-dropdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 12px;
+    min-width: 280px;
+  }
+  .up-mobile-actions-dropdown .up-dashboard-btn-compact:hover,
+  .up-mobile-actions-dropdown .up-dashboard-btn-compact:focus {
+    transform: translateY(-1px) scale(1.02);
+  }
+}
+
+.up-mobile-actions-divider {
+  height: 1px;
+  background: var(--up-border-light);
+  margin: 4px 0;
+}
+
+/* Responsive: Hide desktop buttons, show mobile menu on small screens */
+@media (max-width: 767px) {
+  .up-owner-menu {
+    display: none;
+  }
+  .up-owner-menu-mobile {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Show desktop buttons only on larger screens */
+@media (min-width: 768px) {
+  .up-owner-menu-mobile {
+    display: none;
   }
 }
 
@@ -2794,6 +3181,184 @@ Page Component CSS
 }
 
 /* ============================================
+   SPECIAL EVENT CARD IN POST
+   ============================================ */
+.up-event-card {
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 12px 0;
+  border: 2px solid #8b5cf6;
+}
+
+.up-event-card-cover {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.up-event-card-content {
+  padding: 16px;
+}
+
+.up-event-card-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8b5cf6;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.up-event-card-date svg {
+  width: 18px;
+  height: 18px;
+}
+
+.up-event-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.up-event-card-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.up-event-card-location svg {
+  width: 16px;
+  height: 16px;
+}
+
+.up-event-card-desc {
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.up-event-card-btn {
+  width: 100%;
+  padding: 12px;
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.up-event-card-btn:hover {
+  background: #7c3aed;
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   EVENT CARD IN FEED
+   ============================================ */
+.up-feed-event-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.up-feed-event-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.up-feed-event-card .up-event-cover {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.up-feed-event-card .up-event-content {
+  padding: 16px;
+}
+
+.up-feed-event-card .up-event-date-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8b5cf6;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.up-feed-event-card .up-event-date-badge svg {
+  width: 18px;
+  height: 18px;
+}
+
+.up-feed-event-card .up-event-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.up-feed-event-card .up-event-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0 0 8px 0;
+}
+
+.up-feed-event-card .up-event-location svg {
+  width: 16px;
+  height: 16px;
+  color: #ef4444;
+}
+
+.up-feed-event-card .up-event-description {
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.up-feed-event-card .up-event-cta {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.up-feed-event-card .up-event-cta:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.up-feed-event-card .up-event-cta.is-participating {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* ============================================
    REVIEWS SECTION
    ============================================ */
 .up-reviews-section {
@@ -3208,6 +3773,103 @@ Page Component CSS
   height: 16px;
 }
 
+.up-review-action-voted {
+  color: var(--up-primary);
+  font-weight: 600;
+}
+
+.up-review-action-voted svg {
+  fill: var(--up-primary);
+}
+
+.up-review-reply-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px;
+  background: var(--up-bg-secondary);
+  border-radius: var(--up-radius-md);
+}
+
+.up-review-reply-input input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--up-border);
+  border-radius: var(--up-radius-md);
+  background: var(--up-bg-card);
+  color: var(--up-text-primary);
+  font-size: 14px;
+}
+
+.up-review-reply-input input:focus {
+  outline: none;
+  border-color: var(--up-primary);
+}
+
+.up-review-reply-input button {
+  padding: 8px 12px;
+  background: var(--up-primary);
+  color: white;
+  border: none;
+  border-radius: var(--up-radius-md);
+  cursor: pointer;
+}
+
+.up-review-reply-input button:disabled {
+  background: var(--up-disabled);
+  cursor: not-allowed;
+}
+
+.up-review-replies {
+  margin-top: 12px;
+  padding-left: 16px;
+  border-left: 2px solid var(--up-border);
+}
+
+.up-replies-toggle {
+  background: none;
+  border: none;
+  color: var(--up-primary);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.up-review-reply-item {
+  margin-top: 12px;
+  padding: 10px;
+  background: var(--up-bg-secondary);
+  border-radius: var(--up-radius-md);
+}
+
+.up-reply-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.up-reply-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.up-reply-name {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.up-reply-date {
+  font-size: 12px;
+  color: var(--up-text-secondary);
+}
+
+.up-reply-text {
+  font-size: 14px;
+  margin: 0;
+}
+
 /* ============================================
    COMMUNITY SECTION
    ============================================ */
@@ -3378,12 +4040,12 @@ Page Component CSS
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--up-border-light);
 }
 
 .up-modal-header h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--up-text-primary);
   margin: 0;
@@ -3410,6 +4072,83 @@ Page Component CSS
 .up-modal-close svg {
   width: 16px;
   height: 16px;
+}
+
+.up-share-search {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--up-border-light);
+}
+
+.up-share-search input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--up-radius);
+  border: 1px solid var(--up-border);
+  background: var(--up-bg);
+  color: var(--up-text-primary);
+  font-size: 14px;
+}
+
+.up-share-search input:focus {
+  outline: none;
+  border-color: var(--up-primary);
+}
+
+.up-share-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--up-border-light);
+}
+
+.up-share-section h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--up-text-secondary);
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+.up-share-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.up-share-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: var(--up-radius);
+  cursor: pointer;
+  transition: var(--up-transition);
+}
+
+.up-share-item:hover {
+  background: var(--up-bg-active);
+}
+
+.up-share-item span {
+  font-size: 14px;
+  color: var(--up-text-primary);
+}
+
+.up-share-group-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--up-radius);
+  background: var(--up-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.up-share-empty {
+  font-size: 13px;
+  color: var(--up-text-secondary);
+  font-style: italic;
 }
 
 .up-share-options {
@@ -3526,13 +4265,15 @@ Page Component CSS
   background: var(--up-bg-card);
   border-radius: var(--up-radius-xl);
   width: 90%;
-  max-width: 520px;
+  max-width: 480px;
   box-shadow: var(--up-shadow-lg);
   animation: up-slide-up 0.25s ease;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .up-action-content {
-  padding: 20px;
+  padding: 12px 16px;
 }
 
 .up-action-form label,
@@ -3564,7 +4305,7 @@ Page Component CSS
 .up-action-button-row {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .up-action-setting-item,
@@ -3646,20 +4387,23 @@ Page Component CSS
   .up-msg-btn,
   .up-invite-btn,
   .up-share-btn {
-    flex: 1;
+    flex: 1 1 calc(50% - 4px);
     min-height: 40px;
-    font-size: 12px;
-    padding: 8px 12px;
+    font-size: 13px;
+    padding: 10px 14px;
     display: inline-flex;
-    gap: 8px;
+    gap: 6px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  .up-follow-btn span,
-  .up-like-btn span,
-  .up-msg-btn span,
-  .up-invite-btn span,
-  .up-share-btn span {
-    display: inline;
+  .up-follow-btn:hover,
+  .up-like-btn:hover,
+  .up-msg-btn:hover,
+  .up-invite-btn:hover,
+  .up-share-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
 
   .up-page-avatar {
@@ -3748,17 +4492,19 @@ Page Component CSS
   .up-msg-btn,
   .up-invite-btn,
   .up-share-btn {
-    flex: 1 1 100%;
-    width: 100%;
-    max-width: 100%;
+    flex: 1 1 calc(50% - 3px);
+    width: auto;
+    max-width: none;
     min-width: 0;
-    min-height: 34px;
-    padding: 6px 10px;
-    font-size: 11px;
+    min-height: 42px;
+    padding: 10px 14px;
+    font-size: 13px;
     display: inline-flex;
-    gap: 4px;
-    white-space: normal;
+    gap: 6px;
+    white-space: nowrap;
     justify-content: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .up-follow-btn span,
@@ -3766,7 +4512,7 @@ Page Component CSS
   .up-msg-btn span,
   .up-invite-btn span,
   .up-share-btn span {
-    white-space: normal;
+    white-space: nowrap;
   }
 
   .up-follow-btn svg,
@@ -3774,8 +4520,8 @@ Page Component CSS
   .up-msg-btn svg,
   .up-invite-btn svg,
   .up-share-btn svg {
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
   }
 
   .up-avatar-edit-btn {
@@ -3793,28 +4539,11 @@ Page Component CSS
   .up-composer {
     margin-bottom: 12px;
   }
-
-  .up-content {
-    max-width: 100%;
-    padding: 8px;
-  }
 }
 
-  .up-follow-btn,
-  .up-like-btn,
-  .up-msg-btn,
-  .up-invite-btn,
-  .up-share-btn {
-    padding: 6px 12px;
-    font-size: 13px;
-  }
-
-  .up-follow-btn span,
-  .up-like-btn span,
-  .up-msg-btn span,
-  .up-invite-btn span,
-  .up-share-btn span {
-    display: inline;
+.up-content {
+    max-width: 100%;
+    padding: 8px;
   }
 
   .up-stats-bar {
@@ -4828,4 +5557,198 @@ select:focus-visible {
 :focus-visible {
   outline: 2px solid var(--up-primary);
   outline-offset: 2px;
+}
+
+/* ============================================
+   EDIT PAGE FORM STYLES
+   ============================================ */
+.up-action-edit {
+  padding: 4px 0;
+}
+
+.up-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.up-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.up-edit-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--up-text-primary);
+}
+
+.up-edit-input,
+.up-edit-select,
+.up-edit-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--up-border-light);
+  border-radius: var(--up-radius-md);
+  background: var(--up-bg);
+  color: var(--up-text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.up-edit-input:focus,
+.up-edit-select:focus,
+.up-edit-textarea:focus {
+  border-color: var(--up-primary);
+  box-shadow: 0 0 0 3px rgba(0, 61, 92, 0.1);
+}
+
+.up-edit-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.up-edit-textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+}
+
+.up-edit-input::placeholder,
+.up-edit-textarea::placeholder {
+  color: var(--up-text-secondary);
+  opacity: 0.7;
+}
+
+@media (max-width: 480px) {
+  .up-edit-form {
+    gap: 14px;
+  }
+  
+  .up-edit-input,
+  .up-edit-select,
+  .up-edit-textarea {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Photo Viewer responsive */
+@media (max-width: 600px) {
+  .up-modal-overlay .up-photo-viewer .btn-text {
+    display: none;
+  }
+  
+  .up-modal-overlay .up-photo-viewer button[style*="flex"] {
+    padding: 6px 8px !important;
+  }
+  
+  .up-modal-overlay .up-photo-viewer button[style*="flex"] svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ============================================
+   VIDEO VIEWER STYLES
+   ============================================ */
+.up-video-viewer {
+  animation: videoViewerFadeIn 0.25s ease-out;
+}
+
+@keyframes videoViewerFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.up-video-viewer video {
+  cursor: pointer;
+}
+
+.up-video-viewer .up-action-bar-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.up-video-viewer .up-action-bar-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.up-video-viewer .up-action-bar-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Video Viewer responsive */
+@media (max-width: 768px) {
+  .up-video-viewer {
+    width: 95vw !important;
+    max-width: 95vw !important;
+  }
+  
+  .up-video-viewer .up-stats-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .up-video-viewer .up-stats-bar span.btn-text {
+    display: none;
+  }
+  
+  .up-video-viewer .up-video-title {
+    font-size: 14px;
+  }
+  
+  .up-video-viewer button[style*="width: 48px"] {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  
+  .up-video-viewer button[style*="width: 72px"] {
+    width: 56px !important;
+    height: 56px !important;
+  }
+  
+  .up-video-viewer button[style*="width: 72px"] svg {
+    width: 28px !important;
+    height: 28px !important;
+  }
+}
+
+/* ============================================
+   POST VIDEO STYLES
+   ============================================ */
+.up-post-video {
+  margin-top: 8px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+
+.up-post-video video {
+  display: block;
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
 }

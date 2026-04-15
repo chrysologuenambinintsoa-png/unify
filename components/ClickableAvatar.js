@@ -30,13 +30,15 @@ export default function ClickableAvatar({
   if (!user) return null
 
   const sizeMap = {
+    32: { avatar: 32, font: 12 },
     small: { avatar: 32, font: 12 },
     header: { avatar: 40, font: 14 },
     medium: { avatar: 48, font: 14 },
     large: { avatar: 64, font: 16 }
   }
 
-  const { avatar: avatarSize, font: fontSize } = sizeMap[size]
+  const sizeKey = size in sizeMap ? size : (typeof size === 'number' ? 32 : 'medium')
+  const { avatar: avatarSize, font: fontSize } = sizeMap[sizeKey] || sizeMap.medium
 
   const userName = user.prenom || user.nomUtilisateur || (user.email ? user.email.split('@')[0] : 'Utilisateur')
   const userLastName = user.nom || ''

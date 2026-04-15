@@ -11,6 +11,8 @@ export default async function handler(req, res) {
       const { action } = req.body;
       if (!action) return res.status(400).json({ error: 'action is required' });
       if (action === 'like') {
+        const existingItem = await prisma.item.findUnique({ where: { id: parsedId } });
+        if (!existingItem) return res.status(404).json({ error: 'Item not found' });
         const updated = await prisma.item.update({ where: { id: parsedId }, data: { likes: { increment: 1 } } });
         // create notification for post author
         try {
@@ -53,7 +55,10 @@ export default async function handler(req, res) {
         return res.json({ likes: updated.likes });
       }
       if (action === 'unlike') {
-        const updated = await prisma.item.update({ where: { id: parsedId }, data: { likes: Math.max(0, (await prisma.item.findUnique({ where: { id: parsedId } })).likes - 1) } });
+        const existingItem = await prisma.item.findUnique({ where: { id: parsedId } });
+        if (!existingItem) return res.status(404).json({ error: 'Item not found' });
+        const newLikes = Math.max(0, (existingItem.likes || 0) - 1);
+        const updated = await prisma.item.update({ where: { id: parsedId }, data: { likes: newLikes } });
         return res.json({ likes: updated.likes });
       }
       return res.status(400).json({ error: 'unknown action' });
@@ -63,6 +68,17 @@ export default async function handler(req, res) {
     }
   }
 
-  res.setHeader('Allow', ['POST']);
+  if (req.method === 'GET') {
+    try {
+      const item = await prisma.item.findUnique({ where: { id: parsedId } });
+      if (!item) return res.status(404).json({ error: 'Item not found' });
+      return res.json({ count: item.likes || 0, likes: item.likes || 0 });
+    } catch (e) {
+      console.error('reactions GET error', e);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  res.setHeader('Allow', ['POST', 'GET']);
   res.status(405).end(`Method ${req.method} Not Allowed`);
 }

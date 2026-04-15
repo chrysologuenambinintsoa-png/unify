@@ -512,26 +512,29 @@ export default function PostViewer({ post, onClose, onDelete }) {
           <div className="pv-author">
             <div className="pv-author-row">
               {(() => {
+                // Support post.author as object or string
+                const authorName = typeof post.author === 'object' && post.author !== null ? post.author.name : post.author;
+                const authorAvatar = typeof post.author === 'object' && post.author !== null ? post.author.avatar : post.avatarUrl || post.avatar;
                 const userObj = post.authorUser ? {
-                  prenom: post.authorUser.prenom || post.author,
+                  prenom: post.authorUser.prenom || authorName,
                   nom: post.authorUser.nom,
-                  nomUtilisateur: post.authorUser.nomUtilisateur || post.author,
+                  nomUtilisateur: post.authorUser.nomUtilisateur || authorName,
                   email: post.authorUser.email,
                   avatarUrl: post.authorUser.avatarUrl || post.authorUser.avatar,
                   avatar: post.authorUser.avatar,
                   avatarBg: post.color
                 } : {
-                  prenom: post.author,
-                  nomUtilisateur: post.author,
-                  avatarUrl: post.avatarUrl || post.avatar,
-                  avatar: post.avatar,
+                  prenom: authorName,
+                  nomUtilisateur: authorName,
+                  avatarUrl: authorAvatar,
+                  avatar: authorAvatar,
                   avatarBg: post.color
                 }
                 return <ClickableAvatar user={userObj} size="medium" />
               })()}
               <div className="pv-author-info">
                 <div className="pv-author-name-row">
-                  <span className="pv-author-name" onClick={(e) => { e.stopPropagation(); navigateAuthor() }} style={{ cursor: 'pointer' }}>{post.author}</span>
+                  <span className="pv-author-name" onClick={(e) => { e.stopPropagation(); navigateAuthor() }} style={{ cursor: 'pointer' }}>{typeof post.author === 'object' && post.author !== null ? post.author.name : post.author}</span>
                   {post.isVerified && (
                     <span className="pv-verified-badge" title="Compte vérifié">
                       <i className="fas fa-check"></i>
@@ -705,7 +708,7 @@ export default function PostViewer({ post, onClose, onDelete }) {
                     {getReactionEmoji(reactionType)}
                   </span>
                 ) : (
-                  <i className={`fa${liked ? 's' : 'r'} fa-thumbs-up pv-action-icon`} style={{color: liked ? '#1a1a2e' : 'white'}}></i>
+                  <i className={`fa${liked ? 's' : 'r'} fa-thumbs-up pv-action-icon`} style={{color: liked ? '#e74c3c' : 'white'}}></i>
                 )}
                 <span>{liked ? (reactionType === 'love' ? 'J\'adore' : reactionType === 'haha' ? 'Haha' : reactionType === 'sad' ? 'Triste' : reactionType === 'wow' ? 'Waooo' : reactionType === 'solidarity' ? 'Solidaire' : 'J\'aime') : 'J\'aime'}</span>
               </button>

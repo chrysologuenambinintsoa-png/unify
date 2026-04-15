@@ -36,6 +36,7 @@ export function PagePostCreator({ pageId, currentUser, onPostCreated }) {
   const [eventTitle, setEventTitle] = useState('')
   const [eventDate, setEventDate] = useState('')
   const [eventLocation, setEventLocation] = useState('')
+  const [selectedVideo, setSelectedVideo] = useState(null)
   const fileInputRef = useRef(null)
   const videoInputRef = useRef(null)
   const textareaRef = useRef(null)
@@ -66,6 +67,7 @@ export function PagePostCreator({ pageId, currentUser, onPostCreated }) {
     setIsOpen(false)
     setPostContent('')
     setSelectedImage(null)
+    setSelectedVideo(null)
     setSelectedFiles([])
     setOriginalFile(null)
     setUploadProgress(0)
@@ -138,6 +140,19 @@ export function PagePostCreator({ pageId, currentUser, onPostCreated }) {
     }
   }
 
+  function handleVideoSelect(e) {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+    
+    const file = files[0]
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      setSelectedVideo(event.target.result)
+      setSelectedImage(event.target.result)
+    }
+    reader.readAsDataURL(file)
+  }
+
   function addTaggedUser() {
     if (!tagInput.trim()) return
     setTaggedUsers(prev => [...prev, { id: Date.now(), name: tagInput.trim() }])
@@ -155,8 +170,8 @@ export function PagePostCreator({ pageId, currentUser, onPostCreated }) {
   }
 
   async function handleCreate() {
-    if (!postContent.trim() && !selectedImage) {
-      showToast('Veuillez ajouter du contenu ou une image', 'warning')
+    if (!postContent.trim() && !selectedImage && !selectedVideo) {
+      showToast('Veuillez ajouter du contenu, une image ou une vidéo', 'warning')
       return
     }
 
@@ -219,6 +234,7 @@ export function PagePostCreator({ pageId, currentUser, onPostCreated }) {
           title: computedTitle,
           content: contentWithTags,
           image: imageUrl,
+          video: selectedVideo,
           author: authorName,
           authorEmail: userEmail,
           avatarUrl: localUser?.avatarUrl || localUser?.avatar || null,
@@ -237,7 +253,8 @@ export function PagePostCreator({ pageId, currentUser, onPostCreated }) {
         body: JSON.stringify({
           title: computedTitle,
           content: contentWithTags,
-          image: imageUrl
+          image: imageUrl,
+          video: selectedVideo
         })
       })
 
@@ -494,7 +511,7 @@ export function PagePostCreator({ pageId, currentUser, onPostCreated }) {
           )}
 
           <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} style={{ display: 'none' }} disabled={isUploading} />
-          <input ref={videoInputRef} type="file" accept="video/*" onChange={handleFileSelect} style={{ display: 'none' }} disabled={isUploading} />
+          <input ref={videoInputRef} type="file" accept="video/*" onChange={handleVideoSelect} style={{ display: 'none' }} disabled={isUploading} />
         </div>
       </Modal>
 

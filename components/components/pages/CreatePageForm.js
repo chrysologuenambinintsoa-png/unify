@@ -10,6 +10,11 @@ export default function CreatePageForm({ onPageCreated, user }) {
     name: '',
     description: '',
     category: 'Entreprise',
+    subcategory: '',
+    address: '',
+    phone: '',
+    website: '',
+    contactEmail: '',
     privacy: 'PUBLIC'
   });
   const [profileImage, setProfileImage] = useState(null);
@@ -89,6 +94,11 @@ export default function CreatePageForm({ onPageCreated, user }) {
       formDataToSend.append('name', formData.name);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('category', formData.category);
+      formDataToSend.append('subcategory', formData.subcategory);
+      formDataToSend.append('address', formData.address);
+      formDataToSend.append('phone', formData.phone);
+      formDataToSend.append('website', formData.website);
+      formDataToSend.append('contactEmail', formData.contactEmail);
       formDataToSend.append('privacy', formData.privacy);
       
       // Compress and append images
@@ -118,7 +128,17 @@ export default function CreatePageForm({ onPageCreated, user }) {
       const newPage = await response.json();
       
       // Reset form
-      setFormData({ name: '', description: '', category: 'Entreprise', privacy: 'PUBLIC' });
+      setFormData({ 
+        name: '', 
+        description: '', 
+        category: 'Entreprise', 
+        subcategory: '',
+        address: '',
+        phone: '',
+        website: '',
+        contactEmail: '',
+        privacy: 'PUBLIC' 
+      });
       setProfileImage(null);
       setCoverImage(null);
       setShowForm(false);
@@ -169,17 +189,6 @@ export default function CreatePageForm({ onPageCreated, user }) {
               />
             </div>
 
-            <div className="form-group">
-              <label>Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                placeholder="Décrivez votre page..."
-                rows="4"
-              />
-            </div>
-
             <div className="form-row">
               <div className="form-group">
                 <label>Catégorie</label>
@@ -188,13 +197,16 @@ export default function CreatePageForm({ onPageCreated, user }) {
                   value={formData.category}
                   onChange={handleInputChange}
                 >
-                  <option>Entreprise</option>
-                  <option>Marque</option>
-                  <option>Art</option>
-                  <option>Musique</option>
-                  <option>Sport</option>
-                  <option>Communauté</option>
-                  <option>Autre</option>
+                  <option value="Entreprise">Entreprise</option>
+                  <option value="Marque">Marque</option>
+                  <option value="Artiste">Artiste</option>
+                  <option value="Cause">Cause</option>
+                  <option value="Divertissement">Divertissement</option>
+                  <option value="communauté">Communauté</option>
+                  <option value="Restaurant">Restaurant</option>
+                  <option value="Shop">Boutique</option>
+                  <option value="Service">Service</option>
+                  <option value="Autre">Autre</option>
                 </select>
               </div>
 
@@ -209,6 +221,74 @@ export default function CreatePageForm({ onPageCreated, user }) {
                   <option value="PRIVATE">Privée</option>
                 </select>
               </div>
+            </div>
+
+            <div className="form-group">
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Décrivez votre page..."
+                rows="3"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Sous-catégorie</label>
+              <input
+                type="text"
+                name="subcategory"
+                value={formData.subcategory}
+                onChange={handleInputChange}
+                placeholder="Sous-catégorie (optionnel)"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Adresse</label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                placeholder="Adresse de la page (optionnel)"
+              />
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Téléphone</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder="Numéro de téléphone (optionnel)"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Email de contact</label>
+                <input
+                  type="email"
+                  name="contactEmail"
+                  value={formData.contactEmail}
+                  onChange={handleInputChange}
+                  placeholder="contact@exemple.com (optionnel)"
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Site web</label>
+              <input
+                type="url"
+                name="website"
+                value={formData.website}
+                onChange={handleInputChange}
+                placeholder="https://votre-site.com (optionnel)"
+              />
             </div>
 
             <div className="form-row">

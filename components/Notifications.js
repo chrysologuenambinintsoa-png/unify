@@ -46,6 +46,7 @@ const NOTIFICATION_ICONS = {
 // Formater le temps relatif (style Facebook)
 const formatRelativeTime = (dateString) => {
   const date = new Date(dateString)
+  if (isNaN(date.getTime())) return ''
   const now = new Date()
   const diffMs = now - date
   const diffSec = Math.floor(diffMs / 1000)
@@ -55,7 +56,7 @@ const formatRelativeTime = (dateString) => {
   const diffWeek = Math.floor(diffDay / 7)
   const diffMonth = Math.floor(diffDay / 30)
 
-  if (diffSec < 60) return 'Ã€ l\'instant'
+  if (diffSec < 60) return 'A l\'instant'
   if (diffMin < 60) return `Il y a ${diffMin} min`
   if (diffHour < 24) return `Il y a ${diffHour} h`
   if (diffDay < 7) return `Il y a ${diffDay} j`
